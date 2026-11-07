@@ -1,0 +1,58 @@
+{% extends 'library/layout.twig' %}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap">
+    <div class="whead__crumbs">
+      <a href="/library/works">馆藏作品</a><span>/</span>
+    </div>
+    <h1 class="h1">{{ issue.label }}</h1>
+    <div class="whead__meta">
+      <span>共 <b class="mono">{{ total }}</b> 篇已发布拆解</span>
+      {% if issue.starts_at and issue.ends_at and issue.starts_at|slice(0,10) != issue.ends_at|slice(0,10) %}
+        {# 截稿在早上 7 点，只显示到「日」会把「最后一晚还能改」这件事藏掉 #}
+        <span class="mono">收稿 {{ issue.starts_at|slice(0,10) }} {{ issue.starts_at|slice(11,5) }} — 截稿 {{ issue.ends_at|slice(0,10) }} {{ issue.ends_at|slice(11,5) }}</span>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  {% if rows is empty %}
+    <div class="empty">
+      <p>这一期还没有发布的作品。</p>
+      <p class="dim"><a href="/library/works">看全部馆藏</a></p>
+    </div>
+  {% else %}
+    <div class="grid grid--3">
+      {% for row in rows %}{% include 'library/_card.twig' %}{% endfor %}
+    </div>
+
+    {% if prev_url or first_url or next_url %}
+      <nav class="pager" aria-label="分页">
+        {% if prev_url %}
+          <a class="btn" href="{{ prev_url }}" rel="prev">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"></path></svg>
+            上一页
+          </a>
+        {% endif %}
+        {% if first_url %}<a class="btn btn--ghost" href="{{ first_url }}">回到第一页</a>{% endif %}
+        {% if next_url %}
+          <a class="btn" href="{{ next_url }}" rel="next">下一页
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+          </a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% endif %}
+
+  {% if others is not empty %}
+    <div class="otherissues">
+      <span class="dim">其它期次</span>
+      {% for i in others %}
+        <a class="chip" href="/library/issues/{{ i.no }}">第 {{ i.no }} 期<i class="mono">{{ i.n }} 篇</i></a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

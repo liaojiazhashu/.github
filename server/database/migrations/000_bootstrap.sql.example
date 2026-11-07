@@ -1,0 +1,24 @@
+-- 建库与账号模板：复制为 000_bootstrap.sql 后填入随机口令再执行（root 身份）
+-- 口令生成：php -r "echo bin2hex(random_bytes(12));"
+-- 银河图书馆 · 建库与账号（一次性执行，root 身份）
+SET NAMES utf8mb4;
+CREATE DATABASE IF NOT EXISTS hqlib DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- 1) root 设强密码
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('<ROOT_PASSWORD>');
+SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('<ROOT_PASSWORD>');
+SET PASSWORD FOR 'root'@'::1' = PASSWORD('<ROOT_PASSWORD>');
+
+-- 2) 清理随包自带的匿名账号与测试库
+DELETE FROM mysql.user WHERE User='';
+DROP DATABASE IF EXISTS test;
+
+-- 3) 应用账号：单库 DML，无 DDL / FILE / PROCESS
+CREATE USER 'hqlib_app'@'127.0.0.1' IDENTIFIED BY '<rxSWThxmgUeMp1TOe7I0Heww6IpBhr8r_PASSWORD>';
+GRANT SELECT, INSERT, UPDATE, DELETE ON hqlib.* TO 'hqlib_app'@'127.0.0.1';
+
+-- 4) 迁移账号：仅建表期使用
+CREATE USER 'hqlib_migrate'@'127.0.0.1' IDENTIFIED BY '<HviGdtDQbbnvB2H8teL3qSWEyms_PASSWORD>';
+GRANT ALL PRIVILEGES ON hqlib.* TO 'hqlib_migrate'@'127.0.0.1';
+
+FLUSH PRIVILEGES;

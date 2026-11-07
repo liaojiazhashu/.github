@@ -1,0 +1,85 @@
+[
+ {
+  "label": "H1. 有头 390 无授权（writeText 主路径）",
+  "url": "http://127.0.0.1:8125/index.html",
+  "width": 390,
+  "sentinelSet": true,
+  "sentinel": "SENTINEL-H-1793663328903",
+  "env": {
+   "origin": "http://127.0.0.1:8125",
+   "protocol": "http:",
+   "isSecureContext": true,
+   "hasFocus": true,
+   "hasClipboard": true,
+   "userActivationSupported": true,
+   "activeBefore": false
+  },
+  "btnBefore": {
+   "x": 248.5625,
+   "y": 267.828125,
+   "w": 68,
+   "h": 28,
+   "text": "复制群号"
+  },
+  "activationAfterClick": {
+   "active": true,
+   "ever": true
+  },
+  "afterClick": {
+   "text": "已复制",
+   "aria": "已复制，群号 280660235",
+   "isDone": true
+  },
+  "grantAfter": true,
+  "clipboard": {
+   "text": "280660235",
+   "match": true
+  },
+  "osClipboard": "280660235",
+  "osClipboardIsNumber": true,
+  "osClipboardStillSentinel": false
+ },
+ {
+  "label": "H2. 有头 390 无授权（抹掉 clipboard 走兜底，textarea 挂 dialog）",
+  "url": "http://127.0.0.1:8125/index.html",
+  "width": 390,
+  "sentinelSet": true,
+  "sentinel": "SENTINEL-H-1793663335269",
+  "env": {
+   "origin": "http://127.0.0.1:8125",
+   "protocol": "http:",
+   "isSecureContext": true,
+   "hasFocus": true,
+   "hasClipboard": true,
+   "userActivationSupported": true,
+   "activeBefore": false
+  },
+  "dropClipboard": {
+   "hasClipboard": false
+  },
+  "btnBefore": {
+   "x": 248.5625,
+   "y": 267.828125,
+   "w": 68,
+   "h": 28,
+   "text": "复制群号"
+  },
+  "activationAfterClick": {
+   "active": true,
+   "ever": true
+  },
+  "afterClick": {
+   "text": "已复制",
+   "aria": "已复制，群号 280660235",
+   "isDone": true
+  },
+  "grantAfter": true,
+  "clipboard": {
+   "text": "280660235",
+   "match": true
+  },
+  "osClipboard": "280660235",
+  "osClipboardIsNumber": true,
+  "osClipboardStillSentinel": false
+ }
+]

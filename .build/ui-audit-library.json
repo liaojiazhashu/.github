@@ -1,0 +1,858 @@
+{
+  "target": "library",
+  "when": "2026-11-02T14:53:23.400Z",
+  "widths": [
+    1440,
+    390
+  ],
+  "pages": [
+    {
+      "name": "home",
+      "width": 1440,
+      "height": 2529,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 2,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            },
+            {
+              "text": "全部作品",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "works",
+      "width": 1440,
+      "height": 1504,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "works-sorted",
+      "width": 1440,
+      "height": 1504,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "terms",
+      "width": 1440,
+      "height": 2000,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "method",
+      "width": 1440,
+      "height": 3580,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "search",
+      "width": 1440,
+      "height": 900,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "search-empty",
+      "width": 1440,
+      "height": 900,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "issue",
+      "width": 1440,
+      "height": 1495,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "notfound",
+      "width": 1440,
+      "height": 900,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "work",
+      "width": 1440,
+      "height": 2949,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 2,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            },
+            {
+              "text": "这套结果怎么来的",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "work-author",
+      "width": 1440,
+      "height": 4007,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "term",
+      "width": 1440,
+      "height": 5952,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "author",
+      "width": 1440,
+      "height": 900,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "home",
+      "width": 390,
+      "height": 5129,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 2,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            },
+            {
+              "text": "全部作品",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "works",
+      "width": 390,
+      "height": 3631,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "works-sorted",
+      "width": 390,
+      "height": 3653,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "terms",
+      "width": 390,
+      "height": 6463,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "method",
+      "width": 390,
+      "height": 5786,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "search",
+      "width": 390,
+      "height": 1073,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "search-empty",
+      "width": 390,
+      "height": 1066,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "issue",
+      "width": 390,
+      "height": 3751,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "notfound",
+      "width": 390,
+      "height": 1153,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "work",
+      "width": 390,
+      "height": 4834,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 2,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            },
+            {
+              "text": "这套结果怎么来的",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "work-author",
+      "width": 390,
+      "height": 6009,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "term",
+      "width": 390,
+      "height": 7447,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "author",
+      "width": 390,
+      "height": 1210,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "html>body>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "科幻词库",
+              "n": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

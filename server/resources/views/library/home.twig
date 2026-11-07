@@ -1,0 +1,131 @@
+{% extends 'library/layout.twig' %}
+
+{% block content %}
+<section class="hero">
+  <div class="wrap">
+    <h1 class="h1">同一篇作品，给读者一页，给作者一页</h1>
+    <p class="lede">
+      读者要知道核心设定、魅力所在、能不能拍、适不适合自己；作者要知道哪里站不住、先改哪一处。
+      两种需求没法压在一页里，所以每篇作品都有两页，随时可切换。两边都不打分 —— 打分是评稿的事。
+      这座馆以拆解全部中文科幻小说为目标；现阶段馆藏来自荒启练笔的投稿 —— 授权所限，想被拆解目前只能通过投稿练笔。
+    </p>
+
+    <form class="find find--big" method="get" action="/library/search" role="search">
+      <svg class="find__ico" width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+        <circle cx="7" cy="7" r="4.6"></circle><path d="M10.4 10.4 14 14"></path>
+      </svg>
+      <input class="find__in" type="search" name="q" maxlength="40" placeholder="搜一个词条，比如「星际接触」" aria-label="检索馆藏">
+      <button class="btn btn--primary" type="submit">检索</button>
+    </form>
+
+    <div class="stats">
+      <div class="stat"><b>{{ num(stats.works) }}</b><span>篇已发布拆解</span></div>
+      <div class="stat"><b>{{ num(stats.terms) }}</b><span>个词库词条</span></div>
+      <div class="stat"><b>{{ num(stats.words) }}</b><span>字正文</span></div>
+      <div class="stat"><b>{{ stats.issues }}</b><span>个期次</span></div>
+    </div>
+  </div>
+</section>
+
+{% if latest is not empty %}
+<section class="sec">
+  <div class="wrap">
+    <div class="sec__head">
+      <h2 class="h2">最新入馆</h2>
+      <a class="more" href="/library/works">全部作品
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+      </a>
+    </div>
+    <div class="grid grid--3">
+      {% for row in latest %}{% include 'library/_card.twig' %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if authors is not empty %}
+<section class="sec">
+  <div class="wrap">
+    <div class="sec__head">
+      <div>
+        <h2 class="h2">谁在写</h2>
+      </div>
+      <a class="more" href="/library/authors">全部 {{ num(author_total) }} 位作者
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+      </a>
+    </div>
+    <p class="sub">按馆内作品数排列。点一个名字，是这个人的全部作品，以及他反复写到的概念 —— 一个人反复写的东西，比单篇更能说明他关心什么。</p>
+    <ul class="authrow">
+      {% for a in authors %}
+        <li class="authrow__i">
+          <a class="authrow__a" href="/library/authors/{{ a.code }}">
+            <b class="authrow__n">{{ a.name }}</b>
+            <span class="authrow__m"><i class="mono">{{ a.works }}</i> 篇 · <i class="mono">{{ num(a.words) }}</i> 字</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+<section class="sec sec--tint">
+  <div class="wrap">
+    <div class="sec__head">
+      <div>
+        <h2 class="h2">三类词，一个科幻词库</h2>
+      </div>
+      <a class="more" href="/library/terms">词条总览
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+      </a>
+    </div>
+    <p class="sub">每篇作品最多贡献 5 个词 —— 5 是上限，不是配额，抽不出就少给。只收与科幻强关联、能跨作品复用的概念：设定、世界观、科幻意象。词条按「关联多少篇作品」排序；点一个词，能看到所有写过它的作品与原文里的那处用法。</p>
+
+    <div class="cats">
+      {% for c in cats %}
+        <div class="catbox">
+          <div class="catbox__head">
+            <span class="catbox__name">{{ c.code|category_label }}</span>
+            <span class="catbox__n mono">{{ c.total }}</span>
+          </div>
+          <div class="catbox__terms">
+            {% for t in c.terms %}
+              <a class="chip" href="/library/terms/{{ t.id }}">{{ t.canonical }}<i class="mono">{{ t.works }}</i></a>
+            {% endfor %}
+          </div>
+          <a class="catbox__more" href="/library/terms?cat={{ c.code }}">该类全部 →</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if issues is not empty %}
+<section class="sec">
+  <div class="wrap">
+    <div class="sec__head"><h2 class="h2">按期次浏览</h2></div>
+    <div class="issues">
+      {% for i in issues %}
+        <a class="issue" href="/library/issues/{{ i.no }}">
+          <span class="issue__no mono">第 {{ i.no }} 期</span>
+          <span class="issue__n">{{ i.n }} 篇</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="sec sec--tint">
+  <div class="wrap ctaband">
+    <div>
+      <h2 class="h2">这套结果是怎么来的</h2>
+      <p class="sub">六个阶段、两个视角、三类词 —— 方法说明页讲了每一步为什么这么做，以及它不做什么。</p>
+    </div>
+    <div class="ctaband__acts">
+      {% if method_url %}<a class="btn btn--primary btn--lg" href="{{ method_url }}">看方法说明</a>{% endif %}
+      <a class="btn btn--lg" href="/library/works">浏览馆藏</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,333 @@
+{
+ "geom": {
+  "320": {
+   "num": {
+    "top": 358.5,
+    "bottom": 386.5,
+    "left": 130.67,
+    "right": 196.56,
+    "h": 28,
+    "w": 65.89
+   },
+   "btn": {
+    "top": 358.5,
+    "bottom": 386.5,
+    "left": 206.56,
+    "right": 274.56,
+    "h": 28,
+    "w": 68
+   },
+   "hint": {
+    "top": 394.5,
+    "bottom": 433.59,
+    "left": 80.5,
+    "right": 298.5,
+    "h": 39.09,
+    "w": 218
+   },
+   "qr": {
+    "top": 451.59,
+    "bottom": 667.59,
+    "left": 81.5,
+    "right": 297.5,
+    "h": 216,
+    "w": 216
+   },
+   "p": {
+    "top": 358.5,
+    "bottom": 386.5,
+    "left": 80.5,
+    "right": 298.5,
+    "h": 28,
+    "w": 218
+   },
+   "card": {
+    "top": 110.28,
+    "bottom": 955.72,
+    "left": 50.5,
+    "right": 328.5,
+    "h": 845.44,
+    "w": 278
+   },
+   "order": {
+    "numTop": 358.5,
+    "hintTop": 394.5,
+    "qrTop": 451.59
+   },
+   "btnStyle": {
+    "borderW": "1px",
+    "borderStyle": "solid",
+    "borderColor": "rgb(51, 65, 84)",
+    "color": "rgb(79, 193, 224)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "3px",
+    "fontSize": "11.5px",
+    "minH": "28px",
+    "padding": "0px 10px",
+    "marginLeft": "10px",
+    "cursor": "pointer",
+    "display": "inline-flex",
+    "valign": "middle",
+    "lineHeight": "11.5px"
+   },
+   "hintLines": {
+    "count": 2,
+    "widths": [
+     115,
+     103.5
+    ],
+    "textLen": 19,
+    "scrollW": 218,
+    "clientW": 218
+   },
+   "hintStyle": {
+    "fontSize": "11.5px",
+    "color": "rgb(166, 178, 195)",
+    "margin": "8px 0px 10px",
+    "lineHeight": "19.55px",
+    "textAlign": "center"
+   },
+   "pStyle": {
+    "textAlign": "center",
+    "height": "28px",
+    "lineHeight": "20.125px",
+    "fontSize": "11.5px"
+   },
+   "cardBg": "rgba(0, 0, 0, 0)",
+   "dialogBg": "rgb(26, 32, 45)",
+   "btnFont": "11.5px",
+   "wrapped": false,
+   "docOverflow": 59,
+   "bodyOverflow": 59,
+   "vw": 379,
+   "dpr": 1,
+   "overflowBeforeModal": 59,
+   "hideDelta": {
+    "withBtn": 59,
+    "withoutBtn": 59
+   },
+   "pOneLine": false,
+   "day": {
+    "color": "rgb(10, 101, 128)",
+    "bg": "rgb(255, 255, 255)",
+    "border": "rgb(169, 192, 210)"
+   }
+  },
+  "390": {
+   "num": {
+    "top": 263.59,
+    "bottom": 291.59,
+    "left": 138.67,
+    "right": 204.56,
+    "h": 28,
+    "w": 65.89
+   },
+   "btn": {
+    "top": 263.59,
+    "bottom": 291.59,
+    "left": 214.56,
+    "right": 282.56,
+    "h": 28,
+    "w": 68
+   },
+   "hint": {
+    "top": 299.59,
+    "bottom": 319.14,
+    "left": 53.5,
+    "right": 341.5,
+    "h": 19.55,
+    "w": 288
+   },
+   "qr": {
+    "top": 337.14,
+    "bottom": 553.14,
+    "left": 89.5,
+    "right": 305.5,
+    "h": 216,
+    "w": 216
+   },
+   "p": {
+    "top": 263.59,
+    "bottom": 291.59,
+    "left": 53.5,
+    "right": 341.5,
+    "h": 28,
+    "w": 288
+   },
+   "card": {
+    "top": 70.72,
+    "bottom": 841.27,
+    "left": 23.5,
+    "right": 371.5,
+    "h": 770.55,
+    "w": 348
+   },
+   "order": {
+    "numTop": 263.59,
+    "hintTop": 299.59,
+    "qrTop": 337.14
+   },
+   "btnStyle": {
+    "borderW": "1px",
+    "borderStyle": "solid",
+    "borderColor": "rgb(51, 65, 84)",
+    "color": "rgb(79, 193, 224)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "3px",
+    "fontSize": "11.5px",
+    "minH": "28px",
+    "padding": "0px 10px",
+    "marginLeft": "10px",
+    "cursor": "pointer",
+    "display": "inline-flex",
+    "valign": "middle",
+    "lineHeight": "11.5px"
+   },
+   "hintLines": {
+    "count": 1,
+    "widths": [
+     218.5
+    ],
+    "textLen": 19,
+    "scrollW": 288,
+    "clientW": 288
+   },
+   "hintStyle": {
+    "fontSize": "11.5px",
+    "color": "rgb(166, 178, 195)",
+    "margin": "8px 0px 10px",
+    "lineHeight": "19.55px",
+    "textAlign": "center"
+   },
+   "pStyle": {
+    "textAlign": "center",
+    "height": "28px",
+    "lineHeight": "20.125px",
+    "fontSize": "11.5px"
+   },
+   "cardBg": "rgba(0, 0, 0, 0)",
+   "dialogBg": "rgb(26, 32, 45)",
+   "btnFont": "11.5px",
+   "wrapped": false,
+   "docOverflow": 5,
+   "bodyOverflow": 5,
+   "vw": 395,
+   "dpr": 1,
+   "overflowBeforeModal": 5,
+   "hideDelta": {
+    "withBtn": 5,
+    "withoutBtn": 5
+   },
+   "pOneLine": false,
+   "day": {
+    "color": "rgb(10, 101, 128)",
+    "bg": "rgb(255, 255, 255)",
+    "border": "rgb(169, 192, 210)"
+   }
+  }
+ },
+ "copy": {
+  "env": {
+   "hasClipboard": true,
+   "isSecureContext": true,
+   "hasExecCommand": true,
+   "label": "复制群号"
+  },
+  "pathA": {
+   "text": "已复制",
+   "isDone": true,
+   "dataLabel": "复制群号",
+   "ariaLabel": "已复制，群号 280660235",
+   "borderColor": "rgb(79, 193, 224)",
+   "opacity": "0.72",
+   "clipboardText": "280660235",
+   "after2s": {
+    "text": "复制群号",
+    "isDone": false,
+    "opacity": "1",
+    "ariaLabel": "复制群号 280660235"
+   }
+  },
+  "pathB_inject": {
+   "hasClipboard": false
+  },
+  "pathB": {
+   "text": "已复制",
+   "isDone": true,
+   "textareaCountNow": 0,
+   "textareaBefore": 0,
+   "clipboardProof": {
+    "restored": true,
+    "clipText": "280660235",
+    "match": true
+   },
+   "after2s": "复制群号"
+  },
+  "pathC": {
+   "hasClipboard": false,
+   "execStubbed": true,
+   "afterClick": {
+    "text": "复制失败，请手动选择",
+    "isDone": false
+   },
+   "at2_2s": "复制失败，请手动选择",
+   "at3_4s": "复制群号"
+  }
+ },
+ "order": {
+  "children": [
+   {
+    "cls": "invite-modal__close",
+    "top": 82.72
+   },
+   {
+    "cls": "invite-modal__eyebrow",
+    "top": 100.72
+   },
+   {
+    "cls": "invite-modal__title",
+    "top": 129.97
+   },
+   {
+    "cls": "invite-modal__desc",
+    "top": 175.22
+   },
+   {
+    "cls": "invite-modal__group",
+    "top": 263.59
+   },
+   {
+    "cls": "invite-modal__hint",
+    "top": 299.59
+   },
+   {
+    "cls": "invite-modal__qr",
+    "top": 337.14
+   },
+   {
+    "cls": "invite-modal__actions invite-modal__actions--stack",
+    "top": 571.14
+   },
+   {
+    "cls": "invite-modal__foot",
+    "top": 797.14
+   }
+  ],
+  "iGroup": 4,
+  "iHint": 5,
+  "iQr": 6,
+  "ordered": true
+ },
+ "csp": {},
+ "misc": {
+  "clipPerm": true,
+  "tokens": {
+   "line": "(未定义)",
+   "line2": "#334154",
+   "nebula": "#4FC1E0",
+   "fsXs": "11.5px",
+   "r2": "3px",
+   "computedBorder": "1px solid rgb(51, 65, 84)"
+  }
+ }
+}

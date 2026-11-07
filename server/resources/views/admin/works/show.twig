@@ -1,0 +1,199 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}{{ work.title }}{% endblock %}
+{% block heading %}作品详情{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">{{ work.title }}</div>
+    <span class="badge badge--{{ work.status }}">{{ work.status|status_label }}</span>
+  </div>
+
+  <dl class="dl">
+    <dt>作者</dt>
+    <dd>{{ work.author_name|default('—') }}</dd>
+
+    <dt>期次</dt>
+    <dd>{{ work.issue_label|default('—') }}</dd>
+
+    <dt>体裁</dt>
+    <dd>{{ work.genre_name|default('未指定') }}</dd>
+
+    <dt>字数</dt>
+    <dd>{{ work.word_count }} 字<span class="dim">（汉字按字计、连续拉丁按词计）</span></dd>
+
+    <dt>来源</dt>
+    <dd>{{ work.source == 'import' ? '文件导入' : (work.source == 'manual' ? '手工录入' : '粘贴正文') }}</dd>
+
+    <dt>对外标识</dt>
+    <dd class="mono">{{ work.code }}</dd>
+
+    <dt>导入时间</dt>
+    <dd class="mono dim">{{ work.created_at }}</dd>
+
+    <dt>梗概</dt>
+    <dd>{{ work.summary|default('—') }}</dd>
+  </dl>
+
+  {% if tags is not empty %}
+    <div class="card--gap">
+      {% for tag in tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">原文文件</div>
+    <span class="card__hint">{{ files|length }} 个版本文件</span>
+  </div>
+
+  {% if files is empty %}
+    <div class="empty">没有关联文件。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">原始文件名</th>
+            <th scope="col">类型</th>
+            <th class="num" scope="col">大小</th>
+            <th class="num" scope="col">字符数</th>
+            <th scope="col">编码</th>
+            <th scope="col">SHA-256</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in files %}
+            <tr>
+              <td>{{ f.orig_name }}</td>
+              <td class="dim mono">{{ f.mime }}</td>
+              <td class="num">{{ (f.size_bytes / 1024)|round(1) }} KB</td>
+              <td class="num">{{ f.char_count }}</td>
+              <td class="dim">{{ f.encoding }}</td>
+              <td class="mono dim">{{ f.sha256|slice(0, 16) }}…</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">正文预览</div>
+    <span class="card__hint">取前 1200 字，原文不在此处编辑</span>
+  </div>
+
+  {% if preview is null %}
+    <div class="empty">原文不可读（文件缺失或无权限）。</div>
+  {% else %}
+    <div class="preview">{{ preview }}</div>
+  {% endif %}
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">拆解分析</div>
+    <span class="card__hint">
+      六阶段流水线 · 单篇约 0.1–0.3 元 ·
+      <a href="/admin/works/{{ work.code }}/versions">原文版本</a>
+    </span>
+  </div>
+
+  {% if not aiEnabled %}
+    <div class="flash flash--warn">AI 总开关已关闭（<span class="mono">AI_ENABLED=false</span>），现在发起分析会直接被拒绝。</div>
+  {% endif %}
+
+  {% if latest is not null %}
+    <dl class="dl">
+      <dt>最新一次</dt>
+      <dd>
+        <a href="/admin/analyses/{{ latest.code }}" class="mono">{{ latest.code }}</a>
+        <span class="badge badge--{{ latest.status }}">{{ latest.status|status_label }}</span>
+      </dd>
+
+      <dt>模型</dt>
+      <dd class="mono">{{ latest.model }} · {{ latest.prompt_version }}</dd>
+
+      <dt>用量</dt>
+      <dd class="mono dim">输入 {{ latest.token_in }} / 输出 {{ latest.token_out }} tokens</dd>
+
+      <dt>耗时</dt>
+      <dd class="mono dim">{{ latest.started_at|default('—') }} → {{ latest.finished_at|default('进行中') }}</dd>
+    </dl>
+
+    {% if latest.error_msg is not empty %}
+      <div class="flash flash--err card--gap">
+        <span class="mono">{{ latest.error_code }}</span> — {{ latest.error_msg }}
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="empty">
+      还没有跑过拆解。<br>
+      点下面的「开始分析」入队，worker 起来后会自动跑完七个阶段（科幻词条 → 剧情 → 伏笔 → 建议 → 修改方向 → 读者视角 → 组装）。
+    </div>
+  {% endif %}
+
+  <form method="post" action="/admin/works/{{ work.code }}/analyze" class="form-actions">
+    <input type="hidden" name="_token" value="{{ csrf }}">
+    <label class="tag">
+      <input type="checkbox" name="force" value="1"> 忽略幂等复用，强制重跑
+    </label>
+    <button type="submit" class="btn btn--primary">开始分析</button>
+  </form>
+</div>
+
+{% if analyses is not empty %}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">历史版本</div>
+    <span class="card__hint">同一正文 + 同一提示词只会跑一次，改动后重跑会新增一行</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">编号</th>
+          <th scope="col">状态</th>
+          <th scope="col">模型</th>
+          <th class="num" scope="col">输入</th>
+          <th class="num" scope="col">输出</th>
+          <th scope="col">开始</th>
+          <th scope="col">结束</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in analyses %}
+          <tr>
+            <td><a href="/admin/analyses/{{ a.code }}" class="mono">{{ a.code }}</a></td>
+            <td><span class="badge badge--{{ a.status }}">{{ a.status|status_label }}</span></td>
+            <td class="mono dim">{{ a.model }}</td>
+            <td class="num">{{ a.token_in }}</td>
+            <td class="num">{{ a.token_out }}</td>
+            <td class="mono dim">{{ a.started_at|default('—') }}</td>
+            <td class="mono dim">{{ a.finished_at|default('—') }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<div class="form-actions">
+  <a class="btn btn--ghost" href="/admin/works">返回列表</a>
+  <a class="btn btn--ghost" href="/admin/works/{{ work.code }}/versions">原文版本</a>
+  <a class="btn btn--ghost" href="/admin/works/import">批量导入</a>
+
+  {% if can(user.permissions, 'work.delete') %}
+    <form method="post" action="/admin/works/{{ work.code }}/delete" data-confirm="软删《{{ work.title }}》？它不会再出现在列表里，数据仍保留在库中。">
+      <input type="hidden" name="_token" value="{{ csrf }}">
+      <button class="btn btn--sm btn--ghost" type="submit">软删这篇</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

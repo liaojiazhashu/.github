@@ -1,0 +1,137 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}{{ article ? article.title : '文章' }}{% endblock %}
+{% block heading %}站内文章{% endblock %}
+
+{#
+  全文页
+  --------------------------------------------------------------------------
+  正文是官网返回的 Markdown 原文（`text` 字段），这里**不渲染成 HTML**，
+  只放在 <pre> 里保留原格式。理由：后台不需要阅读理解版式，需要的是
+  「这段文字能不能用」——原样显示才看得出哪些是 Markdown 标记、
+  哪些是作者自己加的空行和分隔线。渲染成 HTML 反而把它们藏起来了。
+
+  另外 Twig 默认转义，作者正文里的 </script>、<img onerror> 不会被当标签执行。
+#}
+
+{% block content %}
+
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">
+      <a class="btn btn--sm btn--ghost" href="/admin/source">← 返回列表</a>
+      <span style="margin-left:10px">{{ article ? article.title : '文章 #' ~ cid }}</span>
+    </div>
+    {% if article %}
+      <div class="card__hint mono">cid={{ cid }}</div>
+    {% endif %}
+  </div>
+
+  {% if article is empty %}
+    <div class="empty">
+      官网没有返回这篇（cid={{ cid }}）。可能是已被删除、尚未公开，或者网络当时不通。
+    </div>
+  {% else %}
+
+    {% set acts = [] %}
+    {% for a in (article.active|default([])) %}
+      {% if a.type == 'active' %}{% set acts = acts|merge([a]) %}{% endif %}
+    {% endfor %}
+
+    <div class="qstats">
+      <div class="qstat"><b>{{ article.size|default(0)|number_format }}</b><span>字数</span></div>
+      <div class="qstat"><b>{{ issue.no > 0 ? issue.label : '—' }}</b><span>练笔期次</span></div>
+      <div class="qstat"><b>{{ article.views|default(0) }}</b><span>浏览</span></div>
+      <div class="qstat"><b>{{ article.likes|default(0) }}</b><span>点赞</span></div>
+      <div class="qstat"><b>{{ article.commentsNum|default(0) }}</b><span>评论</span></div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:16px">
+      <table>
+        <tbody>
+          <tr>
+            <th style="width:120px" scope="col">作者</th>
+            <td>
+              {{ article.userJson.name|default('—') }}
+              {% if article.isAnonymous|default(0) == 1 %}
+                <span class="tag tag--warn">匿名投稿</span>
+                <span class="dim">官网不公开真实作者，导入馆藏前需要认领</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th scope="col">练笔期次</th>
+            <td>
+              {% if issue.no > 0 %}
+                <a href="/admin/source?scope=practice_ready&amp;issue={{ issue.no }}"><b>{{ issue.label }}</b></a>
+                {% if issue.endsAt %}
+                  <span class="dim mono">· 官网截稿 {{ issue.endsAt|date('Y-m-d H:i') }}</span>
+                {% endif %}
+              {% else %}
+                <span class="dim">没有解析出练笔期次（活动名里不是「荒启科幻练笔第 X 期」）</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th scope="col">活动</th>
+            <td>
+              {% if acts is empty %}
+                <span class="dim">未参加活动</span>
+              {% else %}
+                {% for a in acts %}
+                  <span class="tag">{{ a.name }}</span>
+                {% endfor %}
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th scope="col">分类</th>
+            <td>
+              {% set cats = [] %}
+              {% for c in (article.category|default([])) %}{% set cats = cats|merge([c.name|default('')]) %}{% endfor %}
+              {{ cats is empty ? '—' : cats|join('、') }}
+            </td>
+          </tr>
+          <tr>
+            <th scope="col">发布 / 修改</th>
+            <td class="dim mono">
+              {{ article.created ? article.created|date('Y-m-d H:i') : '—' }}
+              ／
+              {{ article.modified ? article.modified|date('Y-m-d H:i') : '—' }}
+            </td>
+          </tr>
+          <tr>
+            <th scope="col">状态</th>
+            <td>
+              {% if article.isDelete|default(0) == 1 %}
+                <span class="tag tag--danger">已删除</span>
+              {% elseif article.isopen|default(1) == 0 %}
+                <span class="tag tag--warn">未公开</span>
+              {% elseif article.status|default('') != 'publish' %}
+                <span class="tag tag--warn">{{ article.status }}</span>
+              {% else %}
+                <span class="tag">正常</span>
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    {% if article.introduction|default('') is not empty %}
+      <div class="card__hint" style="margin-top:16px">摘要</div>
+      <p style="margin:6px 0 0">{{ article.introduction }}</p>
+    {% endif %}
+
+    <div class="card__hint" style="margin-top:20px">全文（已转为纯文本）</div>
+    <pre class="raw">{{ article.plain_text }}</pre>
+
+    <details style="margin-top:16px">
+      <summary class="card__hint" style="cursor:pointer">原始 HTML 源码（需要核对格式时展开）</summary>
+      <pre class="raw">{{ article.text|default('') }}</pre>
+    </details>
+
+  {% endif %}
+</div>
+
+{% endblock %}

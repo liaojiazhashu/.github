@@ -1,0 +1,176 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}词条{% endblock %}
+{% block heading %}词条{% endblock %}
+
+{#
+  词条治理台。
+  --------------------------------------------------------------------------
+  1300 篇跑完之后这里会到两三千条。页面要回答的不是「有哪些词」，
+  而是「哪些词该收起来」——所以默认按引用数排序，孤词自然浮到最下面，
+  而「前台可见 0 篇却挂着」的词会被一眼看见。
+#}
+
+{% block content %}
+{% set canHide = can(user.permissions|default([]), 'visibility.toggle') %}
+{% set carried = 'q=' ~ (filter.keyword|url_encode) ~ '&cat=' ~ (filter.category|url_encode) ~ '&vis=' ~ (filter.visibility|url_encode) ~ '&sort=' ~ filter.sort %}
+{% set backUrl = '/admin/terms?' ~ carried ~ '&page=' ~ page %}
+
+<div class="grid grid--4">
+  <div class="kpi">
+    <div class="kpi__label">在册词条</div>
+    <div class="kpi__value">{{ num(stats.total) }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi__label">通行词</div>
+    <div class="kpi__value">{{ num(stats.canonical) }}<span>审过</span></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi__label">零引用</div>
+    <div class="kpi__value">{{ num(stats.orphans) }}<span>不进词库</span></div>
+  </div>
+  <div class="kpi {{ stats.hidden > 0 ? 'kpi--accent' : '' }}">
+    <div class="kpi__label">已隐藏</div>
+    <div class="kpi__value">{{ num(stats.hidden) }}<span>条</span></div>
+  </div>
+</div>
+
+<div class="card card--gap">
+  <form method="get" action="/admin/terms" class="filter-row">
+    <div class="field">
+      <label for="q">关键词</label>
+      <input id="q" name="q" type="text" value="{{ filter.keyword }}" placeholder="词或别名">
+    </div>
+    <div class="field">
+      <label for="cat">分类</label>
+      <select id="cat" name="cat">
+        <option value="">全部</option>
+        <option value="setting"{% if filter.category == 'setting' %} selected{% endif %}>设定</option>
+        <option value="world"{% if filter.category == 'world' %} selected{% endif %}>世界观</option>
+        <option value="image"{% if filter.category == 'image' %} selected{% endif %}>意象</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="vis">可见性</label>
+      <select id="vis" name="vis">
+        <option value=""{% if filter.visibility == '' %} selected{% endif %}>全部</option>
+        <option value="visible"{% if filter.visibility == 'visible' %} selected{% endif %}>对外可见</option>
+        <option value="hidden"{% if filter.visibility == 'hidden' %} selected{% endif %}>已隐藏</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="sort">排序</label>
+      <select id="sort" name="sort">
+        <option value="refs"{% if filter.sort == 'refs' %} selected{% endif %}>作品数（多→少）</option>
+        <option value="name"{% if filter.sort == 'name' %} selected{% endif %}>字典序</option>
+        <option value="newest"{% if filter.sort == 'newest' %} selected{% endif %}>最新创建</option>
+      </select>
+    </div>
+    <div class="field field--action">
+      <button class="btn" type="submit">筛选</button>
+      <a class="btn btn--ghost" href="/admin/terms">重置</a>
+    </div>
+  </form>
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">共 {{ total }} 条{% if pages > 1 %} · 第 {{ page }} / {{ pages }} 页{% endif %}</div>
+    <div class="card__hint">「前台可见」是读者点进去会看到的作品数；「关联」含被隐藏的作品</div>
+  </div>
+
+  {% if rows is empty %}
+    <div class="empty">没有符合条件的词条。</div>
+  {% else %}
+
+  <form id="termBulk" method="post" action="/admin/terms/hide">
+    <input type="hidden" name="_token" value="{{ csrf }}">
+    <input type="hidden" name="scope" value="ids">
+    <input type="hidden" name="back" value="{{ backUrl }}">
+  </form>
+
+  {% if canHide %}
+  <div class="bulkbar" data-bulkbar>
+    <div class="bulkbar__count"><b data-count>0</b> 项已选</div>
+    <div class="bulkbar__group">
+      <button class="btn btn--sm" type="submit" form="termBulk" name="action" value="hide">隐藏选中的</button>
+      <button class="btn btn--sm" type="submit" form="termBulk" name="action" value="restore">恢复选中的</button>
+    </div>
+    <div class="bulkbar__group">
+      <form method="post" action="/admin/terms/hide" class="inline-form">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <input type="hidden" name="scope" value="filter">
+        <input type="hidden" name="q" value="{{ filter.keyword }}">
+        <input type="hidden" name="cat" value="{{ filter.category }}">
+        <input type="hidden" name="vis" value="{{ filter.visibility }}">
+        <input type="hidden" name="back" value="{{ backUrl }}">
+        <button class="btn btn--sm" type="submit">隐藏全部符合筛选的</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="pick" scope="col"><input type="checkbox" data-check-all aria-label="全选本页"></th>
+          <th scope="col">词条</th>
+          <th scope="col">分类</th>
+          <th class="num" scope="col">前台可见</th>
+          <th class="num" scope="col">关联</th>
+          <th scope="col">性质</th>
+          <th scope="col">状态</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr{% if row.visibility == 'hidden' %} class="is-hidden"{% endif %}>
+            <td class="pick">
+              <input type="checkbox" form="termBulk" name="ids[]" value="{{ row.id }}" data-check aria-label="选择 {{ row.canonical }}">
+            </td>
+            <td><a href="/admin/terms/{{ row.id }}">{{ row.canonical }}</a></td>
+            <td class="dim">
+              {% if row.category == 'setting' %}设定
+              {% elseif row.category == 'world' %}世界观
+              {% elseif row.category == 'image' %}意象
+              {% else %}{{ row.category }}{% endif %}
+            </td>
+            <td class="num">
+              {% if row.refs > 0 %}{{ row.refs }}{% else %}<span class="dim">0</span>{% endif %}
+            </td>
+            <td class="num dim">{{ row.refs_all }}</td>
+            <td class="dim">{{ row.is_canonical ? '通行词' : '表外词' }}</td>
+            <td>
+              {% if row.visibility == 'hidden' %}
+                <span class="badge badge--danger">已隐藏</span>
+              {% elseif row.refs == 0 %}
+                <span class="badge">不进词库</span>
+              {% elseif row.refs == 1 and not row.is_canonical %}
+                <span class="badge badge--analyzing">单篇孤词</span>
+              {% else %}
+                <span class="dim">正常</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if pages > 1 %}
+    <div class="pager">
+      {% if page > 1 %}
+        <a href="/admin/terms?{{ carried }}&page={{ page - 1 }}">上一页</a>
+        <a href="/admin/terms?{{ carried }}&page=1">第一页</a>
+      {% endif %}
+      <span class="is-current">{{ page }} / {{ pages }}</span>
+      {% if page < pages %}
+        <a href="/admin/terms?{{ carried }}&page={{ page + 1 }}">下一页</a>
+        <a href="/admin/terms?{{ carried }}&page={{ pages }}">最后一页</a>
+      {% endif %}
+    </div>
+  {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}批量导入{% endblock %}
+{% block heading %}批量导入{% endblock %}
+
+{% block content %}
+{% if error %}
+  <div class="flash flash--err">{{ error }}</div>
+{% endif %}
+
+{% if result %}
+  <div class="card card--gap">
+    <div class="card__head">
+      <div class="card__title">导入结果</div>
+      <span class="card__hint">成功 {{ result.ok }} · 失败 {{ result.failed }}</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th class="num" scope="col">#</th><th scope="col">文件</th><th scope="col">结果</th><th scope="col">说明</th></tr>
+        </thead>
+        <tbody>
+          {% for row in result.results %}
+            <tr>
+              <td class="num dim">{{ row.row }}</td>
+              <td>{{ row.name }}</td>
+              <td>
+                {% if row.ok %}<span class="badge badge--analyzed">已导入</span>
+                {% else %}<span class="badge badge--danger">失败</span>{% endif %}
+              </td>
+              <td class="dim">
+                {% if row.ok %}
+                  <a href="/admin/works/{{ row.code }}">{{ row.code }}</a>
+                  {% for w in row.warnings %}<br>{{ w }}{% endfor %}
+                {% else %}
+                  {{ row.error }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
+
+<form method="post" action="/admin/works/import" enctype="multipart/form-data" class="card card--gap">
+  <input type="hidden" name="_token" value="{{ csrf }}">
+
+  <div class="card__head">
+    <div class="card__title">批量上传</div>
+    <span class="card__hint">单次最多 50 个文件；标题自动取文件名</span>
+  </div>
+
+  <div class="form-row">
+    <div class="field">
+      <label for="author">作者笔名</label>
+      <input id="author" name="author" type="text" value="{{ old.author }}" required maxlength="64">
+      <div class="field__hint">本批文件的共同作者</div>
+    </div>
+    <div class="field">
+      <label for="issue_no">期次号</label>
+      <input id="issue_no" name="issue_no" type="number" min="1" max="999" value="{{ old.issue_no }}" required>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="field">
+      <label for="genre_code">体裁</label>
+      <select id="genre_code" name="genre_code">
+        <option value="">未指定</option>
+        {% for g in genres %}
+          <option value="{{ g.code }}"{% if old.genre_code == g.code %} selected{% endif %}>{{ g.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="tags">标签</label>
+      <input id="tags" name="tags" type="text" value="{{ old.tags }}" maxlength="200" placeholder="用逗号或空格分隔">
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="files">选择文件</label>
+    <input id="files" name="files[]" type="file" accept=".txt,.md,.markdown,.docx" multiple required>
+    <div class="field__hint">
+      每个文件按一篇作品处理。失败的行不会中断其余行，结果逐行列出。
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn--primary" type="submit">开始导入</button>
+    <a class="btn btn--ghost" href="/admin/works">返回列表</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,96 @@
+[
+ {
+  "label": "H4. 有头 联系页 390 · 徽标复制（无弹窗，textarea 挂 body）",
+  "url": "http://127.0.0.1:8125/contact.html",
+  "width": 390,
+  "sentinelSet": true,
+  "sentinel": "SENTINEL-H-1793663443809",
+  "env": {
+   "origin": "http://127.0.0.1:8125",
+   "protocol": "http:",
+   "isSecureContext": true,
+   "hasFocus": true,
+   "hasClipboard": true,
+   "userActivationSupported": true,
+   "activeBefore": false
+  },
+  "dropClipboard": {
+   "hasClipboard": false
+  },
+  "noModal": true,
+  "btnBefore": {
+   "x": 195,
+   "y": 443.65087890625,
+   "w": 68,
+   "h": 28,
+   "text": "复制群号",
+   "top": 429.65,
+   "vh": 912,
+   "inViewport": true
+  },
+  "activationAfterClick": {
+   "active": true,
+   "ever": true
+  },
+  "afterClick": {
+   "text": "已复制",
+   "aria": "已复制，群号 280660235",
+   "isDone": true
+  },
+  "grantAfter": true,
+  "clipboard": {
+   "text": "280660235",
+   "match": true
+  },
+  "osClipboard": "280660235",
+  "osClipboardIsNumber": true,
+  "osClipboardStillSentinel": false
+ },
+ {
+  "label": "H5. 有头 联系页 390 · 步骤句末复制",
+  "url": "http://127.0.0.1:8125/contact.html",
+  "width": 390,
+  "sentinelSet": true,
+  "sentinel": "SENTINEL-H-1793663454047",
+  "env": {
+   "origin": "http://127.0.0.1:8125",
+   "protocol": "http:",
+   "isSecureContext": true,
+   "hasFocus": true,
+   "hasClipboard": true,
+   "userActivationSupported": true,
+   "activeBefore": false
+  },
+  "dropClipboard": {
+   "hasClipboard": false
+  },
+  "noModal": true,
+  "btnBefore": {
+   "x": 92.93016052246094,
+   "y": 444.18212890625,
+   "w": 68,
+   "h": 28,
+   "text": "复制群号",
+   "top": 430.18,
+   "vh": 912,
+   "inViewport": true
+  },
+  "activationAfterClick": {
+   "active": true,
+   "ever": true
+  },
+  "afterClick": {
+   "text": "已复制",
+   "aria": "已复制，群号 280660235",
+   "isDone": true
+  },
+  "grantAfter": true,
+  "clipboard": {
+   "text": "280660235",
+   "match": true
+  },
+  "osClipboard": "280660235",
+  "osClipboardIsNumber": true,
+  "osClipboardStillSentinel": false
+ }
+]

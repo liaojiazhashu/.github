@@ -1,0 +1,290 @@
+{
+  "target": "admin",
+  "when": "2026-11-03T01:47:54.545Z",
+  "widths": [
+    390,
+    1440
+  ],
+  "pages": [
+    {
+      "name": "dashboard",
+      "width": 390,
+      "height": 2305,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "works",
+      "width": 390,
+      "height": 4520,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "批量导入",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "new",
+      "width": 390,
+      "height": 1145,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "progress",
+      "width": 390,
+      "height": 2697,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "queue",
+      "width": 390,
+      "height": 3230,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "terms",
+      "width": 390,
+      "height": 3629,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "source",
+      "width": 390,
+      "height": 5194,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 2,
+          "items": [
+            {
+              "text": "第 26 期",
+              "n": 4
+            },
+            {
+              "text": "第 25 期",
+              "n": 26
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "source-activity",
+      "width": 390,
+      "height": 3172,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "hidden",
+      "width": 390,
+      "height": 13035,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "恢复",
+              "n": 167
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "audit",
+      "width": 390,
+      "height": 4622,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "work",
+      "width": 390,
+      "height": 2254,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 2,
+          "items": [
+            {
+              "text": "批量导入",
+              "n": 2
+            },
+            {
+              "text": "原文版本",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "analysis",
+      "width": 390,
+      "height": 17162,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "dashboard",
+      "width": 1440,
+      "height": 1339,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "works",
+      "width": 1440,
+      "height": 2851,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "批量导入",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "new",
+      "width": 1440,
+      "height": 900,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "progress",
+      "width": 1440,
+      "height": 1538,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "queue",
+      "width": 1440,
+      "height": 2098,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "terms",
+      "width": 1440,
+      "height": 2796,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "source",
+      "width": 1440,
+      "height": 4519,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 2,
+          "items": [
+            {
+              "text": "第 26 期",
+              "n": 4
+            },
+            {
+              "text": "第 25 期",
+              "n": 26
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "source-activity",
+      "width": 1440,
+      "height": 2487,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "hidden",
+      "width": 1440,
+      "height": 9543,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "恢复",
+              "n": 167
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "audit",
+      "width": 1440,
+      "height": 4192,
+      "overflow": 0,
+      "issues": []
+    },
+    {
+      "name": "work",
+      "width": 1440,
+      "height": 1757,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 2,
+          "items": [
+            {
+              "text": "批量导入",
+              "n": 2
+            },
+            {
+              "text": "原文版本",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "analysis",
+      "width": 1440,
+      "height": 9384,
+      "overflow": 0,
+      "issues": []
+    }
+  ]
+}

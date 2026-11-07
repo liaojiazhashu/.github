@@ -1,0 +1,216 @@
+{
+ "geom": {
+  "390": {
+   "num": {
+    "top": 253.83,
+    "bottom": 281.83,
+    "left": 138.67,
+    "right": 204.56,
+    "h": 28,
+    "w": 65.89
+   },
+   "btn": {
+    "top": 253.83,
+    "bottom": 281.83,
+    "left": 214.56,
+    "right": 282.56,
+    "h": 28,
+    "w": 68
+   },
+   "hint": {
+    "top": 289.83,
+    "bottom": 328.92,
+    "left": 53.5,
+    "right": 341.5,
+    "h": 39.09,
+    "w": 288
+   },
+   "qr": {
+    "top": 346.92,
+    "bottom": 562.92,
+    "left": 89.5,
+    "right": 305.5,
+    "h": 216,
+    "w": 216
+   },
+   "p": {
+    "top": 253.83,
+    "bottom": 281.83,
+    "left": 53.5,
+    "right": 341.5,
+    "h": 28,
+    "w": 288
+   },
+   "card": {
+    "top": 60.95,
+    "bottom": 851.05,
+    "left": 23.5,
+    "right": 371.5,
+    "h": 790.09,
+    "w": 348
+   },
+   "order": {
+    "numTop": 253.83,
+    "hintTop": 289.83,
+    "qrTop": 346.92
+   },
+   "btnStyle": {
+    "borderW": "1px",
+    "borderStyle": "solid",
+    "borderColor": "rgb(51, 65, 84)",
+    "color": "rgb(79, 193, 224)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "3px",
+    "fontSize": "11.5px",
+    "minH": "28px",
+    "padding": "0px 10px",
+    "marginLeft": "10px",
+    "cursor": "pointer",
+    "display": "inline-flex",
+    "valign": "middle",
+    "lineHeight": "11.5px"
+   },
+   "hintStyle": {
+    "fontSize": "11.5px",
+    "color": "rgb(166, 178, 195)",
+    "margin": "8px 0px 10px",
+    "lineHeight": "19.55px",
+    "textAlign": "center"
+   },
+   "pStyle": {
+    "textAlign": "center",
+    "height": "28px",
+    "lineHeight": "20.125px",
+    "fontSize": "11.5px"
+   },
+   "cardBg": "rgba(0, 0, 0, 0)",
+   "dialogBg": "rgb(26, 32, 45)",
+   "btnFont": "11.5px",
+   "wrapped": false,
+   "docOverflow": 5,
+   "bodyOverflow": 5,
+   "vw": 395,
+   "dpr": 1,
+   "overflowBeforeModal": 5,
+   "hideDelta": {
+    "withBtn": 5,
+    "withoutBtn": 5
+   },
+   "pOneLine": false,
+   "day": {
+    "color": "rgb(10, 101, 128)",
+    "bg": "rgb(255, 255, 255)",
+    "border": "rgb(169, 192, 210)"
+   }
+  }
+ },
+ "copy": {
+  "env": {
+   "hasClipboard": true,
+   "isSecureContext": true,
+   "hasExecCommand": true,
+   "label": "复制群号"
+  },
+  "pathA": {
+   "text": "已复制",
+   "isDone": true,
+   "dataLabel": "复制群号",
+   "ariaLabel": "已复制，群号 280660235",
+   "borderColor": "rgb(79, 193, 224)",
+   "opacity": "0.72",
+   "clipboardText": "280660235",
+   "after2s": {
+    "text": "复制群号",
+    "isDone": false,
+    "opacity": "1",
+    "ariaLabel": "复制群号 280660235"
+   }
+  },
+  "pathB_inject": {
+   "hasClipboard": false
+  },
+  "pathB": {
+   "text": "已复制",
+   "isDone": true,
+   "textareaCountNow": 0,
+   "textareaBefore": 0,
+   "clipboardProof": {
+    "restored": true,
+    "clipText": "280660235",
+    "match": true
+   },
+   "after2s": "复制群号"
+  },
+  "pathC": {
+   "hasClipboard": false,
+   "execStubbed": true,
+   "afterClick": {
+    "text": "复制失败，请手动选择",
+    "isDone": false
+   },
+   "at2_2s": "复制失败，请手动选择",
+   "at3_4s": "复制群号"
+  }
+ },
+ "order": {
+  "children": [
+   {
+    "cls": "invite-modal__close",
+    "top": 72.95
+   },
+   {
+    "cls": "invite-modal__eyebrow",
+    "top": 90.95
+   },
+   {
+    "cls": "invite-modal__title",
+    "top": 120.2
+   },
+   {
+    "cls": "invite-modal__desc",
+    "top": 165.45
+   },
+   {
+    "cls": "invite-modal__group",
+    "top": 253.83
+   },
+   {
+    "cls": "invite-modal__hint",
+    "top": 289.83
+   },
+   {
+    "cls": "invite-modal__qr",
+    "top": 346.92
+   },
+   {
+    "cls": "invite-modal__actions invite-modal__actions--stack",
+    "top": 580.92
+   },
+   {
+    "cls": "invite-modal__foot",
+    "top": 806.92
+   }
+  ],
+  "iGroup": 4,
+  "iHint": 5,
+  "iQr": 6,
+  "ordered": true
+ },
+ "csp": {},
+ "misc": {
+  "clipPerm": true,
+  "tokens": {
+   "line": "(未定义)",
+   "line2": "#334154",
+   "nebula": "#4FC1E0",
+   "fsXs": "11.5px",
+   "r2": "3px",
+   "computedBorder": "1px solid rgb(51, 65, 84)"
+  }
+ },
+ "doneShot": {
+  "text": "已复制",
+  "aria": "已复制，群号 280660235",
+  "opacity": "0.72"
+ }
+}

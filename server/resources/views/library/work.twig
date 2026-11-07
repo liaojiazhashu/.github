@@ -1,0 +1,214 @@
+{% extends 'library/layout.twig' %}
+
+{# ==========================================================================
+   读者视角（默认子页）
+   --------------------------------------------------------------------------
+   读者不是作者。他来找的是「这篇值不值得我花时间」：
+   核心设定是什么、好在哪里、能不能拍、适不适合自己。
+   所以这一页只讲这四件事，剧情节点轴与建议留给作者视角 ——
+   那些是「怎么写」的信息，放在这里只会把「是什么」挤掉。
+   ========================================================================== #}
+
+{% block content %}
+{% set card = artifacts.index_card %}
+{% set plot = artifacts.summary %}
+
+<article class="work">
+  <header class="whead">
+    <div class="wrap">
+      <div class="whead__crumbs">
+        <a href="/library/works">馆藏作品</a>
+        <span>/</span>
+        {% if work.issue_no %}<a href="/library/issues/{{ work.issue_no }}">{{ work.issue_label }}</a>{% else %}<span>未分期</span>{% endif %}
+      </div>
+
+      <h1 class="h1">{{ work.title }}</h1>
+      {% if work.subtitle %}<p class="whead__sub">{{ work.subtitle }}</p>{% endif %}
+
+      <div class="whead__meta">
+        {% if work.author_name %}
+          <span>作者
+            {%- if work.author_code %} <a class="whead__author" href="/library/authors/{{ work.author_code }}"><b>{{ work.author_name }}</b></a>
+            {%- else %} <b>{{ work.author_name }}</b>{% endif %}
+          </span>
+        {% endif %}
+        <span>正文 <b class="mono">{{ num(work.word_count) }}</b> 字</span>
+        {% if work.genre_name %}<span>{{ work.genre_name }}</span>{% endif %}
+        {% if work.published_at %}<span class="mono">{{ work.published_at|slice(0,10) }}</span>{% endif %}
+        {% if method_url %}<a class="whead__method" href="{{ method_url }}">这套结果怎么来的
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+        </a>{% endif %}
+      </div>
+
+      {% if reader and reader.hook %}
+        <p class="whead__hook">{{ reader.hook }}</p>
+      {% elseif card and card.one_liner %}
+        <p class="whead__hook">{{ card.one_liner }}</p>
+      {% endif %}
+    </div>
+  </header>
+
+  {% include 'library/_views.twig' with { view: 'reader', work: work } %}
+
+  <div class="wrap wbody">
+
+    {# ------------------------------------------------------- 01 主线 #}
+    {% if plot %}
+      <section class="sec" id="line">
+        <div class="sec__head">
+          <div>
+            <h2 class="h2">这篇在讲什么</h2>
+          </div>
+        </div>
+
+        {% if plot.logline %}<p class="logline">{{ plot.logline }}</p>{% endif %}
+
+        <div class="three">
+          <div class="three__i">
+            <div class="three__l">谁</div>
+            <p>{{ plot.who }}</p>
+          </div>
+          <div class="three__i">
+            <div class="three__l">要什么</div>
+            <p>{{ plot.want }}</p>
+          </div>
+          <div class="three__i">
+            <div class="three__l">付出什么</div>
+            <p>{{ plot.cost }}</p>
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    {# ------------------------------------------------------- 02 核心设定 #}
+    <section class="sec" id="keys">
+      <div class="sec__head">
+        <div>
+          <h2 class="h2">核心设定</h2>
+        </div>
+      </div>
+
+      {% if terms is not empty %}
+        <div class="kset">
+          {% for code in ['setting', 'world', 'image'] %}
+            {% for t in by_category[code]|default([]) %}
+              <a class="kcard" href="/library/terms/{{ t.id }}">
+                <span class="kcard__cat mono">{{ code|category_label }}</span>
+                <span class="kcard__name">{{ t.canonical }}</span>
+                {% if t.definition %}
+                  <span class="kcard__def">{{ t.definition }}</span>
+                {% endif %}
+                {% if t.evidence %}
+                  <span class="kcard__ev">原文「{{ t.evidence }}」</span>
+                {% endif %}
+              </a>
+            {% endfor %}
+          {% endfor %}
+        </div>
+        {% if reader and reader.terms_note %}
+          <p class="note">{{ reader.terms_note }}</p>
+        {% endif %}
+      {% else %}
+        {# 0 个词是合法结果：这篇不靠设定成立，硬凑一个只会让词库多一条死词。
+           所以这里写清「不是拆解失败」，而不是留一句冷冰冰的报错。 #}
+        <p class="dim">这篇没有可索引的科幻概念 —— 不是拆解失败，是它本来就不靠设定成立。
+          按方法页的口径，抽不出就不收。</p>
+      {% endif %}
+    </section>
+
+    {# ------------------------------------------------------- 03 魅力 #}
+    {% if reader and reader.appeal is not empty %}
+      <section class="sec" id="appeal">
+        <div class="sec__head">
+          <div>
+            <h2 class="h2">魅力所在</h2>
+          </div>
+        </div>
+
+        <ol class="appeal">
+          {% for a in reader.appeal %}
+            <li class="appeal__i">
+              <span class="appeal__n mono">{{ '%02d'|format(loop.index) }}</span>
+              <div class="appeal__body">
+                <h3 class="appeal__t">{{ a.title }}</h3>
+                <p>{{ a.why }}</p>
+              </div>
+            </li>
+          {% endfor %}
+        </ol>
+      </section>
+    {% endif %}
+
+    {# ------------------------------------------------------- 04 画面 #}
+    {# 影视化只出文字，不出图。一张生成图会被读者当成「作品插图」或作者原意，
+       而它只是分析模型读完正文后的一次推测；误读的代价大于好看。
+       所以这里把「最适合做预告片的一幕」提成主块，色调/镜头/坐标退为注脚 ——
+       读的人一眼看到的是文字写出的那一幕，而不是一张来历不明的画。 #}
+    {% if reader and reader.visual %}
+      <section class="sec" id="screen">
+        <div class="sec__head">
+          <div>
+            <h2 class="h2">如果拍成片子</h2>
+          </div>
+        </div>
+
+        {% if reader.visual.scene %}
+          <blockquote class="screenscript">
+            <p class="screenscript__label">预告片里最该出现的一幕</p>
+            <p class="screenscript__text">{{ reader.visual.scene }}</p>
+          </blockquote>
+        {% endif %}
+
+        <div class="shotgrid shotgrid--3">
+          <div class="shot">
+            <span class="shot__k">色彩与光线</span>
+            <p class="shot__v">{{ reader.visual.tone }}</p>
+          </div>
+          <div class="shot">
+            <span class="shot__k">镜头与调度</span>
+            <p class="shot__v">{{ reader.visual.lens }}</p>
+          </div>
+          <div class="shot shot--last">
+            <span class="shot__k">可对标的坐标</span>
+            <p class="shot__v">{{ reader.visual.reference }}</p>
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    {# ------------------------------------------------------- 05 适合谁 #}
+    {% if reader and reader.audience %}
+      <section class="sec" id="who">
+        <div class="sec__head">
+          <div>
+            <h2 class="h2">这适合谁</h2>
+          </div>
+        </div>
+
+        <div class="whogrid">
+          <div class="who who--main">
+            <span class="who__l">最主要</span>
+            <p>{{ reader.audience.primary }}</p>
+          </div>
+          <div class="who">
+            <span class="who__l">也会喜欢</span>
+            <p>{{ reader.audience.also }}</p>
+          </div>
+          <div class="who who--avoid">
+            <span class="who__l">可能会觉得不值</span>
+            <p>{{ reader.audience.avoid }}</p>
+          </div>
+          <div class="who">
+            <span class="who__l">阅读门槛</span>
+            <p>{{ reader.audience.gate }}</p>
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    {% include 'library/_source.twig' with { work: work, edits: edits, nav_to_author: true } %}
+
+    {% include 'library/_related.twig' %}
+  </div>
+</article>
+{% endblock %}

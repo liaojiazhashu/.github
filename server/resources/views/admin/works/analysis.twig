@@ -1,0 +1,1079 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}拆解结果 {{ analysis.code }}{% endblock %}
+{% block heading %}拆解结果{% endblock %}
+
+{% block content %}
+{# 四件产出里任何一个都可能是 null，键也可能整个缺失。Twig 开着 strict_variables，
+   裸写 artifacts.reader.hook 在缺失时会直接抛错，所以统一收敛成本地变量，
+   后面每一节自己判自己的空 —— 不再用「索引卡为空就整页不渲染」这种一刀切。 #}
+{% set ic  = artifacts.index_card|default(null) %}
+{% set sm  = artifacts.summary|default(null) %}
+{% set bts = artifacts.beats|default([]) %}
+{% set fs  = artifacts.foreshadows|default([]) %}
+{% set sug = artifacts.suggestions|default([]) %}
+{% set rv  = artifacts.revision|default(null) %}
+{% set rd  = artifacts.reader|default(null) %}
+
+{# 这一页常态是 8000–10000px。没有段落导航，想核一句建议得滚四十屏再滚回来。 #}
+<nav class="secnav" data-secnav aria-label="本页段落">
+  <a class="secnav__item" href="#overview">概览</a>
+  <a class="secnav__item" href="#ops">操作</a>
+  <a class="secnav__item" href="#stages">执行记录</a>
+  <a class="secnav__item" href="#terms">关键词<span class="secnav__n">{{ terms|length }}</span></a>
+  <a class="secnav__item" href="#plot">剧情{% if bts is not empty %}<span class="secnav__n">{{ bts|length }}</span>{% endif %}</a>
+  <a class="secnav__item" href="#advice">建议{% if sug is not empty %}<span class="secnav__n">{{ sug|length }}</span>{% endif %}</a>
+  <a class="secnav__item" href="#revision">修改方向{% if rv is not null and rv.items is not empty %}<span class="secnav__n">{{ rv.items|length }}</span>{% endif %}</a>
+  <a class="secnav__item" href="#reader">读者视角{% if rd is not null %}<span class="secnav__n">{{ rd.appeal|default([])|length }}</span>{% endif %}</a>
+  <a class="secnav__item" href="#snapshot">产出</a>
+</nav>
+
+<div class="card" id="overview">
+  <div class="card__head">
+    <div class="card__title">
+      <a href="/admin/works/{{ analysis.work_code }}">{{ analysis.title }}</a>
+      <span class="dim">· {{ analysis.word_count }} 字</span>
+    </div>
+    <span class="badge badge--{{ analysis.status }}">{{ analysis.status|status_label }}</span>
+  </div>
+
+  <dl class="dl">
+    <dt>分析编号</dt>
+    <dd class="mono">{{ analysis.code }}</dd>
+
+    <dt>模型 / 提示词</dt>
+    <dd class="mono">{{ analysis.model }} · {{ analysis.prompt_version }}</dd>
+
+    <dt>来源</dt>
+    <dd>{{ analysis.source == 'ai' ? '模型生成' : (analysis.source == 'human' ? '人工撰写' : '模型生成 + 人工调整') }}</dd>
+
+    <dt>用量</dt>
+    <dd class="mono dim">输入 {{ analysis.token_in }} / 输出 {{ analysis.token_out }} tokens</dd>
+
+    <dt>成本</dt>
+    <dd class="mono">¥ {{ cost }}</dd>
+
+    <dt>时间</dt>
+    <dd class="mono dim">{{ analysis.started_at|default('—') }} → {{ analysis.finished_at|default('进行中') }}</dd>
+
+    <dt>输入指纹</dt>
+    <dd class="mono dim">{{ analysis.input_hash|slice(0, 24) }}…</dd>
+
+    {# 改完就想看前台效果，别让人自己拼 URL。只有发布了才有这个页面。 #}
+    {% if analysis.status == 'published' %}
+      <dt>前台</dt>
+      <dd><a href="/library/works/{{ analysis.work_code }}" target="_blank" rel="noopener">打开这篇作品 →</a></dd>
+    {% endif %}
+  </dl>
+
+  {% if analysis.error_msg is not empty %}
+    <div class="flash flash--err card--gap">
+      <span class="mono">{{ analysis.error_code }}</span> — {{ analysis.error_msg }}
+    </div>
+  {% endif %}
+</div>
+
+<div class="card card--gap" id="ops">
+  <div class="card__head">
+    <div class="card__title">操作</div>
+    <span class="card__hint">发布 / 下线 / 单阶段重跑</span>
+  </div>
+
+  <div class="split-2">
+    <div class="opbox">
+      <div class="kv-label">发布</div>
+      {% if analysis.status == 'published' %}
+        <p class="dim small">这篇作品的当前版本就是本次分析，前台展示的就是这一份产出。</p>
+        {% if can(user.permissions, 'analysis.publish') %}
+          <form method="post" action="/admin/analyses/{{ analysis.code }}/unpublish"
+                data-confirm="下线后这篇作品的拆解结果在前台不再公开，作品本身还在馆里（回到「已分析」）。确定？">
+            <input type="hidden" name="_token" value="{{ csrf }}">
+            <button class="btn btn--sm" type="submit">下线这次分析</button>
+          </form>
+        {% else %}
+          <p class="dim small">你的角色没有「发布/下线」权限。</p>
+        {% endif %}
+      {% else %}
+        <p class="dim small">发布后它成为作品的当前版本；同一篇作品此前发布的版本会自动转为「已被替换」。</p>
+        {% if can(user.permissions, 'analysis.publish') %}
+          <form method="post" action="/admin/analyses/{{ analysis.code }}/publish">
+            <input type="hidden" name="_token" value="{{ csrf }}">
+            <button class="btn btn--sm btn--primary" type="submit">发布这次分析</button>
+          </form>
+        {% else %}
+          <p class="dim small">你的角色没有「发布/下线」权限。</p>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <div class="opbox">
+      <div class="kv-label">单阶段重跑</div>
+      {% if can(user.permissions, 'analysis.run') %}
+        {# data-edited 让脚本知道要不要补一句「人工编辑会被覆盖」：
+           这个数字只有服务端算得出来（快照备注前缀），前端不该自己猜。 #}
+        <form method="post" action="/admin/analyses/{{ analysis.code }}/rerun" class="inline-form"
+              data-rerun data-edited="{{ edited > 0 ? '1' : '0' }}">
+          <input type="hidden" name="_token" value="{{ csrf }}">
+          <select name="stage" aria-label="要重跑的阶段">
+            {# 选项来自 StageSpec::ORDER，不再手写：手写过一份，S1 在这里叫「科幻词条」、
+               在「执行记录」里叫「索引词」，同一个阶段同页两个名字。 #}
+            {% for code, label in stage_options() %}
+              <option value="{{ code }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+          <label class="check">
+            <input type="checkbox" name="cascade" value="1">
+            级联重跑下游
+          </label>
+          <button class="btn btn--sm btn--primary" type="submit">重跑</button>
+        </form>
+        {% if edited > 0 %}
+          <p class="warnline">
+            这次分析有 <b>{{ edited }}</b> 处人工编辑（建议、修改方向、索引词都算）。
+            重跑会用模型的新结果覆盖对应阶段，<b>编辑内容不会自动保留</b> ——
+            重跑前会自动存一版，可以随时从下方「版本快照」回滚。
+          </p>
+        {% endif %}
+        <p class="dim small">
+          级联规则：索引词 → 建议 → 修改方向；剧情 → 伏笔 → 建议 → 修改方向；伏笔或建议 → 修改方向。
+          读者视角跟着索引词与剧情走（改这两项时一并重跑它），不改建议与修改方向。
+          不勾级联时，下游阶段会被标记为「已过期」——它还在，但引用的是重跑前的数据。
+        </p>
+      {% else %}
+        <p class="dim small">你的角色没有「触发分析/重分析」权限。</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="card card--gap" id="stages">
+  <div class="card__head">
+    <div class="card__title">六阶段执行记录</div>
+    <span class="card__hint">任何一阶段为空都会在这里留痕，不会静默跳过</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">阶段</th>
+          <th scope="col">状态</th>
+          <th class="num" scope="col">尝试</th>
+          <th class="num" scope="col">输入</th>
+          <th class="num" scope="col">输出</th>
+          <th class="num" scope="col">缓存复用</th>
+          <th class="num" scope="col">耗时</th>
+          <th scope="col">错误</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in stages %}
+          <tr>
+            <td>{{ s.stage_code|stage_label }}<span class="dim mono"> {{ s.stage_code }}</span></td>
+            <td><span class="badge badge--{{ s.status }}">{{ s.status|status_label }}</span></td>
+            <td class="num">{{ s.attempt }}</td>
+            <td class="num">{{ s.input_tokens }}</td>
+            <td class="num">{{ s.output_tokens }}</td>
+            <td class="num">{{ s.cached_tokens }}</td>
+            <td class="num">{{ (s.latency_ms / 1000)|round(1) }}s</td>
+            <td class="dim">
+              {% if s.error_code is not empty %}
+                <span class="mono">{{ s.error_code }}</span> {{ s.error_msg }}
+              {% else %}—{% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{# ------------------------------------------------ 一、关键词索引 #}
+<div class="card card--gap" id="terms">
+  <div class="card__head">
+    <div class="card__title">一、关键词索引</div>
+    <span class="card__hint">{{ terms|length }} 个词条</span>
+  </div>
+
+  {% if ic is null %}
+    <div class="empty empty--inline">这次分析没有产出索引卡。可以在下面直接填写。</div>
+  {% endif %}
+
+  <dl class="dl">
+    <dt>一句话定位</dt>
+    <dd>{{ ic is not null ? ic.one_liner : '—' }}</dd>
+
+    <dt>母题说明</dt>
+    <dd class="dim">{{ ic is not null and (ic.theme_note|default('')) is not empty ? ic.theme_note : '—' }}</dd>
+  </dl>
+
+  {% if can(user.permissions, 'analysis.edit') %}
+    <details class="editbox">
+      <summary>编辑索引卡</summary>
+      <form method="post" action="/admin/analyses/{{ analysis.code }}/card" class="form-stack">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <div class="field">
+          <label>一句话定位</label>
+          <input type="text" name="one_liner" maxlength="300" value="{{ ic is not null ? ic.one_liner : '' }}">
+          <div class="field__hint">一句话说清这篇写的是什么。列表页与搜索结果都用它。</div>
+        </div>
+        <div class="field">
+          <label>母题说明</label>
+          <textarea name="theme_note" rows="3">{{ ic is not null ? ic.theme_note|default('') : '' }}</textarea>
+        </div>
+        <div class="form-submit">
+          <button class="btn btn--sm btn--primary" type="submit">保存索引卡</button>
+        </div>
+      </form>
+    </details>
+  {% endif %}
+
+  {# 类别是 migration 003 之后的三类（tech/theme → setting，society → world，tone 已删）。
+     原来这里还写着 theme/tech/society/tone，导致只有 image 一组能渲染出来 ——
+     从词表加进来的 setting / world 词条看着像「没加上」。 #}
+  {% for cat in ['setting', 'world', 'image'] %}
+    {% set group = terms|filter(t => t.category == cat) %}
+    {% if group is not empty %}
+      <div class="termgroup">
+        <div class="termgroup__head">{{ cat|category_label }} · {{ group|length }}</div>
+        {% for t in group %}
+          <div class="termline" id="term-{{ t.term_id }}">
+            <span class="termline__role{{ t.role == 'main' ? ' termline__role--main' : '' }}">{{ t.role == 'main' ? '主词' : '辅词' }}</span>
+            <span class="termline__word">
+              {{ t.canonical }}
+              {% if t.status == 'merged' %}
+                <span class="badge badge--superseded">已并入 {{ t.merged_into_canonical|default('其他词条') }}</span>
+              {% endif %}
+            </span>
+            <span class="termline__ev">「{{ t.evidence|default('—') }}」</span>
+
+            {% if can(user.permissions, 'analysis.edit') %}
+              <details class="termline__edit">
+                <summary>调整</summary>
+                <form method="post" action="/admin/analyses/{{ analysis.code }}/terms/{{ t.term_id }}" class="inline-form">
+                  <input type="hidden" name="_token" value="{{ csrf }}">
+                  <select name="role" aria-label="主词或辅词">
+                    <option value="main"{{ t.role == 'main' ? ' selected' : '' }}>主词</option>
+                    <option value="sub"{{ t.role == 'sub' ? ' selected' : '' }}>辅词</option>
+                  </select>
+                  <input type="number" name="weight" value="{{ t.weight }}" min="1" max="100" aria-label="权重">
+                  <button class="btn btn--sm" type="submit">保存</button>
+                </form>
+                <form method="post" action="/admin/analyses/{{ analysis.code }}/terms/{{ t.term_id }}/delete" data-confirm="从这一篇里移除「{{ t.canonical }}」？全局词表不受影响。">
+                  <input type="hidden" name="_token" value="{{ csrf }}">
+                  <button class="btn btn--sm btn--danger" type="submit">移除</button>
+                </form>
+                {% if t.status == 'merged' and can(user.permissions, 'term.merge') %}
+                  <form method="post" action="/admin/analyses/{{ analysis.code }}/terms/{{ t.term_id }}/unmerge" data-confirm="撤销归并只恢复词条本身，已搬到目标词条的作品关联不会回滚。">
+                    <input type="hidden" name="_token" value="{{ csrf }}">
+                    <button class="btn btn--sm btn--ghost" type="submit">撤销归并</button>
+                  </form>
+                {% endif %}
+              </details>
+            {% endif %}
+            <span class="termline__w">{{ t.weight }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  {% if can(user.permissions, 'analysis.edit') %}
+    <div class="newblock">
+      <div class="kv-label">从词表加一个词</div>
+      <form method="post" action="/admin/analyses/{{ analysis.code }}/terms" class="newblock__form">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <div class="field">
+          <label>词条名</label>
+          <input type="text" name="term" placeholder="写词条名，例如：赛博朋克" required>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>主 / 辅</label>
+            <select name="role">
+              <option value="main">主词</option>
+              <option value="sub">辅词</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>权重</label>
+            <input type="number" name="weight" value="50" min="1" max="100">
+          </div>
+        </div>
+        <div class="field">
+          <label>原文依据</label>
+          <input type="text" name="evidence" placeholder="文中支撑这个词的那句话">
+        </div>
+        <div class="form-submit">
+          <p class="newblock__note">只能加词表里已有的词；要新造词去「词条治理」。</p>
+          <button class="btn btn--sm btn--primary" type="submit">加入索引</button>
+        </div>
+      </form>
+    </div>
+  {% endif %}
+
+  {% if can(user.permissions, 'term.merge') %}
+    <div class="mergebox">
+      <div class="kv-label">索引词归并</div>
+      <form method="post" action="/admin/analyses/{{ analysis.code }}/terms/merge" class="inline-form">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <select name="from_term_id" aria-label="要归并的词条">
+          {% for t in terms %}
+            <option value="{{ t.term_id }}">{{ t.canonical }}（{{ t.role == 'main' ? '主' : '辅' }}）</option>
+          {% endfor %}
+        </select>
+        <input type="text" name="to_term" placeholder="并入哪个词条（写词条名）" required>
+        <button class="btn btn--sm btn--primary" type="submit">归并</button>
+      </form>
+      <p class="dim small">
+        归并改的是全站词表：两个说法合成一条，之后搜旧名仍能找到（旧名会变成别名）。
+        跨类别不能归并；同一篇作品两个词都在用时只留一条，主词优先、权重取大。
+      </p>
+    </div>
+  {% endif %}
+</div>
+
+{# ------------------------------------------------ 二、剧情分析 #}
+<div class="card card--gap" id="plot">
+  <div class="card__head">
+    <div class="card__title">二、剧情分析</div>
+    <span class="card__hint">{{ bts|length }} 个节点 · {{ fs|length }} 条伏笔</span>
+  </div>
+
+  {% if sm is null %}
+    <div class="empty empty--inline">这次分析没有产出剧情三句话。可以在下面直接填写。</div>
+  {% endif %}
+
+  <dl class="dl">
+    <dt>谁</dt>
+    <dd>{{ sm is not null ? sm.who|default('—') : '—' }}</dd>
+
+    <dt>要什么</dt>
+    <dd>{{ sm is not null ? sm.want|default('—') : '—' }}</dd>
+
+    <dt>付出什么</dt>
+    <dd>{{ sm is not null ? sm.cost|default('—') : '—' }}</dd>
+
+    <dt>三句合一</dt>
+    <dd class="dim">{{ sm is not null and (sm.logline|default('')) is not empty ? sm.logline : '—' }}</dd>
+  </dl>
+
+  {% if can(user.permissions, 'analysis.edit') %}
+    <details class="editbox">
+      <summary>编辑这三句</summary>
+      <form method="post" action="/admin/analyses/{{ analysis.code }}/summary" class="form-stack">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <div class="form-row">
+          <div class="field">
+            <label>谁</label>
+            <input type="text" name="who" value="{{ sm is not null ? sm.who|default('') : '' }}">
+          </div>
+          <div class="field">
+            <label>要什么</label>
+            <input type="text" name="want" value="{{ sm is not null ? sm.want|default('') : '' }}">
+          </div>
+          <div class="field">
+            <label>付出什么</label>
+            <input type="text" name="cost" value="{{ sm is not null ? sm.cost|default('') : '' }}">
+          </div>
+        </div>
+        <div class="field">
+          <label>三句合一</label>
+          <textarea name="logline" rows="2">{{ sm is not null ? sm.logline|default('') : '' }}</textarea>
+          <div class="field__hint">谁 + 要什么 + 代价，压成一句能直接口述的话。</div>
+        </div>
+        <div class="form-submit">
+          <button class="btn btn--sm btn--primary" type="submit">保存这三句</button>
+        </div>
+      </form>
+    </details>
+  {% endif %}
+
+  <div class="card__head card--gap">
+    <div class="card__title">节点轴</div>
+    <span class="card__hint">起点 → 转折 → 危机 → 终局</span>
+  </div>
+
+  {% if bts is empty %}
+    <div class="empty empty--inline">还没有剧情节点。可以在下面加一个。</div>
+  {% endif %}
+
+  {% for b in bts %}
+    <div class="beat beat--{{ b.phase }}" id="beat-{{ b.id }}">
+      <div class="beat__seq mono">{{ b.seq }}</div>
+      <div>
+        <div class="beat__head">
+          <div class="beat__title">{{ b.title }}<span class="beat__phase">{{ b.phase|phase_label }}</span></div>
+          {# 位置计量条放右侧固定列：十二个节点排下来能直接看出「越往下越接近结尾」，
+             原来做成整行下划线，宽窄不一反而像随手画的。 #}
+          <div class="beat__pos">
+            <span class="beat__meter"><span class="beat__meter-fill" data-pct="{{ b.position_pct }}"></span></span>
+            <span class="mono">全文 {{ b.position_pct }}%</span>
+          </div>
+        </div>
+        {% if b.detail is not empty %}<div class="beat__detail">{{ b.detail }}</div>{% endif %}
+        {% if b.quote is not empty %}<div class="beat__quote">{{ b.quote }}</div>{% endif %}
+      </div>
+
+      {% if can(user.permissions, 'analysis.edit') %}
+        <details class="editbox beat__edit">
+          <summary>改这个节点</summary>
+          <form method="post" action="/admin/analyses/{{ analysis.code }}/beats/{{ b.id }}" class="form-stack">
+            <input type="hidden" name="_token" value="{{ csrf }}">
+            <div class="form-row">
+              <div class="field">
+                <label>阶段</label>
+                <select name="phase">
+                  <option value="start"{{ b.phase == 'start' ? ' selected' : '' }}>起点</option>
+                  <option value="turn"{{ b.phase == 'turn' ? ' selected' : '' }}>转折</option>
+                  <option value="crisis"{{ b.phase == 'crisis' ? ' selected' : '' }}>危机</option>
+                  <option value="end"{{ b.phase == 'end' ? ' selected' : '' }}>终局</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>位置（全文 %）</label>
+                <input type="number" name="position_pct" value="{{ b.position_pct }}" min="0" max="100">
+              </div>
+            </div>
+            <div class="field">
+              <label>标题</label>
+              <input type="text" name="title" value="{{ b.title }}" maxlength="160">
+            </div>
+            <div class="field">
+              <label>说明</label>
+              <textarea name="detail" rows="3">{{ b.detail|default('') }}</textarea>
+            </div>
+            <div class="field">
+              <label>原文引用</label>
+              <textarea name="quote" rows="2">{{ b.quote|default('') }}</textarea>
+            </div>
+            <div class="form-submit">
+              <button class="btn btn--sm btn--primary" type="submit">保存节点</button>
+            </div>
+          </form>
+          <form method="post" action="/admin/analyses/{{ analysis.code }}/beats/{{ b.id }}/delete" class="editbox__danger">
+            <input type="hidden" name="_token" value="{{ csrf }}">
+            <button class="btn btn--sm btn--danger" type="submit"
+                    data-confirm="删除第 {{ b.seq }} 个节点「{{ b.title }}」？节点轴会立刻少一段，伏笔里指向它的位置会一起清空。">删除这个节点</button>
+          </form>
+        </details>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  {% if can(user.permissions, 'analysis.edit') %}
+    <div class="newblock">
+      <div class="kv-label">新增节点</div>
+      <form method="post" action="/admin/analyses/{{ analysis.code }}/beats" class="newblock__form">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <div class="form-row">
+          <div class="field">
+            <label>阶段</label>
+            <select name="phase">
+              <option value="start">起点</option>
+              <option value="turn" selected>转折</option>
+              <option value="crisis">危机</option>
+              <option value="end">终局</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>位置（全文 %）</label>
+            <input type="number" name="position_pct" value="50" min="0" max="100">
+          </div>
+        </div>
+        <div class="field">
+          <label>标题</label>
+          <input type="text" name="title" maxlength="160" required>
+        </div>
+        <div class="field">
+          <label>说明</label>
+          <textarea name="detail" rows="3"></textarea>
+        </div>
+        <div class="field">
+          <label>原文引用</label>
+          <textarea name="quote" rows="2"></textarea>
+        </div>
+        <div class="form-submit">
+          <button class="btn btn--sm btn--primary" type="submit">新增节点</button>
+        </div>
+      </form>
+    </div>
+  {% endif %}
+
+  <div class="card__head card--gap">
+    <div class="card__title">伏笔台账</div>
+    <span class="card__hint">埋下 → 回收；未回收标为待收</span>
+  </div>
+
+  {% if fs is empty %}
+    <div class="empty empty--inline">还没有伏笔。可以在下面加一条。</div>
+  {% else %}
+    <div class="foreshadow">
+      {% for f in fs %}
+        <div class="foreshadow__item">
+          <span class="badge badge--{{ f.state == 'open' ? 'stale' : 'succeeded' }}">{{ f.state == 'open' ? '待收' : '已收' }}</span>
+          <span>{{ f.content }}</span>
+          <span class="foreshadow__chain mono">
+            {% if f.setup is not null %}#{{ f.setup.seq }} {{ f.setup.title }}{% endif %}
+            {% if f.payoff is not null %} → #{{ f.payoff.seq }} {{ f.payoff.title }}{% endif %}
+          </span>
+
+          {# 后端还没把 id 写进 artifacts.foreshadows，这一版先只做展示。
+             等仓储补上 id，这一段会自动生效，不用再改模板。 #}
+          {% if f.id is defined and f.id and can(user.permissions, 'analysis.edit') %}
+            <details class="editbox foreshadow__edit">
+              <summary>改这条伏笔</summary>
+              <form method="post" action="/admin/analyses/{{ analysis.code }}/foreshadows/{{ f.id }}" class="form-stack">
+                <input type="hidden" name="_token" value="{{ csrf }}">
+                <div class="field">
+                  <label>伏笔内容</label>
+                  <textarea name="content" rows="2">{{ f.content }}</textarea>
+                </div>
+                <div class="form-row">
+                  <div class="field">
+                    <label>埋在哪</label>
+                    <select name="setup_beat_id">
+                      <option value="">（无）</option>
+                      {% for b in bts %}
+                        <option value="{{ b.id }}"{{ f.setup is not null and f.setup.seq == b.seq ? ' selected' : '' }}>#{{ b.seq }} {{ b.title }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>在哪回收</label>
+                    <select name="payoff_beat_id">
+                      <option value="">（无）</option>
+                      {% for b in bts %}
+                        <option value="{{ b.id }}"{{ f.payoff is not null and f.payoff.seq == b.seq ? ' selected' : '' }}>#{{ b.seq }} {{ b.title }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="form-submit">
+                  <button class="btn btn--sm btn--primary" type="submit">保存伏笔</button>
+                </div>
+              </form>
+              <form method="post" action="/admin/analyses/{{ analysis.code }}/foreshadows/{{ f.id }}/delete" class="editbox__danger">
+                <input type="hidden" name="_token" value="{{ csrf }}">
+                <button class="btn btn--sm btn--danger" type="submit"
+                        data-confirm="删除这条伏笔？它原本的埋设与回收位置也会一并消失。">删除这条伏笔</button>
+              </form>
+            </details>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if can(user.permissions, 'analysis.edit') %}
+    <div class="newblock">
+      <div class="kv-label">新增伏笔</div>
+      <form method="post" action="/admin/analyses/{{ analysis.code }}/foreshadows" class="newblock__form">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <div class="field">
+          <label>伏笔内容</label>
+          <textarea name="content" rows="2" required></textarea>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>埋在哪</label>
+            <select name="setup_beat_id">
+              <option value="">（无）</option>
+              {% for b in bts %}
+                <option value="{{ b.id }}">#{{ b.seq }} {{ b.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label>在哪回收</label>
+            <select name="payoff_beat_id">
+              <option value="">（无）</option>
+              {% for b in bts %}
+                <option value="{{ b.id }}">#{{ b.seq }} {{ b.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-submit">
+          <button class="btn btn--sm btn--primary" type="submit">新增伏笔</button>
+        </div>
+      </form>
+    </div>
+  {% endif %}
+</div>
+
+{# ------------------------------------------------ 三、建议 #}
+<div class="card card--gap" id="advice">
+  <div class="card__head">
+    <div class="card__title">三、建议</div>
+    <span class="card__hint">结构 / 执行 / 细节 三层，每条给 3–5 条路径</span>
+  </div>
+
+  {% if sug is empty %}
+    <div class="empty empty--inline">还没有建议。可以在下面加一条。</div>
+  {% endif %}
+
+  {% for s in sug %}
+    <div class="sugg" id="sugg-{{ s.id }}">
+      <div class="sugg__head">
+        <span class="sugg__layer">{{ s.layer|layer_label }}</span>
+        <span class="sugg__title">{{ s.title }}</span>
+      </div>
+      <div class="sugg__problem">{{ s.problem }}</div>
+      {% if s.impact is not empty %}<div class="sugg__impact">牵动：{{ s.impact }}</div>{% endif %}
+      <ul class="paths">
+        {% for p in s.paths %}
+          <li>
+            <b>{{ p.style == 'conservative' ? '保守' : (p.style == 'radical' ? '激进' : '折中') }}</b>
+            <span>{{ p.content }}</span>
+
+            {# 路径项同样还没带 id，有 id 才放开改/删 #}
+            {% if p.id is defined and p.id and can(user.permissions, 'analysis.edit') %}
+              <details class="editbox paths__edit">
+                <summary>改这条路径</summary>
+                <form method="post" action="/admin/analyses/{{ analysis.code }}/paths/{{ p.id }}" class="form-stack">
+                  <input type="hidden" name="_token" value="{{ csrf }}">
+                  <div class="field">
+                    <label>取向</label>
+                    <select name="style">
+                      <option value="conservative"{{ p.style == 'conservative' ? ' selected' : '' }}>保守</option>
+                      <option value="neutral"{{ p.style == 'neutral' ? ' selected' : '' }}>折中</option>
+                      <option value="radical"{{ p.style == 'radical' ? ' selected' : '' }}>激进</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>具体改法</label>
+                    <textarea name="content" rows="2">{{ p.content }}</textarea>
+                  </div>
+                  <div class="form-submit">
+                    <button class="btn btn--sm btn--primary" type="submit">保存路径</button>
+                  </div>
+                </form>
+                <form method="post" action="/admin/analyses/{{ analysis.code }}/paths/{{ p.id }}/delete" class="editbox__danger">
+                  <input type="hidden" name="_token" value="{{ csrf }}">
+                  <button class="btn btn--sm btn--danger" type="submit"
+                          data-confirm="删除这条路径？这条建议至少留一条路径才说得清怎么改。">删除这条路径</button>
+                </form>
+              </details>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if can(user.permissions, 'analysis.edit') %}
+        <form method="post" action="/admin/analyses/{{ analysis.code }}/suggestions/{{ s.id }}/paths" class="inline-form sugg__addpath">
+          <input type="hidden" name="_token" value="{{ csrf }}">
+          <select name="style" aria-label="路径取向">
+            <option value="conservative">保守</option>
+            <option value="neutral">折中</option>
+            <option value="radical">激进</option>
+          </select>
+          <input type="text" name="content" placeholder="再加一条改法" required>
+          <button class="btn btn--sm" type="submit">加一条路径</button>
+        </form>
+
+        <details class="editbox">
+          <summary>编辑这条建议</summary>
+          <form method="post" action="/admin/analyses/{{ analysis.code }}/suggestions/{{ s.id }}" class="form-stack">
+            <input type="hidden" name="_token" value="{{ csrf }}">
+            <div class="field">
+              <label>标题</label>
+              <input type="text" name="title" value="{{ s.title }}" maxlength="160">
+            </div>
+            <div class="field">
+              <label>问题</label>
+              <textarea name="problem" rows="3">{{ s.problem }}</textarea>
+            </div>
+            <div class="field">
+              <label>牵动</label>
+              <input type="text" name="impact" value="{{ s.impact }}" maxlength="300">
+            </div>
+            <div class="form-submit">
+              <button class="btn btn--sm btn--primary" type="submit">保存</button>
+            </div>
+          </form>
+          <p class="dim small">层级与路径由模型给出，改层级请重跑 S4——在界面上把执行层改成结构层，会让产出的自洽性无从判断。</p>
+          <form method="post" action="/admin/analyses/{{ analysis.code }}/suggestions/{{ s.id }}/delete" class="editbox__danger">
+            <input type="hidden" name="_token" value="{{ csrf }}">
+            <button class="btn btn--sm btn--danger" type="submit"
+                    data-confirm="删除后这条建议和它的全部路径都会消失，可以从版本快照回滚。确定？">删除这条建议</button>
+          </form>
+        </details>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  {% if can(user.permissions, 'analysis.edit') %}
+    <div class="newblock">
+      <div class="kv-label">新增一条建议</div>
+      <form method="post" action="/admin/analyses/{{ analysis.code }}/suggestions" class="newblock__form">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <div class="field">
+          <label>层级</label>
+          <select name="layer">
+            <option value="structure">结构层</option>
+            <option value="execution">执行层</option>
+            <option value="detail">细节层</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>标题</label>
+          <input type="text" name="title" maxlength="160" required>
+        </div>
+        <div class="field">
+          <label>问题</label>
+          <textarea name="problem" rows="3" required></textarea>
+        </div>
+        <div class="field">
+          <label>牵动</label>
+          <input type="text" name="impact" maxlength="300" placeholder="改这一处会连带影响什么">
+        </div>
+        <div class="form-submit">
+          <button class="btn btn--sm btn--primary" type="submit">新增建议</button>
+        </div>
+      </form>
+    </div>
+  {% endif %}
+</div>
+
+{# ------------------------------------------------ 四、修改方向 #}
+<div class="card card--gap" id="revision">
+  <div class="card__head">
+    <div class="card__title">四、修改方向</div>
+    <span class="card__hint">按影响面排序，每条两种走法</span>
+  </div>
+
+  {% if rv is null %}
+    <div class="empty empty--inline">这次分析没有生成修改清单。可以在下面手填一条。</div>
+  {% else %}
+    {% if (rv.summary|default('')) is not empty %}
+      <div class="flash">{{ rv.summary }}</div>
+    {% endif %}
+
+    {% for item in rv.items %}
+      <div class="revitem" id="rev-{{ item.id }}">
+        <div class="revitem__rank">第 {{ item.rank_no }} 位</div>
+        <div class="revitem__target">{{ item.target }}</div>
+        <div class="revitem__row">
+          <b>怎么改</b><span>{{ item.action }}</span>
+          <b>保守走法</b><span>{{ item.conservative }}</span>
+          <b>激进走法</b><span>{{ item.radical }}</span>
+          <b>牵动范围</b><span>{{ item.impact_scope }}</span>
+          {% if item.decision_note is not empty %}
+            <b>决定权</b><span>{{ item.decision_note }}</span>
+          {% endif %}
+        </div>
+
+        {% if can(user.permissions, 'analysis.edit') %}
+          <details class="editbox">
+            <summary>编辑两种走法</summary>
+            <form method="post" action="/admin/analyses/{{ analysis.code }}/revisions/{{ item.id }}" class="form-stack">
+              <input type="hidden" name="_token" value="{{ csrf }}">
+              <div class="field">
+                <label>保守走法</label>
+                <textarea name="conservative" rows="2">{{ item.conservative }}</textarea>
+              </div>
+              <div class="field">
+                <label>激进走法</label>
+                <textarea name="radical" rows="2">{{ item.radical }}</textarea>
+              </div>
+              <div class="field">
+                <label>牵动范围</label>
+                <input type="text" name="impact_scope" value="{{ item.impact_scope }}" maxlength="300">
+              </div>
+              <div class="field">
+                <label>决定权</label>
+                <input type="text" name="decision_note" value="{{ item.decision_note|default('') }}" maxlength="300">
+              </div>
+              <div class="form-submit">
+                <button class="btn btn--sm btn--primary" type="submit">保存</button>
+              </div>
+            </form>
+            <form method="post" action="/admin/analyses/{{ analysis.code }}/revisions/{{ item.id }}/delete" class="editbox__danger">
+              <input type="hidden" name="_token" value="{{ csrf }}">
+              <button class="btn btn--sm btn--danger" type="submit"
+                      data-confirm="删除这条修改方向？排序会重排，可以从版本快照回滚。">删除这一条</button>
+            </form>
+          </details>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if can(user.permissions, 'analysis.edit') %}
+    <div class="newblock">
+      <div class="kv-label">新增一条修改方向</div>
+      <form method="post" action="/admin/analyses/{{ analysis.code }}/revisions" class="newblock__form">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <div class="field">
+          <label>改哪里</label>
+          <input type="text" name="target" maxlength="160" required placeholder="例如：第三章的第一次转折">
+        </div>
+        <div class="field">
+          <label>怎么改</label>
+          <input type="text" name="action" maxlength="300" required placeholder="一句话说清动作">
+        </div>
+        <div class="field">
+          <label>保守走法</label>
+          <textarea name="conservative" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label>激进走法</label>
+          <textarea name="radical" rows="2"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>牵动范围</label>
+            <input type="text" name="impact_scope" maxlength="300">
+          </div>
+          <div class="field">
+            <label>决定权</label>
+            <input type="text" name="decision_note" maxlength="300" placeholder="谁拍板、卡在哪">
+          </div>
+        </div>
+        <div class="form-submit">
+          <button class="btn btn--sm btn--primary" type="submit">新增修改方向</button>
+        </div>
+      </form>
+    </div>
+  {% endif %}
+</div>
+
+{# ------------------------------------------------ 五、读者视角 #}
+{% set ap  = rd is not null ? rd.appeal|default([]) : [] %}
+{% set vis = rd is not null ? rd.visual|default({}) : {} %}
+{% set aud = rd is not null ? rd.audience|default({}) : {} %}
+<div class="card card--gap" id="reader">
+  <div class="card__head">
+    <div class="card__title">五、读者视角</div>
+    <span class="card__hint">给运营判断「这篇能不能推荐出去」用</span>
+  </div>
+
+  {% if rd is null %}
+    <div class="empty empty--inline">这次分析没有产出读者视角（S7 可能没跑）。可以在下面手填。</div>
+  {% else %}
+    <p class="readhook">{{ rd.hook|default('—') }}</p>
+
+    <div class="readsub">三条看点</div>
+    {% if ap is empty %}
+      <p class="dim small">没有列看点。</p>
+    {% else %}
+      <ul class="readlist">
+        {% for a in ap %}
+          <li>
+            <b>{{ a.title|default('—') }}</b>
+            <span>{{ a.why|default('') }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <div class="readsub">视觉</div>
+    <dl class="dl">
+      <dt>色彩与光线</dt>
+      <dd>{{ vis.tone|default('—') }}</dd>
+
+      <dt>镜头与调度</dt>
+      <dd>{{ vis.lens|default('—') }}</dd>
+
+      <dt>可对标</dt>
+      <dd>{{ vis.reference|default('—') }}</dd>
+
+      <dt>最适合做预告片的画面</dt>
+      <dd>{{ vis.scene|default('—') }}</dd>
+    </dl>
+
+    <div class="readsub">读者</div>
+    <dl class="dl">
+      <dt>主要读者</dt>
+      <dd>{{ aud.primary|default('—') }}</dd>
+
+      <dt>另一类读者</dt>
+      <dd>{{ aud.also|default('—') }}</dd>
+
+      <dt>会觉得不值的读者</dt>
+      <dd>{{ aud.avoid|default('—') }}</dd>
+
+      <dt>阅读门槛</dt>
+      <dd>{{ aud.gate|default('—') }}</dd>
+    </dl>
+
+    <div class="readsub">关键词怎么帮人找到它</div>
+    <p class="dim small">{{ rd.terms_note|default('—') }}</p>
+  {% endif %}
+
+  {% if can(user.permissions, 'analysis.edit') %}
+    <details class="editbox">
+      <summary>编辑读者视角</summary>
+      <form method="post" action="/admin/analyses/{{ analysis.code }}/reader" class="form-stack">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <div class="field">
+          <label>一句话钩子</label>
+          <textarea name="hook" rows="2">{{ rd is not null ? rd.hook|default('') : '' }}</textarea>
+          <div class="field__hint">写给人转发用的那一句，不要写简介。</div>
+        </div>
+
+        <div class="readsub">三条看点</div>
+        {% for i in 0..2 %}
+          <div class="form-row">
+            <div class="field">
+              <label>看点 {{ i + 1 }}</label>
+              <input type="text" name="appeal_title[{{ i }}]" maxlength="80"
+                     value="{{ ap[i] is defined ? ap[i].title|default('') : '' }}">
+            </div>
+            <div class="field">
+              <label>为什么好看</label>
+              <input type="text" name="appeal_why[{{ i }}]" maxlength="300"
+                     value="{{ ap[i] is defined ? ap[i].why|default('') : '' }}">
+            </div>
+          </div>
+        {% endfor %}
+
+        <div class="readsub">视觉</div>
+        <div class="form-row">
+          <div class="field">
+            <label>色彩与光线</label>
+            <input type="text" name="visual_tone" value="{{ vis.tone|default('') }}">
+          </div>
+          <div class="field">
+            <label>镜头与调度</label>
+            <input type="text" name="visual_lens" value="{{ vis.lens|default('') }}">
+          </div>
+          <div class="field">
+            <label>可对标</label>
+            <input type="text" name="visual_ref" value="{{ vis.reference|default('') }}">
+          </div>
+          <div class="field">
+            <label>最适合做预告片的画面</label>
+            <input type="text" name="visual_scene" value="{{ vis.scene|default('') }}">
+          </div>
+        </div>
+
+        <div class="readsub">读者</div>
+        <div class="form-row">
+          <div class="field">
+            <label>主要读者</label>
+            <input type="text" name="audience_primary" value="{{ aud.primary|default('') }}">
+          </div>
+          <div class="field">
+            <label>另一类读者</label>
+            <input type="text" name="audience_also" value="{{ aud.also|default('') }}">
+          </div>
+          <div class="field">
+            <label>会觉得不值的读者</label>
+            <input type="text" name="audience_avoid" value="{{ aud.avoid|default('') }}">
+          </div>
+          <div class="field">
+            <label>阅读门槛</label>
+            <input type="text" name="audience_gate" value="{{ aud.gate|default('') }}">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>关键词怎么帮人找到它</label>
+          <textarea name="terms_note" rows="2">{{ rd is not null ? rd.terms_note|default('') : '' }}</textarea>
+        </div>
+
+        <div class="form-submit">
+          <button class="btn btn--sm btn--primary" type="submit">保存读者视角</button>
+        </div>
+      </form>
+    </details>
+  {% endif %}
+</div>
+
+<div class="card card--gap" id="snapshot">
+  <div class="card__head">
+    <div class="card__title">产出快照</div>
+    <span class="card__hint">每版记的是那次改动之前的样子，所以每一版都能退回去</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="num" scope="col">版本</th>
+          <th scope="col">说明</th>
+          <th scope="col">操作人</th>
+          <th scope="col">时间</th>
+          <th scope="col">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for snap in snapshots %}
+          <tr>
+            <td class="num mono">v{{ snap.version_no }}</td>
+            <td>{{ snap.note|default('—') }}</td>
+            <td class="dim">{{ snap.editor|default('系统') }}</td>
+            <td class="mono dim">{{ snap.created_at }}</td>
+            <td>
+              {% if can(user.permissions, 'analysis.edit') %}
+                <form method="post" action="/admin/analyses/{{ analysis.code }}/snapshots/{{ snap.version_no }}/restore">
+                  <input type="hidden" name="_token" value="{{ csrf }}">
+                  <button class="btn btn--sm btn--ghost" type="submit"
+                          data-confirm="回滚会把当前的四件产出整个替换成这一版的内容。回滚前会自动存一版当前状态。确定？">回滚到这一版</button>
+                </form>
+              {% else %}
+                <span class="dim">—</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5" class="dim">还没有快照。首次编辑或重跑后会出现。</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">调用明细</div>
+    <span class="card__hint">与 DeepSeek 账单双向核对用</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">阶段</th>
+          <th scope="col">状态</th>
+          <th class="num" scope="col">HTTP</th>
+          <th class="num" scope="col">输入</th>
+          <th class="num" scope="col">输出</th>
+          <th class="num" scope="col">复用输入</th>
+          <th class="num" scope="col">耗时</th>
+          <th class="num" scope="col">成本</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in calls %}
+          <tr>
+            <td>{{ c.stage_code|stage_label }}</td>
+            <td>
+              {% if c.status == 'ok' %}
+                <span class="badge badge--succeeded">{{ c.status|status_label }}</span>
+              {% else %}
+                <span class="badge badge--failed">{{ c.error_code|default('error') }}</span>
+              {% endif %}
+            </td>
+            <td class="num">{{ c.http_code|default('—') }}</td>
+            <td class="num">{{ c.prompt_tokens }}</td>
+            <td class="num">{{ c.completion_tokens }}</td>
+            <td class="num">{{ c.cached_tokens }}</td>
+            <td class="num">{{ (c.latency_ms / 1000)|round(1) }}s</td>
+            <td class="num mono">¥ {{ (c.cost_micro / 1000000)|round(5) }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="8" class="dim">没有调用记录。</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="form-actions">
+  <a class="btn btn--ghost" href="/admin/works/{{ analysis.work_code }}">返回作品</a>
+  <a class="btn btn--ghost" href="/admin/works">作品列表</a>
+</div>
+{% endblock %}

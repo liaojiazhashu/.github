@@ -1,0 +1,240 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}{{ term.canonical }}{% endblock %}
+{% block heading %}词条{% endblock %}
+
+{#
+  词条详情：判断「该不该藏」的依据都在这一页。
+  --------------------------------------------------------------------------
+  四要素各自来自不同的地方，页面上如实标出来源，否则运营会以为
+  「释义/历史/经典」是这里漏了字段 —— 它们其实在词库文件里，不随分析变。
+#}
+
+{% block content %}
+{% set canHide = can(user.permissions|default([]), 'visibility.toggle') %}
+{% if term.category == 'setting' %}{% set catLabel = '设定' %}
+{% elseif term.category == 'world' %}{% set catLabel = '世界观' %}
+{% elseif term.category == 'image' %}{% set catLabel = '意象' %}
+{% else %}{% set catLabel = term.category %}{% endif %}
+
+<div class="card">
+  <div class="row-between">
+    <div>
+      <div class="card__title">{{ term.canonical }}
+        {% if term.visibility == 'hidden' %}<span class="badge badge--danger">已隐藏</span>{% endif %}
+        {% if term.status != 'active' %}<span class="badge">{{ term.status|status_label }}</span>{% endif %}
+      </div>
+      <div class="card__hint">
+        {{ catLabel }} · {{ term.is_canonical ? '通行词' : '表外词' }} ·
+        前台可见 <b>{{ term.refs }}</b> 篇 · 实际关联 <b>{{ term.refs_all }}</b> 篇
+        {% if term.refs_all > term.refs %}（差 {{ term.refs_all - term.refs }} 篇被隐藏或未发布）{% endif %}
+      </div>
+    </div>
+    <div class="card__actions">
+      <a class="btn btn--sm" href="/library/terms/{{ term.id }}" target="_blank" rel="noopener">看前台</a>
+      {% if canHide %}
+        {% if term.visibility == 'hidden' %}
+          <form method="post" action="/admin/terms/restore">
+            <input type="hidden" name="_token" value="{{ csrf }}">
+            <input type="hidden" name="scope" value="ids">
+            <input type="hidden" name="ids[]" value="{{ term.id }}">
+            <input type="hidden" name="back" value="/admin/terms/{{ term.id }}">
+            <button class="btn btn--sm btn--primary" type="submit">恢复显示</button>
+          </form>
+        {% else %}
+          <form method="post" action="/admin/terms/hide" data-confirm="隐藏后，这个词条会从词库、作品页标签、检索与 sitemap 中同时消失。确定？">
+            <input type="hidden" name="_token" value="{{ csrf }}">
+            <input type="hidden" name="scope" value="ids">
+            <input type="hidden" name="ids[]" value="{{ term.id }}">
+            <input type="hidden" name="reason" value="词条详情页隐藏">
+            <input type="hidden" name="back" value="/admin/terms/{{ term.id }}">
+            <button class="btn btn--sm btn--danger" type="submit">隐藏词条</button>
+          </form>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+  {% if term.visibility == 'hidden' and term.hidden_reason %}
+    <div class="flash flash--warn card--gap">隐藏于 {{ term.hidden_at }}：{{ term.hidden_reason }}</div>
+  {% endif %}
+</div>
+
+<div class="grid grid--2 card--gap">
+  <div class="card">
+    <div class="card__head"><div class="card__title">四要素现状</div></div>
+    <div class="dl">
+      <dt>词条释义</dt>
+      <dd>
+        {% if term.definition %}
+          {{ term.definition }}
+          <div class="small dim">来源：数据库 hq_index_term.definition</div>
+        {% else %}
+          <span class="badge badge--failed">缺</span>
+          <div class="small dim">分析产出里没有写释义。可在分析页编辑索引词补上。</div>
+        {% endif %}
+      </dd>
+
+      <dt>起源与发展</dt>
+      <dd>
+        {% if enc and enc.history %}
+          {{ enc.history }}
+          <div class="small dim">来源：{% if enc_source == 'db' %}数据库 hq_term_encyclopedia（下方可编辑）{% else %}词库文件基线（保存后即以库为准）{% endif %}</div>
+        {% else %}
+          <span class="badge badge--failed">缺</span>
+          <div class="small dim">库里和文件基线里都没有这个词，前台这一节不显示。在下方补写或后台编辑。</div>
+        {% endif %}
+      </dd>
+
+      <dt>世界科幻中的它</dt>
+      <dd>
+        {% if enc and enc.classics is not empty %}
+          {% for c in enc.classics %}
+            <div>{{ c.title }} · {{ c.author }}（{{ c.year }}）</div>
+          {% endfor %}
+        {% else %}
+          <span class="badge">空</span>
+          <div class="small dim">至多 3 部。没有就不显示这一节，不会写「暂无」占位。</div>
+        {% endif %}
+      </dd>
+
+      <dt>馆内作品</dt>
+      <dd>{{ term.refs }} 篇（见下表）</dd>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card__head"><div class="card__title">元信息</div></div>
+    <div class="dl">
+      <dt>ID</dt><dd class="mono">{{ term.id }}</dd>
+      <dt>分类</dt><dd>{{ catLabel }}</dd>
+      <dt>性质</dt><dd>{{ term.is_canonical ? '通行词（人工审过的通用概念）' : '表外词（模型新建，需 ≥2 篇引用才进词库）' }}</dd>
+      <dt>别名</dt>
+      <dd>
+        {% if aliases is empty %}<span class="dim">无</span>
+        {% else %}{% for a in aliases %}<span class="chip">{{ a }}</span>{% endfor %}{% endif %}
+      </dd>
+      <dt>创建</dt><dd class="mono dim">{{ term.created_at }}</dd>
+      <dt>更新</dt><dd class="mono dim">{{ term.updated_at }}</dd>
+    </div>
+  </div>
+</div>
+
+{# 百科编辑：这两段是公开页正文，改它不需要碰拆解流水线。
+   表单一次提交三组经典（空行忽略），history 的 80–200 只是写作提示，不做硬校验。 #}
+{% set canEdit = can(user.permissions|default([]), 'term.merge') %}
+<div class="card card--gap" id="enc">
+  <div class="card__head">
+    <div class="card__title">百科：起源与发展 / 世界科幻中的它</div>
+    <div class="card__hint">
+      {% if enc_source == 'db' %}当前取自数据库；保存后立即生效（公开页缓存同步失效）
+      {% elseif enc_source == 'file' %}当前取自词库文件基线；保存后这一条即以数据库为准
+      {% else %}这个词还没有百科内容{% endif %}
+    </div>
+  </div>
+
+  {% if enc_errors is not empty %}
+    <div class="flash flash--err enc-errors">
+      <b>没有保存：</b>
+      <ul>
+        {% for e in enc_errors %}<li>{{ e }}</li>{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if not canEdit %}
+    <div class="empty">没有内容编辑权限（term.merge），这里只读。</div>
+  {% else %}
+    <form method="post" action="/admin/terms/{{ term.id }}/encyclopedia">
+      <input type="hidden" name="_token" value="{{ csrf }}">
+
+      <div class="field">
+        <label for="enc-history">起源与发展</label>
+        <textarea id="enc-history" name="history" rows="6" maxlength="1000"
+                  data-counter="enc-history" data-counter-min="80" data-counter-max="200"
+                  placeholder="这个词从哪里来、含义怎么演变、为什么值得在科幻语境里被记住。">{{ enc_history }}</textarea>
+        <div class="field__hint">
+          <span class="enc-counter" data-counter-output="enc-history"
+                data-text="建议 80–200 字（只做提示，不拦保存）">建议 80–200 字（只做提示，不拦保存）</span>
+          这段文字会原样出现在公开词条页。
+        </div>
+      </div>
+
+      <div class="enc-classics">
+        <div class="enc-classics__head">
+          世界科幻中的它
+          <span class="dim">至多 3 部；整行留空即忽略，只填了的行必须书名 + 作者齐全</span>
+        </div>
+        <div class="enc-classics__grid">
+          {% for row in enc_rows %}
+            {% set n = loop.index %}
+            <fieldset class="enc-classic">
+              <legend>第 {{ n }} 部</legend>
+              <div class="field">
+                <label for="enc-title-{{ n }}">书名</label>
+                <input id="enc-title-{{ n }}" name="classics[{{ n - 1 }}][title]" type="text"
+                       value="{{ row.title }}" maxlength="200" placeholder="例如：基地">
+              </div>
+              <div class="field">
+                <label for="enc-author-{{ n }}">作者</label>
+                <input id="enc-author-{{ n }}" name="classics[{{ n - 1 }}][author]" type="text"
+                       value="{{ row.author }}" maxlength="120" placeholder="例如：阿西莫夫">
+              </div>
+              <div class="field">
+                <label for="enc-year-{{ n }}">年份</label>
+                <input id="enc-year-{{ n }}" name="classics[{{ n - 1 }}][year]" type="number"
+                       value="{{ row.year }}" min="1000" max="2035" inputmode="numeric" placeholder="1951">
+              </div>
+            </fieldset>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn--primary" type="submit">保存百科</button>
+        <span class="field__hint">只改这一块：不影响释义、拆解结果与作品关联，也不会触发重新分析。</span>
+      </div>
+    </form>
+  {% endif %}
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">引用这篇词条的作品（{{ works|length }}）</div>
+    <div class="card__hint">按权重降序。标「隐藏」的不会出现在前台。</div>
+  </div>
+
+  {% if works is empty %}
+    <div class="empty">还没有任何作品引用这个词。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">作品</th><th scope="col">作者</th><th scope="col">期次</th><th scope="col">主/辅</th><th class="num" scope="col">权重</th><th scope="col">状态</th></tr>
+        </thead>
+        <tbody>
+          {% for w in works %}
+            <tr>
+              <td><a href="/admin/works/{{ w.code }}">{{ w.title }}</a></td>
+              <td>{{ w.author_name|default('—') }}</td>
+              <td class="dim">{{ w.issue_no ? '第 ' ~ w.issue_no ~ ' 期' : '—' }}</td>
+              <td class="dim">{{ w.role == 'main' ? '主' : '辅' }}</td>
+              <td class="num">{{ w.weight }}</td>
+              <td>
+                {% if w.work_visibility == 'hidden' %}<span class="badge badge--danger">作品已隐藏</span>
+                {% elseif w.analysis_visibility == 'hidden' %}<span class="badge badge--analyzing">拆解已收存</span>
+                {% elseif w.analysis_status != 'published' %}<span class="badge">未发布</span>
+                {% else %}<span class="dim">正常</span>{% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+<div class="card card--gap">
+  <a class="btn btn--sm" href="/admin/terms">返回词条列表</a>
+</div>
+{% endblock %}

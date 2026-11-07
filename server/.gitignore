@@ -1,0 +1,53 @@
+# ============================================================
+# 银河图书馆 · 忽略规则
+# 原则：凡是「凭据 / 用户数据 / 运行时产物 / 本机路径」都不进版本库
+# ============================================================
+
+# ---- 凭据：最高优先级，一行都不能进库 ----
+.env
+.env.local
+.env.*.local
+*.cnf
+client-root.cnf
+client-app.cnf
+000_bootstrap.sql
+000_bootstrap.executed.sql
+
+# ---- 依赖 ----
+/vendor/
+# Composer 本体与本机缓存：二进制大文件，换机重下即可（不随仓库分发）
+/composer.phar
+/.composer/
+
+# ---- 用户上传与模型产物（含作品原文，属作者版权内容）----
+/storage/uploads/*
+/storage/artifacts/*
+/storage/cache/*
+/storage/logs/*
+!/storage/uploads/.gitkeep
+!/storage/artifacts/.gitkeep
+!/storage/cache/.gitkeep
+!/storage/logs/.gitkeep
+
+# ---- 数据库导出 / 备份 ----
+*.sql.gz
+*.dump
+*.bak
+/backups/
+
+# ---- 测试与调试产物 ----
+/tests/_output/
+.phpunit.result.cache
+coverage/
+*.log
+
+# ---- 编辑器与系统 ----
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ---- 本机环境差异 ----
+# 注意：php.ini 要进版本库 —— 它是本项目的安全配置基线，不含任何凭据

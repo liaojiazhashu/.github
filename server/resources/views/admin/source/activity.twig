@@ -1,0 +1,192 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}作者分类{% endblock %}
+{% block heading %}作者分类{% endblock %}
+
+{#
+  活跃 / 僵尸
+  --------------------------------------------------------------------------
+  分类依据是「近一年有没有产出」：投稿（站内任意栏目，不只练笔）或评稿。
+  这一页存在的理由是拆解排期 —— 一千多篇不能平铺着拆，得先看作者还在不在。
+
+  三件事容易看错，写在页面上比写在文档里有用的多：
+    · 「站内投稿」是该作者在全站的文章数，不是练笔篇数（有人三年不参赛但一直在写）；
+    · 匿名作品单独一行，不进作者表 —— 按 UID 归到人头上就是把匿名揭开了；
+    · 「仅评论」是单列口径，不是僵尸：口径只算投稿与评稿，只发短评的人落在这一类。
+
+  数据是离线快照，不是实时的。快照日期放在标题旁边，过期了要重跑命令。
+#}
+
+{% block content %}
+
+{% if missing %}
+  <div class="card">
+    <div class="card__head">
+      <div class="card__title">还没有分类快照</div>
+      <div class="card__hint">要逐位作者问官网「最近有没有投稿 / 评稿」，两百多人跑几分钟，所以做成命令</div>
+    </div>
+    <p class="dim" style="margin:0 0 14px">
+      {% if meta %}目录已同步（{{ meta.built_at|date('Y-m-d H:i') }}），但缺少作者活跃度快照。
+      {% else %}缺少作者活跃度快照。{% endif %}
+      在服务器上执行：
+    </p>
+    <pre class="raw">php -c php.ini bin/console.php source:activity</pre>
+    <p class="dim" style="margin:14px 0 0">
+      跑完刷新本页即可。每人一次请求，约三到五分钟；中途失败的会标成「未查到」而不是判成僵尸，
+      再跑一次只补没查到的部分。
+    </p>
+  </div>
+{% else %}
+
+{# ---------------- 两类概览 ---------------- #}
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">两类</div>
+    <div class="card__hint">
+      判定线 {{ meta.since_label }} 之后
+      · 快照 {{ meta.built_at|date('Y-m-d H:i') }}
+    </div>
+  </div>
+
+  <div class="qstats">
+    <div class="qstat">
+      <b>{{ summary.active.works|default(0) }}</b><span>活跃作品</span>
+    </div>
+    <div class="qstat">
+      <b>{{ summary.active.authors|default(0) }}</b><span>活跃作者</span>
+    </div>
+    <div class="qstat">
+      <b>{{ summary.zombie.works|default(0) }}</b><span>僵尸作品</span>
+    </div>
+    <div class="qstat">
+      <b>{{ summary.zombie.authors|default(0) }}</b><span>僵尸作者</span>
+    </div>
+    <div class="qstat">
+      <b>{{ summary.comment_only.works|default(0) }}</b><span>仅评论作品</span>
+    </div>
+    <div class="qstat">
+      <b>{{ anon.works }}</b><span>匿名作品</span>
+    </div>
+    <div class="qstat">
+      <b>{{ summary.gone.works|default(0) }}</b><span>已注销作品</span>
+    </div>
+  </div>
+
+  <p class="dim" style="margin:14px 0 0">
+    <b>活跃</b>= 近一年投过稿或评过稿；<b>僵尸</b>= 两样都没有。
+    投稿看的是该作者在<strong>全站</strong>的文章（不只练笔），评稿取站里的评稿记录（带五维打分那种），
+    不是短评。<br>
+    <b>仅评论</b>（{{ summary.comment_only.works|default(0) }} 篇）单列不归类：这类作者一年内只发过短评、没投过稿也没评过稿。
+    按「投稿 + 评稿」口径算僵尸，按「任何产出」口径算活跃 —— 口径由你定，这里不替你做主。<br>
+    <b>匿名</b>（{{ anon.works }} 篇，{{ anon.words|number_format }} 字）不参与分类、不进作者表：
+    那是练笔揭晓前的匿名投稿，给了 UID 也不该拿来对人。
+    <b>已注销</b>（{{ summary.gone.works|default(0) }} 篇）单列：人已离站，谈不上活跃与否，既不并进僵尸也不并进活跃。
+    {% if summary.unknown and summary.unknown.authors > 0 %}
+      <br><span class="tag tag--warn">注意</span>
+      还有 {{ summary.unknown.authors }} 位作者这次没查到，未计入两类，重跑一次命令即可补上。
+    {% endif %}
+  </p>
+</div>
+
+{# ---------------- 作者表 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">作者</div>
+    <div class="card__hint">按可用作品数排序；点作者名查其在站内的全部文章</div>
+  </div>
+
+  <form method="get" action="/admin/source/activity" class="filter-row">
+    <div class="field">
+      <label for="state">分类</label>
+      <select id="state" name="state">
+        {% for value, label in labels %}
+          <option value="{{ value }}"{% if state == value %} selected{% endif %}>
+            {{ label }}（作者 {{ (summary[value].authors|default(0)) }} · 作品 {{ (summary[value].works|default(0)) }}）
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field field--action">
+      <button class="btn" type="submit">查看</button>
+      <a class="btn btn--ghost" href="/admin/source">回到文章列表</a>
+    </div>
+  </form>
+
+  {% if authors is empty %}
+    <div class="empty">这一类下没有作者。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">作者</th>
+            <th scope="col">分类</th>
+            <th class="num" scope="col">可用作品</th>
+            <th class="num" scope="col">字数</th>
+            <th class="num" scope="col">站内投稿</th>
+            <th scope="col">最近投稿</th>
+            <th class="num" scope="col">评稿</th>
+            <th scope="col">最近评稿</th>
+            <th scope="col">最近评论</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in authors %}
+            <tr>
+              <td>
+                <a href="/admin/source?scope=practice_ready&amp;q={{ a.name|url_encode }}">{{ a.name }}</a>
+                <span class="dim mono">#{{ a.uid }}</span>
+              </td>
+              <td>
+                {% if a.state == 'active' %}
+                  <span class="tag">活跃</span>
+                {% elseif a.state == 'zombie' %}
+                  <span class="tag tag--warn">僵尸</span>
+                {% elseif a.state == 'comment_only' %}
+                  <span class="tag tag--warn">仅评论</span>
+                {% elseif a.state == 'unknown' %}
+                  <span class="tag tag--danger">未查到</span>
+                {% else %}
+                  <span class="tag">{{ labels[a.state]|default(a.state) }}</span>
+                {% endif %}
+              </td>
+              <td class="num mono">{{ a.works }}</td>
+              <td class="num mono">{{ a.words|number_format }}</td>
+              <td class="num mono dim">{{ a.posts }}</td>
+              <td class="dim mono">{{ a.latest_post_at ? a.latest_post_at|date('Y-m-d') : '—' }}</td>
+              <td class="num mono">{{ a.review_total ? a.review_total : '—' }}</td>
+              <td class="dim mono">{{ a.latest_review_at ? a.latest_review_at|date('Y-m-d') : '—' }}</td>
+              <td class="dim mono">{{ a.latest_comment_at ? a.latest_comment_at|date('Y-m-d') : '—' }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if pagination.pages > 1 %}
+      <div class="pager">
+        <span class="dim">共 {{ pagination.total }} 位 · 第 {{ pagination.page }} / {{ pagination.pages }} 页</span>
+        {% if pagination.page > 1 %}
+          <a href="/admin/source/activity?state={{ state }}&amp;page={{ pagination.page - 1 }}">上一页</a>
+        {% endif %}
+        {% if pagination.page < pagination.pages %}
+          <a href="/admin/source/activity?state={{ state }}&amp;page={{ pagination.page + 1 }}">下一页</a>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="dim" style="margin-top:12px">共 {{ pagination.total }} 位</div>
+    {% endif %}
+  {% endif %}
+
+  <p class="dim" style="margin:14px 0 0">
+    「站内投稿」是该作者在官网<strong>全部栏目</strong>的正式文章数（不含草稿箱与回收站）；
+    「可用作品」是其中参加练笔、且能公开阅读的部分。
+    「评稿」是带五维打分的长评，与短评分开统计。<br>
+    「最近评论」这一列大量为空是正常的：评论只在「评稿还不够新、不足以判活跃」时才去查，
+    评稿已经很新的人不再多打一次接口。空值表示<strong>没查</strong>，不是没评论过。
+    要导出名单：<code>php -c php.ini bin/console.php source:activity</code>，产物在 <code>storage/artifacts/</code>。
+  </p>
+</div>
+
+{% endif %}
+{% endblock %}

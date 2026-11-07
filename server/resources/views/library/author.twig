@@ -1,0 +1,89 @@
+{% extends 'library/layout.twig' %}
+
+{#
+  作者页：一个人名下的全部馆内作品。
+  --------------------------------------------------------------------------
+  这一页没有侧栏，也不用「人物小传」那种版式：读者来这里只有一个目的 ——
+  看完一篇喜欢了，把同一个人的其它篇找出来读完。所以作品在最前面，
+  词条画像垫后，且只作参考（它回答「这个人反复在写什么」，不是身份介绍）。
+#}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap">
+    <div class="whead__crumbs">
+      <a href="/library/works">馆藏作品</a><span>/</span>
+      <a href="/library/authors">作者</a><span>/</span>
+      {{ author.name }}
+    </div>
+    <h1 class="h1">{{ author.name }}</h1>
+    <div class="whead__meta">
+      <span>馆内作品 <b class="mono">{{ num(author.works) }}</b> 篇</span>
+      {% if author.works > 0 %}
+        <span class="mono">{{ num(author.words) }} 字</span>
+        {% if author.first_issue %}
+          <span>
+            {% if author.last_issue and author.last_issue != author.first_issue %}
+              第 {{ author.first_issue }}–{{ author.last_issue }} 期
+            {% else %}
+              第 {{ author.first_issue }} 期
+            {% endif %}
+          </span>
+        {% endif %}
+      {% endif %}
+    </div>
+    {% if author.bio %}<p class="lede">{{ author.bio }}</p>{% endif %}
+  </div>
+</section>
+
+<div class="wrap">
+  {% if rows is empty %}
+    {# 0 篇不是「查无此人」：页面照常在，只是名下作品都不在公开区。
+       不写「本来有 N 篇被隐藏」这类话 —— 那等于把藏起来的东西报个数。 #}
+    <div class="empty">
+      <p>这位作者名下暂时没有公开展示的作品。</p>
+      <p class="dim"><a href="/library/works">看全部馆藏</a></p>
+    </div>
+  {% else %}
+    <div class="grid grid--3">
+      {% for row in rows %}{% include 'library/_card.twig' with {'hide_author': true} %}{% endfor %}
+    </div>
+
+    {% if prev_url or first_url or next_url %}
+      <nav class="pager" aria-label="分页">
+        {% if prev_url %}
+          <a class="btn" href="{{ prev_url }}" rel="prev">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"></path></svg>
+            上一页
+          </a>
+        {% endif %}
+        {% if first_url %}<a class="btn btn--ghost" href="{{ first_url }}">回到第一页</a>{% endif %}
+        {% if next_url %}
+          <a class="btn" href="{{ next_url }}" rel="next">下一页
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+          </a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% endif %}
+
+  {% if terms is not empty %}
+    <section class="sec sec--flat">
+      <div class="sec__head">
+        <div>
+          <h2 class="h2 h2--sm">{{ author.name }}反复写到的</h2>
+        </div>
+        <a class="more" href="/library/terms">科幻词库
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+        </a>
+      </div>
+      <p class="dim">按出现在几篇作品里排序，数字是篇数。点进去能看到同样写过这个词的其它作品。</p>
+      <div class="chips">
+        {% for t in terms %}
+          <a class="chip chip--lg" href="/library/terms/{{ t.id }}">{{ t.canonical }}<i class="mono">{{ t.works }}</i></a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</div>
+{% endblock %}

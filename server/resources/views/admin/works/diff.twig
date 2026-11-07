@@ -1,0 +1,73 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}版本对比 · {{ work.title }}{% endblock %}
+{% block heading %}版本对比{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">
+      <a href="/admin/works/{{ work.code }}">{{ work.title }}</a>
+      <span class="dim mono">v{{ from.version_no }} → v{{ to.version_no }}</span>
+    </div>
+    <a class="btn btn--sm btn--ghost" href="/admin/works/{{ work.code }}/versions">版本列表</a>
+  </div>
+
+  <div class="diffstat">
+    <span class="diffstat__item"><b>{{ stats.kept }}</b> 段未动</span>
+    <span class="diffstat__item diffstat__item--chg"><b>{{ stats.changed }}</b> 段改写</span>
+    <span class="diffstat__item diffstat__item--del"><b>{{ stats.removed }}</b> 段删除</span>
+    <span class="diffstat__item diffstat__item--add"><b>{{ stats.added }}</b> 段新增</span>
+    <span class="dim small">（v{{ from.version_no }} {{ stats.old_paragraphs }} 段 · v{{ to.version_no }} {{ stats.new_paragraphs }} 段）</span>
+  </div>
+
+  {% if stats.kept == stats.old_paragraphs and stats.old_paragraphs == stats.new_paragraphs %}
+    <div class="flash">两版正文完全一致（可能是同一个文件换了名字重传）。</div>
+  {% endif %}
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">逐段对比</div>
+    <span class="card__hint">左为 v{{ from.version_no }}，右为 v{{ to.version_no }}；灰色是未变动的段落</span>
+  </div>
+
+  <div class="diff">
+    {% for op in ops %}
+      {% if op.type == 'keep' %}
+        <div class="diff__row diff__row--keep">
+          <div class="diff__cell">{{ op.text }}</div>
+          <div class="diff__cell">{{ op.text }}</div>
+        </div>
+      {% elseif op.type == 'del' and op.other is not null %}
+        {% set seg = inline[loop.index0] %}
+        <div class="diff__row diff__row--chg">
+          <div class="diff__cell">
+            {{ seg.prefix }}<mark class="diff__del">{{ seg.old_mid }}</mark>{{ seg.suffix }}
+          </div>
+          <div class="diff__cell">
+            {{ seg.prefix }}<mark class="diff__add">{{ seg.new_mid }}</mark>{{ seg.suffix }}
+          </div>
+        </div>
+      {% elseif op.type == 'del' %}
+        <div class="diff__row diff__row--del">
+          <div class="diff__cell"><mark class="diff__del">{{ op.text }}</mark></div>
+          <div class="diff__cell diff__cell--empty">（v{{ to.version_no }} 没有这一段）</div>
+        </div>
+      {% else %}
+        <div class="diff__row diff__row--add">
+          <div class="diff__cell diff__cell--empty">（v{{ from.version_no }} 没有这一段）</div>
+          <div class="diff__cell"><mark class="diff__add">{{ op.text }}</mark></div>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="empty">两版都读不出正文，无法比较。</div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="form-actions">
+  <a class="btn btn--ghost" href="/admin/works/{{ work.code }}/versions">版本列表</a>
+  <a class="btn btn--ghost" href="/admin/works/{{ work.code }}">返回作品</a>
+</div>
+{% endblock %}

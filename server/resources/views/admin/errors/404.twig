@@ -1,0 +1,21 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}未找到{% endblock %}
+{% block heading %}未找到{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">这条记录不存在</div>
+    <span class="badge">404</span>
+  </div>
+  <p class="dim">
+    地址里的标识可能拼错，或者这条作品已被归档、删除。
+    作品的对外标识是 26 位 ULID，注意区分大小写。
+  </p>
+  <div class="form-actions">
+    <a class="btn btn--primary" href="/admin/works">回到作品列表</a>
+    <a class="btn btn--ghost" href="/admin">概览</a>
+  </div>
+</div>
+{% endblock %}

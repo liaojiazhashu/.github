@@ -1,0 +1,58 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}我的账号{% endblock %}
+{% block heading %}我的账号{% endblock %}
+
+{% block content %}
+<div class="grid grid--2">
+  <div class="card">
+    <div class="card__head"><div class="card__title">账号信息</div></div>
+    <div class="dl">
+      <dt>用户名</dt><dd>{{ user.username }}</dd>
+      <dt>角色</dt><dd>{{ user.role_label|default(user.role_code) }}</dd>
+      <dt>状态</dt><dd>{{ user.status == 'active' ? '正常' : user.status }}</dd>
+      <dt>上次登录</dt><dd class="mono dim">{{ user.last_login_at|default('—') }}</dd>
+    </div>
+
+    <div class="kv-label card--gap">角色权限</div>
+    <div>
+      {% for code in user.permissions|default([]) %}
+        <span class="chip">{{ code|perm_label }}</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card__head"><div class="card__title">修改口令</div></div>
+
+    {% if error %}
+      <div class="flash flash--err">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/admin/account/password">
+      <input type="hidden" name="_token" value="{{ csrf }}">
+
+      <div class="field">
+        <label for="current">当前口令</label>
+        <input id="current" name="current" type="password" autocomplete="current-password" required>
+      </div>
+
+      <div class="field">
+        <label for="next">新口令</label>
+        <input id="next" name="next" type="password" autocomplete="new-password" required>
+        <div class="field__hint">至少 {{ minLen }} 位。长口令优先于复杂口令 —— 12 位以上的词组比 8 位的符号混排更难猜。</div>
+      </div>
+
+      <div class="field">
+        <label for="repeat">再输一次</label>
+        <input id="repeat" name="repeat" type="password" autocomplete="new-password" required>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn--primary" type="submit">保存</button>
+        <span class="card__hint">改完不需要重新登录。</span>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

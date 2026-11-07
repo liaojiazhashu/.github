@@ -1,0 +1,85 @@
+{% extends 'library/layout.twig' %}
+
+{% set cats = [
+  {'code': '', 'name': '全部'},
+  {'code': 'setting', 'name': '科幻设定'},
+  {'code': 'world', 'name': '世界观'},
+  {'code': 'image', 'name': '意象'}
+] %}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap">
+    <h1 class="h1">科幻词库 · 共 {{ num(total) }} 条</h1>
+    <p class="lede">这里收的是概念，不是标签：只收与科幻强关联、能跨作品复用的词，每篇作品最多贡献 5 个 —— 上限不是配额，抽不出就少给。每个词都有一条脱离原文也读得懂的定义。想找「记忆外包」这类设定的作品，从这里进。</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="catnav">
+    {% for c in cats %}
+      <a class="catnav__a{% if category == c.code %} is-on{% endif %}" href="/library/terms{{ c.code ? '?cat=' ~ c.code : '' }}">{{ c.name }}</a>
+    {% endfor %}
+    <form class="find find--slim" method="get" action="/library/terms" role="search">
+      {% if category %}<input type="hidden" name="cat" value="{{ category }}">{% endif %}
+      <input class="find__in" type="search" name="q" value="{{ keyword }}" maxlength="40" placeholder="找词条" aria-label="找词条">
+      <button class="btn btn--sm" type="submit">搜</button>
+    </form>
+  </div>
+
+  {% if groups is not empty %}
+    {# 总览：三类各取前 24 个最热的 #}
+    {% for g in groups %}
+      <section class="sec sec--flat">
+        <div class="sec__head">
+          <div>
+            <h2 class="h2 h2--sm">{{ g.code|category_label }}<i class="count mono">{{ g.total }}</i></h2>
+          </div>
+          {% if g.total > 0 %}<a class="more" href="/library/terms?cat={{ g.code }}">该类全部 →</a>{% endif %}
+        </div>
+        {% if g.terms is empty %}
+          <p class="dim">这一类还没有词条。</p>
+        {% else %}
+          <div class="tgrid">
+            {% for t in g.terms %}
+              <a class="tcard" href="/library/terms/{{ t.id }}">
+                <span class="tcard__n">{{ t.canonical }}</span>
+                <span class="tcard__m"><b class="mono">{{ t.works }}</b> 篇</span>
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </section>
+    {% endfor %}
+  {% else %}
+    {% if rows is empty %}
+      <div class="empty">
+        <p>没有匹配「{{ keyword }}」的词条。</p>
+        <p class="dim">换个说法试试，或者<a href="/library/terms">看全部词条</a>。</p>
+      </div>
+    {% else %}
+      <div class="tgrid tgrid--wide">
+        {% for t in rows %}
+          <a class="tcard" href="/library/terms/{{ t.id }}">
+            <span class="tcard__cat">{{ t.category|category_label }}</span>
+            <span class="tcard__n">{{ t.canonical }}</span>
+            <span class="tcard__m">馆内作品 <b class="mono">{{ t.works }}</b> 篇</span>
+          </a>
+        {% endfor %}
+      </div>
+
+      {% if pages > 1 %}
+        <nav class="pager" aria-label="分页">
+          {% if page > 1 %}
+            <a class="btn btn--sm" href="/library/terms?{{ {'cat': category, 'q': keyword, 'page': page - 1}|filter(v => v is not empty)|url_encode }}">← 上一页</a>
+          {% endif %}
+          <span class="pager__i mono">{{ page }} / {{ pages }}</span>
+          {% if page < pages %}
+            <a class="btn btn--sm" href="/library/terms?{{ {'cat': category, 'q': keyword, 'page': page + 1}|filter(v => v is not empty)|url_encode }}">下一页 →</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}审计日志{% endblock %}
+{% block heading %}审计日志{% endblock %}
+
+{#
+  只读。表是 append-only 的（002 迁移用触发器挡住 UPDATE / DELETE），
+  所以这一页没有编辑入口 —— 那正是它能被当作证据的原因。
+
+  批量操作只写一条汇总（例如「隐藏 300 篇」），不是 300 行：
+  审计是拿来回答「谁动过、动了多少」，行级细节在业务表的 hidden_* 字段里。
+#}
+
+{% block content %}
+<div class="card">
+  <form method="get" action="/admin/audit" class="filter-row">
+    <div class="field">
+      <label for="action">动作前缀</label>
+      <input id="action" name="action" type="text" value="{{ filter.action }}" placeholder="如 visibility / analysis">
+    </div>
+    <div class="field">
+      <label for="actor">操作人</label>
+      <select id="actor" name="actor">
+        <option value="0">全部</option>
+        {% for a in actors %}
+          <option value="{{ a.id }}"{% if filter.actor == a.id %} selected{% endif %}>{{ a.username }}（{{ a.n }}）</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field field--action">
+      <button class="btn" type="submit">筛选</button>
+      <a class="btn btn--ghost" href="/admin/audit">重置</a>
+    </div>
+  </form>
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">共 {{ total }} 条{% if pages > 1 %} · 第 {{ page }} / {{ pages }} 页{% endif %}</div>
+    <div class="card__hint">最近 30 种动作：{% for a in actions %}{{ a.action }}（{{ a.n }}）{% if not loop.last %} · {% endif %}{% endfor %}</div>
+  </div>
+
+  {% if rows is empty %}
+    <div class="empty">没有符合条件的记录。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">时间</th><th scope="col">操作人</th><th scope="col">动作</th><th scope="col">对象</th><th scope="col">内容</th></tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+            <tr>
+              <td class="dim mono">{{ r.created_at }}</td>
+              <td>{{ r.username|default('系统') }}</td>
+              <td><span class="mono">{{ r.action }}</span></td>
+              <td class="dim mono">{{ r.target_type }}{% if r.target_id %} #{{ r.target_id }}{% endif %}</td>
+              <td class="small">
+                {% if r.after_json %}
+                  <details class="kv-details">
+                    <summary>查看</summary>
+                    <div class="preview">{{ r.after_json }}</div>
+                  </details>
+                {% else %}<span class="dim">—</span>{% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if pages > 1 %}
+      <div class="pager">
+        {% if page > 1 %}
+          <a href="/admin/audit?page={{ page - 1 }}&action={{ filter.action|url_encode }}&actor={{ filter.actor }}">上一页</a>
+        {% endif %}
+        <span class="is-current">{{ page }} / {{ pages }}</span>
+        {% if page < pages %}
+          <a href="/admin/audit?page={{ page + 1 }}&action={{ filter.action|url_encode }}&actor={{ filter.actor }}">下一页</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

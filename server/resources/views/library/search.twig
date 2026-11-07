@@ -1,0 +1,96 @@
+{% extends 'library/layout.twig' %}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap">
+    {% if query %}
+      <h1 class="h1">检索「{{ query }}」</h1>
+      {% if rows is not empty %}
+        <p class="lede">{{ mode_label }}，共 {{ rows|length }} 篇。{% if mode == 'keyword' %}先按词条精确匹配，没找到才退到标题与摘要。{% endif %}</p>
+      {% else %}
+        {# 搜不到时不说「没有找到，共 0 篇」—— 这句话只是把「空」重复了两遍。
+           说清「什么没有」，把下一步交给下面的空态块。 #}
+        <p class="lede">馆内作品里暂时没有对上的内容。下面是能走的两条路。</p>
+      {% endif %}
+    {% else %}
+      <h1 class="h1">检索馆藏</h1>
+      <p class="lede">标题、作者、词条、建议标题都能搜。搜到的地方会标出来。</p>
+    {% endif %}
+
+    <form class="find find--big" method="get" action="/library/search" role="search">
+      <svg class="find__ico" width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+        <circle cx="7" cy="7" r="4.6"></circle><path d="M10.4 10.4 14 14"></path>
+      </svg>
+      <input class="find__in" type="search" name="q" value="{{ query }}" maxlength="40" placeholder="指数、父子、克制的悲伤……" aria-label="检索馆藏">
+      <button class="btn btn--primary" type="submit">检索</button>
+    </form>
+  </div>
+</section>
+
+<div class="wrap">
+  {% if query and rows is empty %}
+    <div class="empty">
+      <p>「{{ query }}」还没有对上任何一篇。</p>
+      {% if suggestions is not empty %}
+        <p class="dim">词库里有这些写法相近的词，点一个能看到所有写过它的作品：</p>
+        <div class="chips">
+          {% for s in suggestions %}
+            <a class="chip chip--lg" href="/library/terms/{{ s.id }}">{{ s.canonical }}</a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="dim">换个说法试试，或者去<a href="/library/terms">科幻词库</a>里按类翻。</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if rows is not empty %}
+    <ul class="reslist">
+      {% for row in rows %}
+        <li class="res">
+          <div class="res__kicker">
+            {% if row.issue_label %}{{ row.issue_label }} · {% endif %}{{ row.author_name }} · <span class="mono">{{ num(row.word_count) }}</span> 字
+          </div>
+          <h2 class="res__t">
+            <a href="/library/works/{{ row.code }}">
+              {%- for part in row.title_parts -%}
+                {%- if part.hit %}<mark>{{ part.text }}</mark>{% else %}{{ part.text }}{% endif -%}
+              {%- endfor -%}
+            </a>
+          </h2>
+          {% if row.lead_parts is not empty %}
+            <p class="res__lead">
+              {%- for part in row.lead_parts -%}
+                {%- if part.hit %}<mark>{{ part.text }}</mark>{% else %}{{ part.text }}{% endif -%}
+              {%- endfor -%}
+            </p>
+          {% endif %}
+          {# 搜到的原因：靠词条找到的时候，标题和摘要里可能一个字都没出现，
+             不给这排词，读者会以为「搜到的跟搜的没关系」 #}
+          {% if row.matched is defined and row.matched is not empty %}
+            <div class="chips res__terms">
+              <span class="res__why">相关词</span>
+              {% for name in row.matched %}<span class="chip chip--on">{{ name }}</span>{% endfor %}
+            </div>
+          {% elseif row.terms is defined and row.terms is not empty %}
+            <div class="chips res__terms">
+              {% for t in row.terms %}<span class="chip">{{ t.canonical }}</span>{% endfor %}
+            </div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if query is empty %}
+    <div class="hotwords">
+      <div class="hotwords__l">常被搜的词条</div>
+      <div class="chips">
+        {% for t in hot %}
+          <a class="chip chip--lg" href="/library/terms/{{ t.id }}">{{ t.canonical }}<i class="mono">{{ t.works }}</i></a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

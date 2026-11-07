@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>科幻社群 · 公益写作社群 | 荒启科幻</title>
+<meta name="description" content="纯公益写作社群，每年九期练笔，参加全程免费。投稿与评稿均通过公司开发的 APP 完成，算法分配评稿任务，每篇作品至少十位读者评稿，超过四份时去极值计分。">
+<meta name="theme-color" content="#0B0E14">
+<meta property="og:title" content="科幻社群 · 公益写作社群 | 荒启科幻">
+<meta property="og:description" content="纯公益写作社群，每年九期练笔，参加全程免费。投稿与评稿均通过公司开发的 APP 完成，算法分配评稿任务，每篇作品至少十位读者评稿，超过四份时去极值计分。">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/logo/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/noto-sans-sc-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/noto-sans-sc-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+<script>/* 首帧前应用主题，避免闪色；图书馆链接带上当前主题，馆里首帧就同色 */(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('hq-theme')||'night')}catch(e){}})();
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*="/library"]');if(!a)return;try{var t=localStorage.getItem('hq-theme');if(t==='day'||t==='night'){var u=new URL(a.href,location.href);u.searchParams.set('theme',t);a.href=u.toString()}}catch(err){}},true);</script>
+</head>
+<body id="top" data-scene="community">
+<a class="skip-link" href="#main">跳到主要内容</a>
+
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<div class="bg-overlay" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-stars"></div>
+  <svg class="bg-constellation" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <!-- 银河带：边界虚线 + 半透明带 + 带内碎星 -->
+      <g fill="currentColor" opacity="0.055">
+        <path d="M470 -40 C 620 120 740 260 790 400 C 840 540 850 720 830 940 L 660 940 C 700 740 690 600 620 470 C 550 340 460 160 400 -40 Z"/>
+      </g>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.16" stroke-dasharray="2 10">
+        <path d="M470 -40 C 620 120 740 260 790 400 C 840 540 850 720 830 940"/>
+        <path d="M400 -40 C 460 160 550 340 620 470 C 690 600 700 740 660 940"/>
+      </g>
+      <g fill="currentColor" opacity="0.5">
+        <circle cx="560" cy="60" r="1.1"/><circle cx="640" cy="150" r="1.3"/><circle cx="700" cy="240" r="1.1"/>
+        <circle cx="740" cy="330" r="1.4"/><circle cx="790" cy="430" r="1.2"/><circle cx="810" cy="520" r="1.5"/>
+        <circle cx="800" cy="610" r="1.2"/><circle cx="780" cy="700" r="1.4"/><circle cx="760" cy="790" r="1.2"/>
+        <circle cx="700" cy="850" r="1.3"/><circle cx="850" cy="120" r="1"/><circle cx="760" cy="90" r="1"/>
+      </g>
+      <!-- 远景散星（无连线） -->
+      <g fill="#EDF2F8">
+        <circle cx="60" cy="420" r="1.3" opacity="0.4"/><circle cx="180" cy="640" r="1" opacity="0.3"/>
+        <circle cx="460" cy="380" r="1.2" opacity="0.35"/><circle cx="1010" cy="180" r="1.2" opacity="0.4"/>
+        <circle cx="1130" cy="330" r="1" opacity="0.3"/><circle cx="1310" cy="430" r="1.3" opacity="0.4"/>
+        <circle cx="1430" cy="620" r="1" opacity="0.3"/><circle cx="1530" cy="240" r="1.2" opacity="0.35"/>
+        <circle cx="980" cy="740" r="1" opacity="0.3"/><circle cx="240" cy="300" r="1" opacity="0.3"/>
+      </g>
+      <!-- 北斗七星（西北天，右上）：天枢→天璇→天玑→天权→玉衡→开阳→摇光 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.4" fill="none">
+        <polyline points="1240,140 1300,120 1350,135 1390,110 1440,120 1490,95 1545,105"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="1240" cy="140" r="2.2"/><circle cx="1300" cy="120" r="2.2"/><circle cx="1350" cy="135" r="2"/>
+        <circle cx="1390" cy="110" r="2"/><circle cx="1440" cy="120" r="2.2"/><circle cx="1490" cy="95" r="2.2"/>
+        <circle cx="1545" cy="105" r="2.2"/>
+      </g>
+      <!-- 仙后座 W（东北天，左上） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.35" fill="none">
+        <polyline points="140,130 200,105 265,135 330,100 395,125"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.65">
+        <circle cx="140" cy="130" r="1.8"/><circle cx="200" cy="105" r="1.8"/><circle cx="265" cy="135" r="1.8"/>
+        <circle cx="330" cy="100" r="1.8"/><circle cx="395" cy="125" r="1.8"/>
+      </g>
+      <!-- 天琴座：织女星 + 平行四边形 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="648,215 682,232 668,276 634,258 648,215"/>
+      </g>
+      <circle cx="620" cy="170" r="3.4" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="620" cy="170" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.7">
+        <circle cx="648" cy="215" r="1.8"/><circle cx="682" cy="232" r="1.6"/><circle cx="668" cy="276" r="1.6"/><circle cx="634" cy="258" r="1.6"/>
+      </g>
+      <!-- 天鹅座（北十字）：天津四 → 天津一 → 辇道增七，两翼 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="880,120 852,212 822,322"/>
+        <polyline points="772,190 852,212 932,252"/>
+      </g>
+      <circle cx="880" cy="120" r="3.2" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="880" cy="120" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="852" cy="212" r="2.4"/><circle cx="822" cy="322" r="2.2"/>
+        <circle cx="772" cy="190" r="1.8"/><circle cx="932" cy="252" r="1.8"/>
+      </g>
+      <!-- 天鹰座：牛郎星 + 扁担双星（河鼓一 / 河鼓三） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="665,445 700,482 736,518"/>
+      </g>
+      <circle cx="700" cy="482" r="3.2" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="700" cy="482" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="665" cy="445" r="2"/><circle cx="736" cy="518" r="2"/>
+        <circle cx="780" cy="570" r="1.6"/><circle cx="816" cy="608" r="1.5"/>
+      </g>
+      <!-- 天蝎座：三星头弧 → 心宿二（红色超巨星） → 尾钩 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="1080,575 1120,560 1160,575"/>
+        <polyline points="1120,630 1160,690 1195,735 1178,795 1122,822 1066,806 1042,762"/>
+      </g>
+      <circle cx="1120" cy="630" r="3" fill="#E88B8B" opacity="0.9"/>
+      <circle cx="1120" cy="630" r="9" fill="none" stroke="#E88B8B" stroke-width="1" opacity="0.55"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="1080" cy="575" r="1.9"/><circle cx="1120" cy="560" r="2"/><circle cx="1160" cy="575" r="1.9"/>
+        <circle cx="1160" cy="690" r="1.9"/><circle cx="1195" cy="735" r="1.9"/><circle cx="1178" cy="795" r="1.9"/>
+        <circle cx="1122" cy="822" r="1.7"/><circle cx="1066" cy="806" r="1.7"/><circle cx="1042" cy="762" r="1.7"/>
+      </g>
+      <!-- 人马座茶壶（银河中心方向） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="790,692 850,672 898,702 893,756 834,776 786,746 790,692"/>
+        <polyline points="786,746 752,722"/>
+        <polyline points="850,672 872,640"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="790" cy="692" r="1.9"/><circle cx="850" cy="672" r="2"/><circle cx="898" cy="702" r="1.9"/>
+        <circle cx="893" cy="756" r="1.9"/><circle cx="834" cy="776" r="1.9"/><circle cx="786" cy="746" r="1.9"/>
+        <circle cx="752" cy="722" r="1.6"/><circle cx="872" cy="640" r="1.6"/>
+      </g>
+      <!-- 织女星坐标十字（织女一是夏季夜空最易辨认的恒星之一） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.5">
+        <path d="M620 152 V165 M620 175 V188 M602 170 H615 M625 170 H638"/>
+      </g>
+    </svg>
+  <svg class="bg-shard bg-shard--a" viewBox="0 0 320 320" aria-hidden="true">
+      <path d="M60 40 L200 120 L110 230 Z" fill="currentColor" opacity="0.07"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+        <polyline points="40,240 110,150 190,190 250,90"/>
+        <path d="M210 60 A 80 80 0 0 1 268 140" stroke-dasharray="1 6"/>
+      </g>
+      <g fill="currentColor">
+        <circle cx="40" cy="240" r="2.6"/><circle cx="110" cy="150" r="3"/>
+        <circle cx="190" cy="190" r="3.4"/><circle cx="250" cy="90" r="2.6"/>
+      </g>
+      <circle cx="190" cy="190" r="8" fill="none" stroke="currentColor" stroke-width="1" opacity="0.65"/>
+      <g stroke="currentColor" stroke-width="1" opacity="0.55">
+        <path d="M250 78 V88 M250 92 V102 M240 90 H250 M254 90 H264"/>
+      </g>
+      <rect x="30" y="264" width="20" height="20" fill="currentColor" opacity="0.8"/>
+    </svg>
+  <svg class="bg-shard bg-shard--b" viewBox="0 0 320 320" aria-hidden="true">
+      <path d="M160 160 L268 122 A 118 118 0 0 1 262 202 Z" fill="currentColor" opacity="0.09"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+        <circle cx="160" cy="160" r="110"/>
+        <circle cx="160" cy="160" r="72" stroke-dasharray="2 8" opacity="0.6"/>
+        <ellipse cx="160" cy="160" rx="132" ry="44" transform="rotate(-18 160 160)" opacity="0.8"/>
+      </g>
+      <g stroke="currentColor" stroke-width="1" opacity="0.5">
+        <path d="M160 132 V156 M160 164 V188 M132 160 H156 M164 160 H188"/>
+      </g>
+      <circle cx="160" cy="160" r="4" fill="currentColor" opacity="0.9"/>
+      <circle cx="52" cy="196" r="5" fill="currentColor"/>
+      <circle cx="41" cy="188" r="2" fill="currentColor" opacity="0.7"/>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.35">
+        <path d="M52 196 L160 160"/>
+      </g>
+    </svg>
+  <svg class="bg-daysky" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <mask id="daysky-moon-mask">
+          <rect x="100" y="700" width="150" height="130" fill="#fff"/>
+          <circle cx="145" cy="767" r="30" fill="#000"/>
+        </mask>
+      </defs>
+      <!-- 锐利斜切色块：深空平面，全部直线边界 -->
+      <polygon points="0,900 0,560 640,900" fill="var(--c-data, #4A5FA8)" opacity="0.10"/>
+      <polygon points="1600,900 1600,470 960,900" fill="var(--c-data, #4A5FA8)" opacity="0.08"/>
+      <polygon points="1600,0 1600,280 1270,0" fill="#FFFFFF" opacity="0.55"/>
+      <polygon points="0,0 320,0 0,200" fill="#FFFFFF" opacity="0.40"/>
+      <line x1="0" y1="742" x2="1600" y2="548" stroke="var(--c-data, #4A5FA8)" stroke-width="1" opacity="0.14"/>
+      <!-- 光照阶梯带（v2.3.7）：以太阳为圆心的三层平涂同心圆，
+           亮度逐层衰减 —— 用「色阶」而非渐变表达「这一片天光来自太阳」 -->
+      <g fill="var(--sun, #F5C445)">
+        <circle cx="1400" cy="540" r="1000" opacity="0.025"/>
+        <circle cx="1400" cy="540" r="860" opacity="0.045"/>
+        <circle cx="1400" cy="540" r="700" opacity="0.07"/>
+      </g>
+      <!-- 放射光线：自日面外侧射出的直线光束（几何、锐利，非卡通短刺） -->
+      <g class="daysky__rays" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.14">
+        <path d="M1682.5 1029.3 L1900 1406 M1400 1105 L1400 1540 M910.7 822.5 L534 1040
+                 M835 540 L400 540 M910.7 257.5 L534 40 M1117.5 50.7 L900 -326
+                 M1400 -25 L1400 -460 M1682.5 50.7 L1900 -326"/>
+      </g>
+      <!-- 巨物太阳：r=520、圆心 (1400,540) —— 左侧与上方 limb 完整落在
+           画幅内、右下两向出画。直径 1040 已超过画幅高 900，比 v2.3.7 的
+           r=400 再放大 1.3 倍：太阳从此不是「画面里的一个圆」，
+           而是「画面装不下的一个天体」 -->
+      <g class="daysky__rings">
+        <circle cx="1400" cy="540" r="575" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.12"/>
+        <circle cx="1400" cy="540" r="554" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.20"/>
+        <circle cx="1400" cy="540" r="536" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1.2" opacity="0.34"/>
+      </g>
+      <g class="daysky__sun">
+        <!-- 平涂内盘（v2.3.16）：五层同心、半径逐级收 74、透明度逐级 +0.05。
+             日面跨度 1040，只用一层均匀填色时读作「一片浅黄雾」而不是球体；
+             五级台阶叠出「中心亮、边缘暗」的亮度梯度，全站禁渐变，
+             这是唯一能表达「发光球体」的语言 —— 与「光照阶梯带」同一套做法。 -->
+        <circle cx="1400" cy="540" r="520" fill="var(--sun, #F5C445)" opacity="0.26"/>
+        <circle cx="1400" cy="540" r="446" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="372" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="298" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="224" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <!-- 赤道与子午两条对角基准线（几何线稿语言） -->
+        <path d="M800 -60 L2000 1140 M2000 -60 L800 1140" stroke="var(--sun-line, #D9A32B)" stroke-width="1" fill="none" opacity="0.22"/>
+        <!-- 日面边缘：加粗一档并提亮 —— 直径超过画幅后，这条弧是唯一
+             能让人读出「这是个球、不是色块」的证据，必须给足 -->
+        <circle cx="1400" cy="540" r="520" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="3" opacity="0.72"/>
+        <circle cx="1400" cy="540" r="492" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1.2" opacity="0.34"/>
+      </g>
+      <!-- 黯淡的月亮：画面左下，亮面朝向太阳（光源方向一致），
+           mask 硬裁出锐利明暗界线 -->
+      <g class="daysky__moon" opacity="0.5">
+        <circle cx="170" cy="760" r="30" fill="#DDE7EF" mask="url(#daysky-moon-mask)"/>
+        <circle cx="170" cy="760" r="30" fill="none" stroke="var(--c-data, #4A5FA8)" stroke-width="1" opacity="0.35"/>
+      </g>
+      <!-- 几点黯淡星光：低存在感圆点与十字亮星（极慢漂移） -->
+      <g class="daysky__stars" fill="var(--c-data, #4A5FA8)">
+        <circle cx="520" cy="212" r="2" opacity="0.35"/>
+        <circle cx="760" cy="332" r="1.5" opacity="0.28"/>
+        <circle cx="984" cy="140" r="2" opacity="0.30"/>
+        <circle cx="700" cy="560" r="1.8" opacity="0.25"/>
+        <circle cx="1084" cy="692" r="2.2" opacity="0.28"/>
+        <circle cx="222" cy="322" r="1.6" opacity="0.30"/>
+        <circle cx="1448" cy="424" r="1.8" opacity="0.30"/>
+        <path d="M880 458 V482 M868 470 H892" stroke="var(--c-data, #4A5FA8)" stroke-width="1" fill="none" opacity="0.30"/>
+        <path d="M1494 640 V660 M1484 650 H1504" stroke="var(--c-data, #4A5FA8)" stroke-width="1" fill="none" opacity="0.26"/>
+      </g>
+    </svg>
+  <div class="bg-vignette"></div>
+</div>
+
+  <header class="site-header">
+    <div class="container container--wide site-header__inner">
+      <a class="brand" href="index.html" aria-label="荒启科幻 首页">
+        <img class="brand__img brand__img--night" src="assets/logo/logo-full-white.png" alt="荒启科幻 HUANGQI SCI-FI" width="880" height="334">
+        <img class="brand__img brand__img--day" loading="lazy" src="assets/logo/logo-full-dark.png" alt="荒启科幻 HUANGQI SCI-FI" width="880" height="334">
+      </a>
+
+      <nav class="nav" aria-label="主导航">
+        <ul class="nav" style="display:contents">
+        <li class="nav__item">
+          <a class="nav__link" href="index.html">首页</a>
+        </li>
+        <li class="nav__item">
+          <a class="nav__link" href="about.html">关于荒启</a>
+        </li>
+        <li class="nav__item has-drop is-current">
+          <span class="nav__group">
+            <a class="nav__link nav__link--parent" href="index.html#business">三大板块</a>
+            <button class="nav__caret-btn" type="button" aria-expanded="false" aria-haspopup="true" aria-label="展开「三大板块」子菜单">
+              <svg class="ico nav__caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </span>
+          <div class="nav__drop">
+            <a class="drop-item" href="community.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.4a3.4 3.4 0 0 1 0 6.6"/><path d="M18 14.4A6.2 6.2 0 0 1 21.2 20"/></svg></span>
+              <span>
+                <span class="drop-item__title">科幻社群</span>
+                <span class="drop-item__desc">成员自主运营的公益写作社群，每年九期练笔</span>
+              </span>
+            </a>
+            <a class="drop-item" href="tools.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="5.4"/><path d="M20.6 12h-3.2M12 20.6v-3.2M3.4 12h3.2M12 3.4v3.2M18.08 18.08l-2.26-2.26M5.92 18.08l2.26-2.26M5.92 5.92l2.26 2.26M18.08 5.92l-2.26 2.26"/></svg></span>
+              <span>
+                <span class="drop-item__title">数字化产品开发</span>
+                <span class="drop-item__desc">社区、教育、AI 与定制开发，源码可交付</span>
+              </span>
+            </a>
+            <a class="drop-item" href="library.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="17" r="2.2"/><circle cx="19" cy="17" r="2.2"/><path d="M10.4 6.6 6.6 15M13.6 6.6 17.4 15M7.2 17h9.6"/></svg></span>
+              <span>
+                <span class="drop-item__title">银河图书馆</span>
+                <span class="drop-item__desc">免费开放的在线索引馆，一篇两页：读者一页、作者一页</span>
+              </span>
+            </a>
+          </div>
+        </li>
+        <li class="nav__item">
+          <a class="nav__link" href="contact.html">联系我们</a>
+        </li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到白天模式" aria-pressed="false">
+          <svg class="ico ico-20 theme-toggle__ico theme-toggle__ico--to-day" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/></svg>
+          <svg class="ico ico-20 theme-toggle__ico theme-toggle__ico--to-night" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 14.4A8.5 8.5 0 0 1 9.6 3.4a8.5 8.5 0 1 0 11 11Z"/></svg>
+        </button>
+        
+        
+        <a class="btn btn--outline btn--sm btn--read" href="/library" target="_blank" rel="noopener"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h6a3 3 0 0 1 3 3V20a2.4 2.4 0 0 0-2.4-2.4H4z"/><path d="M20 4.5h-6a3 3 0 0 0-3 3V20a2.4 2.4 0 0 1 2.4-2.4H20z"/></svg>银河图书馆</a>
+        <a class="btn btn--outline btn--sm btn--read" href="/h5/" target="_blank" rel="noopener" data-invite-open>在线阅读</a>
+        <a class="btn btn--outline btn--sm btn--download" href="/dt/荒启科幻.exe" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3.5v3.5M14 3.5v3.5M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></svg>下载客户端</a>
+        
+        <a class="btn btn--primary btn--sm" href="contact.html#invite"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12 11.3 14.1 15 10.4"/></svg>获取邀请码</a>
+        <button class="nav-toggle" type="button" aria-label="打开导航菜单" aria-controls="mobile-drawer">
+          <span class="nav-toggle__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+<main id="main" class="page">
+
+  <!-- ========================================================= 页面头 -->
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="面包屑">
+        <a href="index.html">首页</a>
+        <svg class="ico ico-18 breadcrumb__sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        <a href="index.html#business">三大板块</a>
+        <svg class="ico ico-18 breadcrumb__sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        <span class="breadcrumb__current">科幻社群</span>
+      </nav>
+
+      <p class="eyebrow mt-5" data-reveal="fade">公益社群 · 荒启科幻练笔</p>
+      <h1 class="page-hero__title" data-reveal="up">科幻社群</h1>
+      <p class="page-hero__desc" data-reveal="up" style="--reveal-delay:90ms">
+        一个由科幻爱好者组成、成员自主运营的纯公益写作社群，运作方式称为「荒启科幻练笔」。
+        不做发布平台，只做一件事：保证每一篇投稿至少被十位不同的读者认真读完，
+        并拿到具体、可用、无处可躲的反馈。参加全程免费。
+      </p>
+
+      <div class="page-hero__stats" data-reveal="fade" style="--reveal-delay:200ms">
+        <div>
+          <p class="hero__meta-num"><span data-count="9">0</span><small>期 / 年</small></p>
+          <p class="hero__meta-label">年度期数</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="10">0</span><small>位 / 篇</small></p>
+          <p class="hero__meta-label">每篇作品的最低评稿人数</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="5">0</span><small>个维度</small></p>
+          <p class="hero__meta-label">评稿的量化维度</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="25">0</span><small>期</small></p>
+          <p class="hero__meta-label">当前进行到的期次</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 运营模式 -->
+  <section class="section">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow" data-reveal="fade">运作模式</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">用节奏代替热情</h2>
+          <p class="body mt-6" data-reveal="up">
+            写作最容易失败的地方不是才华，而是节奏。多数人的第一篇作品停在草稿里，
+            不是因为写不下去，而是因为没有下一个人等着读它。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            因此练笔的第一条设计原则是稳定：每年九期，投稿与评稿全部在
+            成都荒启文化传播有限公司开发的 APP「荒启科幻」内完成。期次连续编号、不因年份重置，
+            成员随时知道自己处在第几期、下一期什么时候开始。
+          </p>
+
+          <div class="grid grid--auto mt-7" data-reveal="up">
+            <div class="panel">
+              <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/></svg> 九期节奏</p>
+              <p class="panel__body">每年九期，周期按月份划分、长短交替（见右侧分布）。每期提供推荐主题，但不具强制性，作者可自由创作。</p>
+            </div>
+            <div class="panel">
+              <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="6.5" height="5" rx="1.4"/><rect x="14.5" y="3.5" width="6.5" height="5" rx="1.4"/><rect x="8.75" y="15.5" width="6.5" height="5" rx="1.4"/><path d="M6.25 8.5v3.5h11.5V8.5M12 12v3.5"/></svg> 投稿与评稿同在 APP</p>
+              <p class="panel__body">投稿和评稿都通过公司开发的 APP「荒启科幻」进行。写、读、评、计分、反馈形成一条闭环，不需要在多个工具之间搬运稿件。</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="split__aside" data-reveal="left">
+          <div class="demo-frame">
+            <div class="demo-frame__bar">
+              <span class="demo-frame__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+              <span class="demo-frame__title">年度九期 / 月份分布（长条为周期长度）</span>
+            </div>
+            <div class="demo-frame__body">
+              <div class="bar-list">
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 1 期　1-2 月</span><span class="bar-item__val">2 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill" data-value="100"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 2 期　3 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 3 期　4 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 4 期　5-6 月</span><span class="bar-item__val">2 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill" data-value="100"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 5 期　7 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 6 期　8 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 7 期　9-10 月</span><span class="bar-item__val">2 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill" data-value="100"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 8 期　11 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 9 期　12 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+              </div>
+              <p class="micro mt-5">跨度两个月的期次写作窗口更宽，跨度一个月的期次更紧凑。每期都从活动创建时开始，至截止日早上 7 点截止。</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 年度节奏 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">年度节奏</p>
+        <h2 class="section-head__title" data-reveal="up">一年九期，月份周期各不相等</h2>
+        <p class="section-head__desc" data-reveal="up">
+          九期不是平均切分十二个月：写作窗口宽窄交替，长窗口容纳长篇，短窗口逼出短篇。
+        </p>
+      </div>
+
+      <div class="notice mt-6" data-reveal="fade">
+        <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2"/></svg>
+        <span>
+          练笔始于 2024 年 1 月 1 日，期次连续编号、每年九期循环。
+          最新一期与各期起止时间以社群公告为准；过期稿件不参与评比。
+        </span>
+      </div>
+
+      <div class="grid grid--3 mt-7" data-reveal="up">
+        <div class="metric">
+          <svg class="ico ico-24" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+          <p class="metric__value">3000–33000 <small class="text-cyan" style="font-size:0.5em">字</small></p>
+          <p class="metric__label">练笔稿件的字数区间。不符合字数要求的稿件一律视为无效投稿，不予接受</p>
+        </div>
+        <div class="metric">
+          <svg class="ico ico-24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2"/></svg>
+          <p class="metric__value">7:00 <small class="text-cyan" style="font-size:0.5em">截止</small></p>
+          <p class="metric__label">每期在截止日早上 7 点截止，过期稿件不参与评比</p>
+        </div>
+        <div class="metric">
+          <svg class="ico ico-24" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5A8 8 0 0 0 6.3 6.4L4 8.6"/><path d="M20 4.5v4h-4"/><path d="M4 12.5a8 8 0 0 0 13.7 5.1l2.3-2.2"/><path d="M4 19.5v-4h4"/></svg>
+          <p class="metric__value">2025-11-01 <small class="text-cyan" style="font-size:0.5em">起实行</small></p>
+          <p class="metric__label">现行《荒启科幻练笔活动正式规则》为 4.1 版本，自 2025 年 11 月 1 日起实行</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================== 单期活动流程 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">单期流程</p>
+        <h2 class="section-head__title" data-reveal="up">一期活动是怎么跑完的</h2>
+        <p class="section-head__desc" data-reveal="up">
+          五个步骤，每一步都有明确的交付物与截止时间。流程本身不做简化，
+          因为简化掉的往往是反馈质量。
+        </p>
+      </div>
+
+      <div class="steps mt-8" data-reveal="up">
+        <div class="step">
+          <p class="step__num" aria-hidden="true"></p>
+          <h3 class="step__title">投稿</h3>
+          <p class="step__desc">
+            在 APP 内创建作品并提交，字数须落在 3000–33000 字之间，过期稿件不参与评比。
+          </p>
+        </div>
+        <div class="step">
+          <p class="step__num" aria-hidden="true"></p>
+          <h3 class="step__title">算法分配</h3>
+          <p class="step__desc">
+            算法工具完成派单，结果直接推送到 APP 评审中心；四条分配原则见下方机制。
+          </p>
+        </div>
+        <div class="step">
+          <p class="step__num" aria-hidden="true"></p>
+          <h3 class="step__title">评稿</h3>
+          <p class="step__desc">
+            在 APP 内填写六部分评稿单：五个维度各自打分，并写出十字以上的文字评价。
+          </p>
+        </div>
+        <div class="step">
+          <p class="step__num" aria-hidden="true"></p>
+          <h3 class="step__title">计分与反馈</h3>
+          <p class="step__desc">
+            系统汇总当期排名并生成个人反馈单，作者可在 APP 内看到收到的全部评稿。
+          </p>
+        </div>
+        <div class="step">
+          <p class="step__num" aria-hidden="true"></p>
+          <h3 class="step__title">线上指指点点大会</h3>
+          <p class="step__desc">
+            把文字评稿搬到当面：按发布时间逐篇开麦讨论，每期一次。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================= 评稿分配与评稿结构 -->
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">核心机制</p>
+        <h2 class="section-head__title" data-reveal="up">分配、评稿、计分、纪律</h2>
+        <p class="section-head__desc" data-reveal="up">
+          这四件事决定了反馈的质量。规则把它们全部写死，不做弹性处理 ——
+          弹性一旦出现在这里，反馈就不再可比。
+        </p>
+      </div>
+
+      <div class="grid grid--2 grid--gap-lg mt-8">
+        <article class="card" data-reveal="up">
+          <div class="card__head">
+            <div class="ico-box"><svg class="ico ico-24" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="4.4" rx="1.2"/><rect x="3" y="16.6" width="6" height="4.4" rx="1.2"/><rect x="15" y="16.6" width="6" height="4.4" rx="1.2"/><path d="M12 7.4v4.4M6 16.6v-2.4h12v2.4"/></svg></div>
+            <span class="chip chip--accent">01</span>
+          </div>
+          <h3 class="card__title">分配：算法工具的四条原则</h3>
+          <p class="card__desc">分配不靠人情，也不靠人工排表。</p>
+          <ul class="list-check card__desc">
+            <li>未完成练笔任务的成员，需要完成作者两倍的评稿任务</li>
+            <li>作者不可以为自己的作品写评稿</li>
+            <li>每个人的评稿任务里，稿件平均字数尽可能一致</li>
+            <li>每篇作品在分配时至少指派 10 个不同的读者（分配下限，不设上限）</li>
+          </ul>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:100ms">
+          <div class="card__head">
+            <div class="ico-box ico-box--cyan"><svg class="ico ico-24" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4.5" width="14" height="16" rx="2"/><path d="M9 4.5V3.4A1.4 1.4 0 0 1 10.4 2h3.2A1.4 1.4 0 0 1 15 3.4v1.1z"/><path d="M9 10.5h6M9 14.5h4"/></svg></div>
+            <span class="chip chip--cyan">02</span>
+          </div>
+          <h3 class="card__title">评稿：六个组成部分</h3>
+          <p class="card__desc">评分保证可比，文字保证可用，两者都不可省。</p>
+          <ul class="list-check card__desc">
+            <li>综合评价：选填，用于写下不落在单一维度上的整体判断</li>
+            <li>设定、文笔、情节、人物、思想性：五个必填维度</li>
+            <li>每个维度的文字评价需在十个字以上，并对应打出 0–10 分</li>
+            <li>APP 自动取五个维度分数之和的平均分作为评稿结果</li>
+          </ul>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:200ms">
+          <div class="card__head">
+            <div class="ico-box"><svg class="ico ico-24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 17a8.5 8.5 0 0 1 15 0"/><path d="M12 17 15.5 11"/><circle cx="12" cy="17" r="1.4"/></svg></div>
+            <span class="chip chip--accent">03</span>
+          </div>
+          <h3 class="card__title">计分：去极值后取总分</h3>
+          <p class="card__desc">只考量合格评稿，不考量人情与情绪。</p>
+          <ul class="list-check card__desc">
+            <li>计分时考量所有合格评稿，不合格的评稿不参与计算</li>
+            <li>一篇作品超过四个评稿时，去掉一个最低分与一个最高分后得出总分</li>
+            <li>去极值的作用是削弱单份极端评分对结果的牵动</li>
+          </ul>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:300ms">
+          <div class="card__head">
+            <div class="ico-box ico-box--cyan"><svg class="ico ico-24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12 11.3 14.1 15 10.4"/></svg></div>
+            <span class="chip chip--cyan">04</span>
+          </div>
+          <h3 class="card__title">纪律：评稿只对作品负责</h3>
+          <p class="card__desc">这是唯一一条没有商量余地的规则。</p>
+          <ul class="list-check card__desc">
+            <li>评稿只可以评价作品本身，不可以对作者进行评价、揣度或攻击</li>
+            <li>评稿内容需言之有物，不可以敷衍对待</li>
+            <li>绝对不允许使用任何 AI 工具撰写评稿，一经查实将直接移除该评稿作者</li>
+            <li>管理员有权删除危害社群环境或敷衍了事的评稿，并要求评稿作者重新完成该任务</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= 分配机制示意 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow" data-reveal="fade">分配机制</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">每篇作品，至少十位读者</h2>
+          <p class="body mt-6" data-reveal="up">
+            「每篇至少十位读者」是整套机制里最硬的一条约束。它意味着任何一篇投稿都不可能被冷落 ——
+            哪怕当期只有一篇稿子，也会有十个评稿任务被分配出去。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            与此同时，算法还要让每个人拿到的稿件总字数尽可能接近。
+            这两条约束会互相拉扯：想让字数均匀，读者就必须更分散；想让每篇都覆盖到十位读者，
+            字数就必然出现波动。算法在这两者之间取一个尽量好的解，而不是优先满足其中任意一条。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            十人是<b>分配下限</b>，不是实际评稿人数：分配以外的成员可以基于自己的喜好主动认领，
+            不设上限，所以一篇作品的实际评稿人数通常多于十人。
+          </p>
+        </div>
+
+        <aside class="split__aside" data-reveal="left">
+          <div class="graph-stage">
+            <svg viewBox="0 0 520 380" role="img" aria-label="一篇作品至少被分配给十位不同读者的示意图">
+              <g stroke="var(--accent-1-line)" stroke-width="1.3">
+                <path d="M260 190 L260 50"/>
+                <path d="M260 190 L377.6 76.7"/>
+                <path d="M260 190 L450.2 146.7"/>
+                <path d="M260 190 L450.2 233.3"/>
+                <path d="M260 190 L377.6 303.3"/>
+                <path d="M260 190 L260 330"/>
+                <path d="M260 190 L142.4 303.3"/>
+                <path d="M260 190 L69.8 233.3"/>
+                <path d="M260 190 L69.8 146.7"/>
+                <path d="M260 190 L142.4 76.7"/>
+              </g>
+
+              <g fill="var(--surface-2)" stroke="var(--line-2)" stroke-width="1.6">
+                <circle cx="260" cy="50" r="17"/>
+                <circle cx="377.6" cy="76.7" r="17"/>
+                <circle cx="450.2" cy="146.7" r="17"/>
+                <circle cx="450.2" cy="233.3" r="17"/>
+                <circle cx="377.6" cy="303.3" r="17"/>
+                <circle cx="260" cy="330" r="17"/>
+                <circle cx="142.4" cy="303.3" r="17"/>
+                <circle cx="69.8" cy="233.3" r="17"/>
+                <circle cx="69.8" cy="146.7" r="17"/>
+                <circle cx="142.4" cy="76.7" r="17"/>
+              </g>
+
+              <g fill="var(--text-4)" font-size="10.5" font-family="JetBrains Mono, monospace" text-anchor="middle">
+                <text x="260" y="54">01</text>
+                <text x="377.6" y="80.7">02</text>
+                <text x="450.2" y="150.7">03</text>
+                <text x="450.2" y="237.3">04</text>
+                <text x="377.6" y="307.3">05</text>
+                <text x="260" y="334">06</text>
+                <text x="142.4" y="307.3">07</text>
+                <text x="69.8" y="237.3">08</text>
+                <text x="69.8" y="150.7">09</text>
+                <text x="142.4" y="80.7">10</text>
+              </g>
+
+              <circle cx="260" cy="190" r="46" fill="var(--accent-1-soft)" stroke="var(--accent-1)" stroke-width="1.8"/>
+              <text x="260" y="186" fill="var(--text-1)" font-size="14" font-weight="600" text-anchor="middle" font-family="Noto Sans SC, sans-serif">一篇</text>
+              <text x="260" y="205" fill="var(--text-1)" font-size="14" font-weight="600" text-anchor="middle" font-family="Noto Sans SC, sans-serif">作品</text>
+
+              <text x="260" y="366" fill="var(--text-4)" font-size="11.5" text-anchor="middle" font-family="Noto Sans SC, sans-serif">
+                被指派的十位读者互不重叠，且都不包括作者本人
+              </text>
+            </svg>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= 界面示意 / 评稿 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">界面示意</p>
+        <h2 class="section-head__title" data-reveal="up">评审中心长什么样</h2>
+        <p class="section-head__desc" data-reveal="up">
+          以下为 APP 界面结构示意，用于说明信息如何呈现，其中的作品名与数值均为示例。
+        </p>
+      </div>
+
+      <div class="grid grid--2 grid--gap-lg mt-8">
+        <div class="demo-frame" data-reveal="up">
+          <div class="demo-frame__bar">
+            <span class="demo-frame__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="demo-frame__title">评审中心 / 待评列表 · 第 25 期（界面示意，非真实数据）</span>
+          </div>
+          <div class="demo-frame__body">
+            <div class="ui-row">
+              <span class="ui-row__idx">01</span>
+              <span class="ui-row__main">幻梦</span>
+              <span class="ui-row__meta">11,436 字</span>
+            </div>
+            <div class="ui-row">
+              <span class="ui-row__idx">02</span>
+              <span class="ui-row__main">和平存续</span>
+              <span class="ui-row__meta">6,247 字</span>
+            </div>
+            <div class="ui-row">
+              <span class="ui-row__idx">03</span>
+              <span class="ui-row__main">关于维修申请表 P1—025C 的故事</span>
+              <span class="ui-row__meta">7,577 字</span>
+            </div>
+            <div class="ui-row">
+              <span class="ui-row__idx">04</span>
+              <span class="ui-row__main">何须马革裹尸还</span>
+              <span class="ui-row__meta">8,004 字</span>
+            </div>
+            <div class="ui-row">
+              <span class="ui-row__idx">05</span>
+              <span class="ui-row__main">存在即合理号星际间武装货运飞船观察录</span>
+              <span class="ui-row__meta">11,164 字</span>
+            </div>
+            <p class="micro mt-4">任务清单由算法工具生成后直接推送到本页；清单里的稿件平均字数在全体成员之间拉平。</p>
+          </div>
+        </div>
+
+        <div class="demo-frame" data-reveal="up" style="--reveal-delay:120ms">
+          <div class="demo-frame__bar">
+            <span class="demo-frame__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="demo-frame__title">评稿单 / 六部分组成（界面示意，非真实数据）</span>
+          </div>
+          <div class="demo-frame__body">
+            <div class="score-grid">
+              <div class="score-line">
+                <span>设定</span>
+                <span class="score-line__track"><span class="score-line__fill" data-value="88"></span></span>
+                <span class="score-line__val">8.8</span>
+              </div>
+              <div class="score-line">
+                <span>文笔</span>
+                <span class="score-line__track"><span class="score-line__fill" data-value="79"></span></span>
+                <span class="score-line__val">7.9</span>
+              </div>
+              <div class="score-line">
+                <span>情节</span>
+                <span class="score-line__track"><span class="score-line__fill" data-value="71"></span></span>
+                <span class="score-line__val">7.1</span>
+              </div>
+              <div class="score-line">
+                <span>人物</span>
+                <span class="score-line__track"><span class="score-line__fill" data-value="84"></span></span>
+                <span class="score-line__val">8.4</span>
+              </div>
+              <div class="score-line">
+                <span>思想性</span>
+                <span class="score-line__track"><span class="score-line__fill" data-value="82"></span></span>
+                <span class="score-line__val">8.2</span>
+              </div>
+            </div>
+
+            <div class="panel mt-6">
+              <p class="panel__title">综合评价（选填）</p>
+              <p class="panel__body">
+                「第四章的视角切换让读者第一次意识到叙述者并不可靠，这个设计很准。
+                但前三章埋的线索密度不够，建议在第二章的对话里再加一处时间矛盾，
+                让重读时的第二次冲击更早到来。」
+              </p>
+              <p class="micro mt-3">五个必填维度的文字评价需在十字以上；综合评价不计分，只用于写下落在单一维度之外的整体判断。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================== 评分区间建议 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">评分标尺</p>
+        <h2 class="section-head__title" data-reveal="up">0–10 分对应什么</h2>
+        <p class="section-head__desc" data-reveal="up">
+          打分最怕的是各人心里那把尺子不一样。规则因此给出一份建议区间，
+          让「7 分」在所有人那里指同一种水平。
+        </p>
+      </div>
+
+      <div class="table-wrap mt-7" data-reveal="up">
+        <table class="data-table">
+          <caption class="sr-only">单个维度的 0–10 分评分区间建议</caption>
+          <thead>
+            <tr>
+              <th scope="col" style="width:120px">分数</th>
+              <th scope="col" style="width:110px">档位</th>
+              <th scope="col">说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="mono">0 – 1</span></td>
+              <td>外行</td>
+              <td>在该维度完全没有值得一提的地方</td>
+            </tr>
+            <tr>
+              <td><span class="mono">2 – 3</span></td>
+              <td>新手</td>
+              <td>在该维度极其粗拙，但是略有雏形</td>
+            </tr>
+            <tr>
+              <td><span class="mono">4 – 5</span></td>
+              <td>业余</td>
+              <td>在该维度的写作技法有过一定的训练</td>
+            </tr>
+            <tr>
+              <td><span class="mono">6 – 7</span></td>
+              <td>职业</td>
+              <td>在该维度的写作表现已经足以在公开发表渠道获得广泛认可</td>
+            </tr>
+            <tr>
+              <td><span class="mono">8 – 9</span></td>
+              <td>专家</td>
+              <td>在该维度的写作表现令人惊叹，扣人心弦</td>
+            </tr>
+            <tr>
+              <td><span class="mono">10</span></td>
+              <td>大师</td>
+              <td>在该维度的写作表现令人无可指摘，几近完美</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="micro mt-4" data-reveal="fade">
+        区间为建议值，不作为强制约束；但打分时请对齐同一把尺子 —— 跨期次的可比性依赖于它。
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================================================== 奖金与特别奖项 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">激励</p>
+        <h2 class="section-head__title" data-reveal="up">奖项设置与三个评稿奖</h2>
+        <p class="section-head__desc" data-reveal="up">
+          奖项由社群成员共同设立，资金来自社群自设的荣誉池 —— 纯粹为鼓励而设：
+          不要求授权、不影响署名与后续投稿出版，公司不参与奖项的设置与发放。
+          作品版权始终归作者本人。
+        </p>
+      </div>
+
+      <div class="table-wrap mt-7" data-reveal="up">
+        <table class="data-table">
+          <caption class="sr-only">每期作品奖金与特别奖项对照表</caption>
+          <thead>
+            <tr>
+              <th scope="col">类别</th>
+              <th scope="col">范围</th>
+              <th scope="col">奖励</th>
+              <th scope="col">认定依据</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>作品奖 · 第一名</td>
+              <td>当期投稿总数前 10%（向上取整）中的第 1 名</td>
+              <td><span class="mono">200 元</span></td>
+              <td>去掉一个最低分与一个最高分后的总分排名</td>
+            </tr>
+            <tr>
+              <td>作品奖 · 第二、三名</td>
+              <td>同一入围范围内的第 2、3 名</td>
+              <td><span class="mono">各 100 元</span></td>
+              <td>同上</td>
+            </tr>
+            <tr>
+              <td>作品奖 · 优秀奖</td>
+              <td>入围范围内除前三名以外的作品</td>
+              <td><span class="mono">各 50 元</span></td>
+              <td>同上</td>
+            </tr>
+            <tr>
+              <td>评稿奖 · 最欢乐评稿</td>
+              <td>当期全部评稿</td>
+              <td><span class="mono">50 元</span></td>
+              <td rowspan="3">APP 0.2.1 版本更新后新增的评稿评价功能</td>
+            </tr>
+            <tr>
+              <td>评稿奖 · 最有帮助评稿</td>
+              <td>当期全部评稿</td>
+              <td><span class="mono">50 元</span></td>
+            </tr>
+            <tr>
+              <td>评稿奖 · 最认真评稿</td>
+              <td>当期全部评稿</td>
+              <td><span class="mono">50 元</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-7" data-reveal="up">
+        <div class="panel">
+          <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="4.4"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg> 入围范围怎么算</p>
+          <p class="panel__body">每期根据当期投稿总数，取前百分之十（向上取整）的作品进入奖励范围。投稿 23 篇则取前 3 篇，投稿 4 篇也取前 1 篇。</p>
+        </div>
+        <div class="panel">
+          <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 14.6 9l6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.8 9.4 9z"/></svg> 三个评稿奖为什么单设</p>
+          <p class="panel__body">如果只奖励作品，评稿就永远是「顺手做完的任务」。三个评稿奖把评价的注意力引回到读者这一侧 —— 欢乐、有用、认真，是三件不同的事。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== 线上指指点点大会 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow" data-reveal="fade">线上直播</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">「指指点点大会」</h2>
+          <p class="body mt-6" data-reveal="up">
+            这是每期最有意思的环节，官方名称是「线上指指点点大会」。
+            名字起得很重，实际气氛比名字轻得多 —— 它更像是把评稿从文字里拎出来，
+            当面说一遍。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            时间固定在<strong>每月 16 日以后第一个周六晚 8 点</strong>，地点是<strong>腾讯会议</strong>。
+            讨论顺序按作品发布时间先后排列，不按分数、不按人气。
+          </p>
+
+          <div class="panel mt-7" data-reveal="up">
+            <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2"/></svg> 流程与限制</p>
+            <ul class="list-dot panel__body">
+              <li>先由作者表达创作历程与意图，其他人此时不开麦</li>
+              <li>随后其他成员轮流开麦评价或提问，<b>每次开麦不超过两分钟</b></li>
+              <li>开麦时严禁对作者本人进行评价、揣度或攻击，只谈作品</li>
+              <li>周六晚未能讨论完全部作品时，周日晚八点继续讨论后面的作品</li>
+              <li><b>该环节没有强制性</b>，作者可以自行选择是否参加</li>
+            </ul>
+          </div>
+        </div>
+
+        <aside class="split__aside" data-reveal="left">
+          <div class="demo-frame">
+            <div class="demo-frame__bar">
+              <span class="demo-frame__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+              <span class="demo-frame__title">单场议程 / 时间分配</span>
+            </div>
+            <div class="demo-frame__body">
+              <div class="ui-row">
+                <span class="ui-row__idx">01</span>
+                <span class="ui-row__main">作者讲述创作历程与意图</span>
+                <span class="ui-row__meta">开场</span>
+              </div>
+              <div class="ui-row">
+                <span class="ui-row__idx">02</span>
+                <span class="ui-row__main">成员轮流开麦评价或提问（每人 ≤ 2 分钟）</span>
+                <span class="ui-row__meta">轮次 × 人数</span>
+              </div>
+              <div class="ui-row">
+                <span class="ui-row__idx">03</span>
+                <span class="ui-row__main">作者回应与补充</span>
+                <span class="ui-row__meta">收束</span>
+              </div>
+              <div class="ui-row">
+                <span class="ui-row__idx">04</span>
+                <span class="ui-row__main">进入下一篇作品，按发布时间顺序</span>
+                <span class="ui-row__meta">循环</span>
+              </div>
+
+              <div class="panel mt-6">
+                <p class="panel__title">为什么限定两分钟</p>
+                <p class="panel__body">
+                  不限时的情况下，声音最大的人会占掉整场。两分钟的上限把发言权强制摊平，
+                  也让「讲清一件事」而不是「讲很多事」成为默认要求。
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= 管理规则 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">管理规则</p>
+        <h2 class="section-head__title" data-reveal="up">三条规则，没有例外</h2>
+        <p class="section-head__desc" data-reveal="up">
+          这三条是练笔能持续运行的底线。它们不针对任何人，只针对行为。
+        </p>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8" data-reveal="up">
+        <div class="card">
+          <div class="card__head">
+            <div class="ico-box"><svg class="ico ico-24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.4a3.4 3.4 0 0 1 0 6.6"/><path d="M18 14.4A6.2 6.2 0 0 1 21.2 20"/></svg></div>
+            <span class="chip chip--accent">01</span>
+          </div>
+          <h3 class="card__title">群成员仅由参与者组成</h3>
+          <p class="card__desc">
+            练笔群群内成员仅由练笔或评稿参与者组成，不接受任何闲杂分子。
+            想先了解荒启科幻的人，可以加 QQ 群「荒启科幻交流群」进行交流。
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card__head">
+            <div class="ico-box ico-box--cyan"><svg class="ico ico-24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2"/></svg></div>
+            <span class="chip chip--cyan">02</span>
+          </div>
+          <h3 class="card__title">评稿须在当月 16 日 7:00 前完成</h3>
+          <p class="card__desc">
+            每期评稿必须在当月 16 日 7:00 前在 APP 完成。
+            这个时间点排在「指指点点大会」之前，保证讨论开始时所有人已经读过全部稿件。
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card__head">
+            <div class="ico-box"><svg class="ico ico-24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12 11.3 14.1 15 10.4"/></svg></div>
+            <span class="chip chip--accent">03</span>
+          </div>
+          <h3 class="card__title">未完成评稿任务将被移除</h3>
+          <p class="card__desc">
+            投稿自愿，评稿必做：不投稿的那一期仍会领到任务，且任务量是投稿者的两倍。
+            没有完成任务会被直接移除，需在两个月以后方可继续参与活动。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 适合谁 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">适合谁</p>
+        <h2 class="section-head__title" data-reveal="up">三种人在这里收获最大</h2>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="persona" data-reveal="up">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.8 2.8M14.9 14.9l2.8 2.8M17.7 6.3l-2.8 2.8M9.1 14.9l-2.8 2.8"/></svg></div>
+          <h3 class="persona__title">刚开始写科幻的人</h3>
+          <p class="persona__need">
+            你有一个想法，但不确定它是否成立；你写完了，但不确定哪里出了问题。
+            最需要的是有人认真读完，并指出具体在哪个段落出了问题。
+          </p>
+          <p class="persona__serve"><b>你会得到</b>　至少十位读者各自写下的设定、文笔、情节、人物、思想性评价，以及一份可对照的 0–10 分标尺</p>
+        </article>
+        <article class="persona" data-reveal="up" style="--reveal-delay:100ms">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.4a3.4 3.4 0 0 1 0 6.6"/><path d="M18 14.4A6.2 6.2 0 0 1 21.2 20"/></svg></div>
+          <h3 class="persona__title">寻求氛围的资深写作者</h3>
+          <p class="persona__need">
+            你已经写过不少，缺的不是技巧，而是持续的产出节奏，以及能和你讨论结构问题的同行。
+          </p>
+          <p class="persona__serve"><b>你会得到</b>　每年九期稳定的截稿节奏、当面讨论作品的直播环节，以及每期优秀作品可获的社群荣誉激励</p>
+        </article>
+        <article class="persona" data-reveal="up" style="--reveal-delay:200ms">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M15.6 8.4 13.9 13.9 8.4 15.6l1.7-5.5z"/></svg></div>
+          <h3 class="persona__title">愿意认真读稿的读者</h3>
+          <p class="persona__need">
+            你未必当期就投稿，但享受把一篇稿子读透、并把自己的判断写清楚的过程。
+            未投稿者在这里不是旁观者，而是完成任务量两倍的评稿人。
+          </p>
+          <p class="persona__serve"><b>你会得到</b>　优先参评最欢乐、最有帮助、最认真三个评稿奖项的资格，以及一套被认真对待的阅读方法</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 加入流程 -->
+  <section class="section">
+    <div class="container">
+      <div class="split split--top">
+        <div>
+          <p class="eyebrow" data-reveal="fade">加入流程</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">四步拿到注册邀请码</h2>
+          <p class="body mt-5" data-reveal="up">
+            荒启科幻练笔是邀请码准入制活动。我们不设创作门槛，
+            但有一条前置条件：<strong>你必须接受全部规则，才可以获得注册邀请码。</strong>
+          </p>
+          <div class="row mt-7" data-reveal="up">
+            <a class="btn btn--primary" href="contact.html#invite">去拿邀请码 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn btn--ghost" href="library.html">走进银河图书馆</a>
+          </div>
+        </div>
+
+        <div class="steps" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))" data-reveal="up">
+          <div class="step">
+            <p class="step__num" aria-hidden="true"></p>
+            <h3 class="step__title">先到交流群了解</h3>
+            <p class="step__desc">加入 QQ 群 280660235「荒启科幻交流群」，或通过微信公众号「荒启科幻」了解动态。这一步只是了解，不要求任何承诺。</p>
+          </div>
+          <div class="step">
+            <p class="step__num" aria-hidden="true"></p>
+            <h3 class="step__title">完整阅读并接受规则</h3>
+            <p class="step__desc">通读《荒启科幻练笔活动正式规则》，包括练笔、评比、管理三个部分。接受全部条款是获得邀请码的唯一前提。</p>
+          </div>
+          <div class="step">
+            <p class="step__num" aria-hidden="true"></p>
+            <h3 class="step__title">获取注册邀请码</h3>
+            <p class="step__desc">接受规则后即可获得注册邀请码，用于在 APP「荒启科幻」上完成注册。邀请码是准入凭证，不对外散发。</p>
+          </div>
+          <div class="step">
+            <p class="step__num" aria-hidden="true"></p>
+            <h3 class="step__title">进入练笔群</h3>
+            <p class="step__desc">注册后进入练笔群。群内成员仅由练笔或评稿参与者组成，你将在这里收到当期的推荐主题与评稿任务。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =========================================================== CTA -->
+  <section class="section section--sm">
+    <div class="container">
+      <div class="cta-block" data-reveal="up">
+        <div class="cta-block__inner">
+          <div class="cta-block__text">
+            <h2 class="cta-block__title">想为你的文学组织搭一套同样的机制？</h2>
+            <p class="cta-block__desc">
+              支撑这套机制的社区系统软件由成都荒启文化传播有限公司开发，
+              可按你的社团、工坊或文学社的流程定制开发并部署；荒启科幻社群本身保持纯公益，与该项商业服务无关。
+            </p>
+          </div>
+          <div class="cta-block__actions">
+            <a class="btn btn--primary btn--lg" href="tools.html">查看工具能力 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn btn--outline btn--lg" href="contact.html">咨询定制</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <footer class="site-footer">
+    <div class="container container--full">
+      <div class="site-footer__main">
+        <div class="site-footer__brand">
+          <img class="brand__img--night" src="assets/logo/logo-full-white.png" alt="荒启科幻" width="880" height="334">
+          <img class="brand__img--day" loading="lazy" src="assets/logo/logo-full-dark.png" alt="荒启科幻" width="880" height="334">
+          <p class="site-footer__tagline">从荒芜中开启新世界。连接科幻创作者与读者，用技术把重复劳动交给系统，用关键词索引解构科幻世界。</p>
+          <p class="footer-brand-line">HUANGQI SCI-FI</p>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">三大板块</h2>
+          <ul class="site-footer__links">
+            <li><a href="community.html">科幻社群</a></li>
+            <li><a href="tools.html">数字化产品开发</a></li>
+            <li><a href="library.html">银河图书馆</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">快速链接</h2>
+          <ul class="site-footer__links">
+            <li><a href="contact.html#start">客户端下载</a></li>
+            <li><a href="/h5/" target="_blank" rel="noopener">在线阅读</a></li>
+            <li><a href="/library" target="_blank" rel="noopener">进入银河图书馆</a></li>
+            <li><a href="about.html">关于荒启</a></li>
+            <li><a href="contact.html">联系与加入</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">联系我们</h2>
+          <ul class="site-footer__links">
+            <li><a href="contact.html#invite">加入社群（QQ 群 280660235）</a></li>
+            <li><a href="contact.html">联系方式与入群须知</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="site-footer__bottom">
+        <p>© <span data-year>2026</span> 成都荒启文化传播有限公司 · 荒启科幻。<a class="site-footer__icp" href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank"> 蜀ICP备2025169184号-1 </a></p>
+        <p class="site-footer__compliance">「荒启科幻」练笔社群由科幻爱好者组成、成员自主运营，为纯公益社群；成都荒启文化传播有限公司提供网络平台工具，不参与社群运营，不从中获取经营收益。</p>
+        <div class="site-footer__bottom-links">
+          <a href="about.html">品牌规范</a>
+          <a href="contact.html#privacy">隐私说明</a>
+          <a href="#top">返回顶部</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="drawer" id="mobile-drawer">
+    <div class="drawer__panel">
+      <button class="drawer__close" type="button" aria-label="关闭导航菜单">
+        <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="drawer__group">
+        <p class="drawer__label">页面</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="index.html">首页<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="about.html">关于荒启<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="contact.html">联系我们<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__group">
+        <p class="drawer__label">三大板块</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="community.html">科幻社群<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="tools.html">数字化产品开发<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="library.html">银河图书馆<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__group">
+        <p class="drawer__label">开始使用</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="contact.html#start">客户端下载<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="/h5/" target="_blank" rel="noopener">在线阅读<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="/library" target="_blank" rel="noopener">进入银河图书馆<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__cta">
+        <a class="btn btn--primary btn--block" href="contact.html"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.5 13.5"/><path d="M21 3l-6.8 18-3.7-7.5L3 9.8z"/></svg>加入社群</a>
+      </div>
+    </div>
+  </div>
+
+
+  <dialog class="invite-modal" id="invite-modal" aria-labelledby="invite-modal-title">
+    <div class="invite-modal__card">
+      <button class="invite-modal__close" type="button" data-invite-close aria-label="关闭弹窗">
+        <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <p class="invite-modal__eyebrow">邀请码准入</p>
+      <h2 class="invite-modal__title" id="invite-modal-title">注册与阅读之前，先拿邀请码</h2>
+      <p class="invite-modal__desc">
+        客户端安装包可以直接下载安装；<b>注册账号</b>与<b>在线阅读</b>都需要邀请码 ——
+        加入交流 QQ 群、在加群申请里回答「科幻的定义是什么？」即可获取，不收费，也不需要填表。
+      </p>
+      <p class="invite-modal__group">群号 <span class="mono">280660235</span><button class="copy-btn" type="button" data-copy="280660235" aria-label="复制群号 280660235">复制群号</button></p>
+      <p class="invite-modal__hint">电脑上扫二维码；手机上复制群号去搜索。</p>
+      <img class="invite-modal__qr" loading="lazy" decoding="async" src="assets/qq/qq-group-qr.png"
+           alt="荒启科幻交流群二维码，群号 280660235" width="216" height="216">
+      <div class="invite-modal__actions invite-modal__actions--stack">
+        <a class="btn btn--primary btn--sm" href="contact.html#invite"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12 11.3 14.1 15 10.4"/></svg>获取邀请码</a>
+                  <a class="btn btn--outline btn--sm" href="/dt/荒启科幻.exe" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3.5v3.5M14 3.5v3.5M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></svg>电脑端 Windows<span class="app-dl__ext">.exe</span></a>
+          <a class="btn btn--outline btn--sm" href="/dt/Huangqisf.apk" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.5 13.5"/><path d="M21 3l-6.8 18-3.7-7.5L3 9.8z"/></svg>安卓端 Android<span class="app-dl__ext">.apk</span></a>
+          <a class="btn btn--outline btn--sm" href="/dt/huangqisf.mobileconfig" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2"/><path d="M12 3.4c2.4 2.4 3.6 5.4 3.6 8.6s-1.2 6.2-3.6 8.6c-2.4-2.4-3.6-5.4-3.6-8.6S9.6 5.8 12 3.4Z"/></svg>iOS 端 iPhone / iPad<span class="app-dl__ext">.ipa</span></a>
+      </div>
+      <p class="invite-modal__foot">已有邀请码？<a href="/h5/" target="_blank" rel="noopener">进入在线阅读</a></p>
+    </div>
+  </dialog>
+
+
+<button class="to-top" type="button" aria-label="回到顶部">
+  <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

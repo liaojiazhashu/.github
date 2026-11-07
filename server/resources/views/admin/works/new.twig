@@ -1,0 +1,72 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}新建导入{% endblock %}
+{% block heading %}新建导入{% endblock %}
+
+{% block content %}
+{% if error %}
+  <div class="flash flash--err">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/admin/works" enctype="multipart/form-data" class="card">
+  <input type="hidden" name="_token" value="{{ csrf }}">
+
+  <div class="card__head">
+    <div class="card__title">作品信息</div>
+    <span class="card__hint">一次一篇；批量请用「批量导入」</span>
+  </div>
+
+  <div class="field">
+    <label for="title">标题</label>
+    <input id="title" name="title" type="text" value="{{ old.title }}" required maxlength="200">
+  </div>
+
+  <div class="form-row">
+    <div class="field">
+      <label for="author">作者笔名</label>
+      <input id="author" name="author" type="text" value="{{ old.author }}" required maxlength="64">
+      <div class="field__hint">按归一化笔名匹配已有作者，不存在则自动新建</div>
+    </div>
+    <div class="field">
+      <label for="issue_no">期次号</label>
+      <input id="issue_no" name="issue_no" type="number" min="1" max="999" value="{{ old.issue_no }}" required>
+      <div class="field__hint">填数字，如 25；期次不存在会自动创建</div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="field">
+      <label for="genre_code">体裁</label>
+      <select id="genre_code" name="genre_code">
+        <option value="">未指定</option>
+        {% for g in genres %}
+          <option value="{{ g.code }}"{% if old.genre_code == g.code %} selected{% endif %}>{{ g.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="tags">标签</label>
+      <input id="tags" name="tags" type="text" value="{{ old.tags }}" maxlength="200" placeholder="用逗号或空格分隔，最多 12 个">
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="summary">一句话梗概<span class="dim">（可留空，自动取正文开头）</span></label>
+    <textarea id="summary" name="summary" maxlength="500">{{ old.summary }}</textarea>
+  </div>
+
+  <div class="field">
+    <label for="file">原文文件</label>
+    <input id="file" name="file" type="file" accept=".txt,.md,.markdown,.docx" required>
+    <div class="field__hint">
+      支持 txt / md / docx，单篇上限 32 MiB。txt 与 md 会自动识别 UTF-8 与 GBK 编码；
+      docx 只读取正文，含宏的文档会被拒收。
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn--primary" type="submit">导入</button>
+    <a class="btn btn--ghost" href="/admin/works">取消</a>
+  </div>
+</form>
+{% endblock %}

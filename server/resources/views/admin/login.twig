@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>登录 · 银河图书馆</title>
+  <link rel="stylesheet" href="/assets/admin.css">
+</head>
+<body>
+<div class="login">
+  <div class="login__card">
+    <div class="login__brand">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#4FC1E0" stroke-width="1.1" aria-hidden="true">
+        <circle cx="10" cy="10" r="8.2"></circle>
+        <ellipse cx="10" cy="10" rx="8.2" ry="3.1"></ellipse>
+        <path d="M10 1.8v16.4"></path>
+      </svg>
+      <span class="login__title">银河图书馆</span>
+    </div>
+    <div class="login__sub">Library Console</div>
+
+    {% if expired %}
+      <div class="flash flash--warn">登录状态已失效，请重新登录。</div>
+    {% endif %}
+    {% if error %}
+      <div class="flash flash--err">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/admin/login" autocomplete="off">
+      <input type="hidden" name="_token" value="{{ csrf }}">
+
+      <div class="field">
+        <label for="username">用户名</label>
+        <input id="username" name="username" type="text" value="{{ username }}" required maxlength="64" autofocus>
+      </div>
+
+      <div class="field">
+        <label for="password">口令</label>
+        <input id="password" name="password" type="password" required minlength="1" autocomplete="current-password">
+      </div>
+
+      <div class="field">
+        <label for="totp">动态验证码<span class="dim">（未绑定可留空）</span></label>
+        <input id="totp" name="totp" type="text" inputmode="numeric" maxlength="8" autocomplete="one-time-code">
+      </div>
+
+      <button class="btn btn--primary" type="submit">登录</button>
+    </form>
+
+    <div class="login__foot">
+      仅供运营人员使用。账号由管理员在服务器上创建，不开放注册。<br>
+      连续输错 5 次将锁定 15 分钟。
+      <span class="login__legal">
+        成都荒启文化传播有限公司 · 统一社会信用代码
+        <span class="mono">91510100MAEY15D64X</span> ·
+        <a href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank">蜀ICP备2025169184号-1</a>
+      </span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

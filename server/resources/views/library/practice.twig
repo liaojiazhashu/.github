@@ -1,0 +1,144 @@
+{% extends 'library/layout.twig' %}
+
+{#
+  练笔统计：每一期收到了多少稿、多少人写、多少人评。
+  --------------------------------------------------------------------------
+  这一页回答的是运营与作者都会问的那句「这一期到底有多少篇」。
+  口径比数字重要：分母含不含草稿、匿名算不算、评稿含不含 AI，
+  四个问题各有一个答案，所以数字下面必须紧跟一段口径说明 —— 否则
+  这些数字被截图拿去汇报时，每个人理解的都不一样。
+
+  版式上只做两件事：顶部四个总量、下面一张按期次的表。
+  不做折线图：26 个期次里有一半是「一次性投满」，趋势线会把
+  第 13 期（89 篇）和第 26 期（11 篇，还在收稿）连成一条假的下坡。
+#}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap">
+    <div class="whead__crumbs">
+      <a href="/library">银河图书馆</a><span>/</span>
+      练笔统计
+    </div>
+    <h1 class="h1">练笔统计</h1>
+    <div class="whead__meta">
+      {% if run is not empty %}
+        <span>覆盖 <b class="mono">{{ rows|length }}</b> 期</span>
+        <span>数据截至 <b class="mono">{{ run.finished_at }}</b></span>
+        <span>每月 16 日 18:00 重算</span>
+      {% else %}
+        <span>还没有统计数据</span>
+      {% endif %}
+    </div>
+    <p class="lede">
+      荒启科幻练笔每一期收到多少稿、有多少人写、多少人评过、一共写了多少字。
+      只统计正式稿：草稿箱与回收站不计入，匿名作品照常计入。
+    </p>
+  </div>
+</section>
+
+<div class="wrap">
+{% if rows is empty %}
+  <div class="note">
+    <p><b>这一页还没有数据。</b></p>
+    <p>
+      统计由服务器每月 16 日 18:00 自动重算一次，结果落在库里。
+      如果这是刚部署完，下一次定时任务跑完后这里就会有数字；
+      也可以让人在服务器上手动跑一次 <span class="mono">bin/console.php source:stats --apply</span>。
+    </p>
+  </div>
+{% else %}
+
+  <div class="pstat">
+    <div class="pstat__i">
+      <b class="pstat__n">{{ num(total.works_total) }}</b>
+      <span class="pstat__l">作品</span>
+      <span class="pstat__s">公开 {{ num(total.works_public) }} · 未公开 {{ num(total.works_hidden) }}</span>
+    </div>
+    <div class="pstat__i">
+      <b class="pstat__n">{{ num(total.authors) }}</b>
+      <span class="pstat__l">作者</span>
+      <span class="pstat__s">按账号去重</span>
+    </div>
+    <div class="pstat__i">
+      <b class="pstat__n">{{ num(total.review_count) }}</b>
+      <span class="pstat__l">评稿</span>
+      <span class="pstat__s">{{ num(total.review_people) }} 位评稿人</span>
+    </div>
+    <div class="pstat__i">
+      <b class="pstat__n">{{ num(total.words_total) }}</b>
+      <span class="pstat__l">作品总字数</span>
+      <span class="pstat__s">平均每篇 {{ num(total.avg_words) }} 字</span>
+    </div>
+  </div>
+
+  <p class="tnote dim">按期次。公开 = 读者能读到全文；未公开 = 隐藏、待审或未通过审核。</p>
+  <div class="tblscroll">
+  <table class="table table--stat">
+    <thead>
+      <tr>
+        <th scope="col">期次</th>
+        <th scope="col">公开作品</th>
+        <th scope="col">未公开</th>
+        <th scope="col">作者</th>
+        <th scope="col">评稿成员</th>
+        <th scope="col">评稿</th>
+        <th scope="col">作品总字数</th>
+        <th scope="col">平均字数</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+        <tr>
+          <th scope="row">
+            <a href="/library/issues/{{ r.issue_no }}">{{ r.label }}</a>
+            {% if r.ended_at %}<div class="dim mono">{{ r.ended_at|slice(0, 10) }} 截稿</div>{% endif %}
+          </th>
+          <td class="mono" data-l="公开作品">{{ num(r.works_public) }}</td>
+          <td class="mono" data-l="未公开">
+            {{ num(r.works_hidden) }}{% if r.works_rejected > 0 %}<span class="dim"> ＋{{ num(r.works_rejected) }} 待审/未过</span>{% endif %}
+          </td>
+          <td class="mono" data-l="作者">{{ num(r.authors) }}{% if r.works_anon > 0 %}<span class="dim">（{{ num(r.works_anon) }} 篇匿名）</span>{% endif %}</td>
+          <td class="mono" data-l="评稿成员">{{ num(r.review_people) }}</td>
+          <td class="mono" data-l="评稿">{{ num(r.review_count) }}{% if r.review_ai > 0 %}<span class="dim"> ＋{{ num(r.review_ai) }} AI</span>{% endif %}</td>
+          <td class="mono" data-l="作品总字数">{{ num(r.words_total) }}</td>
+          <td class="mono dim" data-l="平均字数">{{ num(r.avg_words) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th scope="row">总计</th>
+        <td class="mono" data-l="公开作品"><b>{{ num(total.works_public) }}</b></td>
+        <td class="mono" data-l="未公开"><b>{{ num(total.works_hidden) }}</b>{% if total.works_rejected > 0 %}<span class="dim"> ＋{{ num(total.works_rejected) }}</span>{% endif %}</td>
+        <td class="mono" data-l="作者"><b>{{ num(total.authors) }}</b></td>
+        <td class="mono" data-l="评稿成员"><b>{{ num(total.review_people) }}</b></td>
+        <td class="mono" data-l="评稿"><b>{{ num(total.review_count) }}</b></td>
+        <td class="mono" data-l="作品总字数"><b>{{ num(total.words_total) }}</b></td>
+        <td class="mono dim" data-l="平均字数">{{ num(total.avg_words) }}</td>
+      </tr>
+    </tfoot>
+  </table>
+  </div>
+
+  <div class="note">
+    <p><b>口径。</b>说清楚这四个问题，数字才有意义。</p>
+    <ul>
+      <li><b>作品：</b>{{ notes.works }}</li>
+      <li><b>作者：</b>{{ notes.authors }}</li>
+      <li><b>评稿：</b>{{ notes.reviews }}</li>
+      <li><b>总字数：</b>取官网的正文规模（去标签后的字符数），不是本地重新数的 —— 两者相差几十个字符的空白，
+          为这几十个字去拉一遍全文没有必要。</li>
+      <li><b>总计：</b>作者与评稿成员是<b>去重后</b>的合计，不等于各期相加。同一个人投过五期，总计里只有一位。</li>
+    </ul>
+    {% if total.site_review > 0 %}
+      <p class="dim">
+        对账：官网自己报的本期评稿合计 {{ num(total.site_review) }} 条，我们数出 {{ num(total.review_count) }} 条。
+        差值是站方计数器里仍保留的已删评稿 —— 这一页只数现在还能打开的那些。
+      </p>
+    {% endif %}
+  </div>
+
+{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% if same_term is defined and same_term.works is not empty %}
+  <section class="sec">
+    <div class="sec__head">
+      <div>
+        <h2 class="h2 h2--sm">同属「{{ same_term.term }}」的作品</h2>
+      </div>
+      <a class="more" href="/library/terms/{{ same_term.term_id }}">看这个词条</a>
+    </div>
+    <div class="sibs">
+      {% for s in same_term.works %}
+        <a class="sib" href="/library/works/{{ s.code }}">
+          <span class="sib__t">{{ s.title }}</span>
+          <span class="sib__m">{{ s.author_name }} · <span class="mono">{{ num(s.word_count) }}</span> 字</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}

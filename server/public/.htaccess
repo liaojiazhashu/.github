@@ -1,0 +1,35 @@
+# 银河图书馆 · Apache 兜底配置（生产用 Nginx，见规划文档附录 B.4）
+# 只对 public/ 生效：这里之外的东西都不应该被 Web 直接访问到。
+
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# 隐藏一切不该被下载的东西（即便被人放进了 public/）
+<FilesMatch "(^\.|\.(env|ini|log|sql|md|lock|json|dist|phar|bak|swp)$)">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 已存在的文件与目录直接交给静态处理（assets / media）
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # 其余全部进前端控制器
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# media 目录禁止执行任何脚本
+<IfModule mod_php.c>
+    <Directory "media">
+        php_flag engine off
+    </Directory>
+</IfModule>

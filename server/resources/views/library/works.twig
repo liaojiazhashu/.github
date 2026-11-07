@@ -1,0 +1,107 @@
+{% extends 'library/layout.twig' %}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap">
+    <h1 class="h1">{{ heading|default('馆藏作品') }} · 共 {{ num(total) }} 篇</h1>
+    {# 排序说明必须跟着 filter.sort 走：以前写死「按最新入馆排序」，
+       读者把下拉框改成「字数多」，说明文字还在说按最新入馆。 #}
+    {% set sort_ledes = {
+      'newest': '按最新入馆排序',
+      'words': '按字数从多到少排序',
+      'title': '按标题字序排序'
+    } %}
+    <p class="lede">{{ sort_ledes[filter.sort|default('newest')]|default('按最新入馆排序') }}。筛选条件会写进地址栏，可以直接复制给别人。</p>
+    <p class="quicklinks">换个维度：<a href="/library/authors">按作者</a><span>·</span><a href="/library/terms">按词条</a><span>·</span><a href="/library/search">直接搜</a></p>
+  </div>
+</section>
+
+<div class="wrap">
+  <form class="filters" method="get" action="/library/works">
+    <label class="field">
+      <span>期次</span>
+      <select name="issue">
+        <option value="0">全部</option>
+        {% for i in options.issues %}
+          <option value="{{ i.no }}"{% if filter.issue == i.no %} selected{% endif %}>第 {{ i.no }} 期（{{ i.n }}）</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    {% if options.genres is not empty %}
+    <label class="field">
+      <span>体裁</span>
+      <select name="genre">
+        <option value="">全部</option>
+        {% for g in options.genres %}
+          <option value="{{ g.code }}"{% if filter.genre == g.code %} selected{% endif %}>{{ g.name }}（{{ g.n }}）</option>
+        {% endfor %}
+      </select>
+    </label>
+    {% endif %}
+
+    <label class="field">
+      <span>字数</span>
+      <select name="range">
+        <option value="">全部</option>
+        <option value="0-3000"{% if filter.range == '0-3000' %} selected{% endif %}>3000 字以内</option>
+        <option value="3000-6000"{% if filter.range == '3000-6000' %} selected{% endif %}>3000–6000 字</option>
+        <option value="6000-12000"{% if filter.range == '6000-12000' %} selected{% endif %}>6000–12000 字</option>
+        <option value="12000-0"{% if filter.range == '12000-0' %} selected{% endif %}>12000 字以上</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span>排序</span>
+      <select name="sort">
+        <option value="newest"{% if filter.sort == 'newest' %} selected{% endif %}>最新入馆</option>
+        <option value="words"{% if filter.sort == 'words' %} selected{% endif %}>字数多</option>
+        <option value="title"{% if filter.sort == 'title' %} selected{% endif %}>标题</option>
+      </select>
+    </label>
+
+    <button class="btn btn--primary" type="submit">筛选</button>
+    {% if active is not empty %}<a class="btn btn--ghost" href="/library/works">清除</a>{% endif %}
+  </form>
+
+  {% if active is not empty %}
+    <div class="chips">
+      {% for c in active %}<a class="chip chip--on" href="{{ c.href }}">{{ c.label }}<i>×</i></a>{% endfor %}
+    </div>
+  {% endif %}
+
+  {% if rows is empty %}
+    <div class="empty">
+      {% if filter.author %}
+        {# 按作者筛且筛出空：人是存在的（否则条件早被丢掉），只是作品都不在公开区 #}
+        <p>这位作者名下暂时没有公开展示的作品。</p>
+        <p class="dim"><a href="/library/works">看全部作品</a></p>
+      {% else %}
+        <p>这个条件下还没有作品。</p>
+        <p class="dim">换个期次或字数区间试试，或者<a href="/library/works">看全部作品</a>。</p>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="grid grid--3">
+      {% for row in rows %}{% include 'library/_card.twig' %}{% endfor %}
+    </div>
+
+    {% if prev_url or first_url or next_url %}
+      <nav class="pager" aria-label="分页">
+        {% if prev_url %}
+          <a class="btn" href="{{ prev_url }}" rel="prev">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"></path></svg>
+            上一页
+          </a>
+        {% endif %}
+        {% if first_url %}<a class="btn btn--ghost" href="{{ first_url }}">回到第一页</a>{% endif %}
+        {% if next_url %}
+          <a class="btn" href="{{ next_url }}" rel="next">下一页
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+          </a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

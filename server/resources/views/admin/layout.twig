@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}后台{% endblock %} · 银河图书馆</title>
+  <link rel="stylesheet" href="/assets/admin.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand__mark">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4FC1E0" stroke-width="1.1" aria-hidden="true">
+          <circle cx="10" cy="10" r="8.2"></circle>
+          <ellipse cx="10" cy="10" rx="8.2" ry="3.1"></ellipse>
+          <path d="M10 1.8v16.4"></path>
+        </svg>
+        <span class="brand__name">银河图书馆</span>
+      </div>
+      <div class="brand__sub">Huangqi Library</div>
+    </div>
+
+    {# 导航按「一天里会做什么」分组，不按数据表分组。
+       1300 篇的运营节奏是：先看调度台 → 再处理失败与待发布 → 偶尔去词条和隐藏归档。
+       所以调度台排在作品前面：它不是工具之一，它是主界面。 #}
+    <nav class="nav" aria-label="主导航">
+      <div class="nav__label">拆解</div>
+      <a class="nav__item{% if nav == 'dashboard' %} is-active{% endif %}"{% if nav == 'dashboard' %} aria-current="page"{% endif %} href="/admin">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <rect x="1.6" y="1.6" width="5" height="5"></rect>
+          <rect x="9.4" y="1.6" width="5" height="5"></rect>
+          <rect x="1.6" y="9.4" width="5" height="5"></rect>
+          <rect x="9.4" y="9.4" width="5" height="5"></rect>
+        </svg>
+        概览
+      </a>
+      {% if can(user.permissions|default([]), 'analysis.run') %}
+      <a class="nav__item{% if nav == 'oneclick' %} is-active{% endif %}"{% if nav == 'oneclick' %} aria-current="page"{% endif %} href="/admin/oneclick">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M8.6 1.4 3.4 9.1h3.6L6.2 14.6l5.6-8.1H8.2z"></path>
+        </svg>
+        一键拆解
+      </a>
+      {% endif %}
+      {% if can(user.permissions|default([]), 'analysis.run') %}
+      <a class="nav__item{% if nav == 'progress' %} is-active{% endif %}"{% if nav == 'progress' %} aria-current="page"{% endif %} href="/admin/progress">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M2 13.2h12"></path>
+          <path d="M3.4 13.2V9.4M6.8 13.2V5.6M10.2 13.2V7.8M13.6 13.2V3.4"></path>
+        </svg>
+        拆解实况
+      </a>
+      {% endif %}
+      {% if can(user.permissions|default([]), 'analysis.run') %}
+      <a class="nav__item{% if nav == 'queue' %} is-active{% endif %}"{% if nav == 'queue' %} aria-current="page"{% endif %} href="/admin/queue">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M2 4.2h12M2 8h12M2 11.8h7"></path>
+          <circle cx="12.4" cy="11.8" r="1.8"></circle>
+        </svg>
+        拆解调度
+      </a>
+      {% endif %}
+
+      <div class="nav__label">作品</div>
+      <a class="nav__item{% if nav == 'works' %} is-active{% endif %}"{% if nav == 'works' %} aria-current="page"{% endif %} href="/admin/works">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M2.5 2.2h7.2a1.5 1.5 0 0 1 1.5 1.5v10.1H4a1.5 1.5 0 0 1-1.5-1.5z"></path>
+          <path d="M11.2 4.6h2.3v9.2h-2.3"></path>
+          <path d="M4.8 5.4h4.2M4.8 7.8h4.2"></path>
+        </svg>
+        作品
+      </a>
+      {% if can(user.permissions|default([]), 'work.write') %}
+      <a class="nav__item{% if nav == 'import' %} is-active{% endif %}"{% if nav == 'import' %} aria-current="page"{% endif %} href="/admin/works/import">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M8 1.8v8.4"></path>
+          <path d="M4.8 7.4 8 10.6l3.2-3.2"></path>
+          <path d="M2.2 12.2h11.6"></path>
+        </svg>
+        批量导入
+      </a>
+      {% endif %}
+
+      {% if can(user.permissions|default([]), 'term.merge') %}
+      <div class="nav__label">索引</div>
+      <a class="nav__item{% if nav == 'terms' %} is-active{% endif %}"{% if nav == 'terms' %} aria-current="page"{% endif %} href="/admin/terms">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M2.4 3.4h4.6v4.6H2.4zM9 3.4h4.6v4.6H9zM2.4 10h4.6v3.6H2.4z"></path>
+          <path d="M9 10h4.6v3.6H9z"></path>
+        </svg>
+        词条
+      </a>
+      {% endif %}
+
+      {% if can(user.permissions|default([]), 'work.read') %}
+      <div class="nav__label">内容源</div>
+      <a class="nav__item{% if nav == 'source' and subnav|default('') != 'activity' %} is-active{% endif %}" href="/admin/source">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M2.4 2.6h8.2l3 3v8.8H2.4z"></path>
+          <path d="M10.4 2.6v3.2h3.2"></path>
+          <path d="M4.8 8.4h6.4M4.8 10.8h4.4"></path>
+        </svg>
+        站内文章
+      </a>
+      <a class="nav__item{% if nav == 'source' and subnav|default('') == 'activity' %} is-active{% endif %}" href="/admin/source/activity">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <circle cx="8" cy="5.2" r="2.6"></circle>
+          <path d="M2.8 13.4c0-2.6 2.3-4.2 5.2-4.2s5.2 1.6 5.2 4.2"></path>
+        </svg>
+        作者分类
+      </a>
+      {% endif %}
+
+      {% if can(user.permissions|default([]), 'visibility.toggle') %}
+      <div class="nav__label">治理</div>
+      <a class="nav__item{% if nav == 'hidden' %} is-active{% endif %}"{% if nav == 'hidden' %} aria-current="page"{% endif %} href="/admin/hidden">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M1.6 8s2.4-4.2 6.4-4.2S14.4 8 14.4 8s-2.4 4.2-6.4 4.2S1.6 8 1.6 8z"></path>
+          <path d="M3.2 12.8 12.8 3.2"></path>
+        </svg>
+        隐藏归档
+      </a>
+      {% endif %}
+      {% if can(user.permissions|default([]), 'audit.read') %}
+      <a class="nav__item{% if nav == 'audit' %} is-active{% endif %}"{% if nav == 'audit' %} aria-current="page"{% endif %} href="/admin/audit">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M3.4 1.8h9.2v12.4H3.4z"></path>
+          <path d="M5.6 5h4.8M5.6 7.6h4.8M5.6 10.2h3"></path>
+        </svg>
+        审计日志
+      </a>
+      {% endif %}
+    </nav>
+
+    <div class="sidebar__foot">内部系统<br>仅限授权人员使用</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar__title">{% block heading %}{% endblock %}</div>
+      <div class="topbar__meta">
+        <a class="topbar__user" href="/admin/account">{{ user.username|default('') }}{% if user.role_label is defined %} · {{ user.role_label }}{% endif %}</a>
+        <form method="post" action="/admin/logout">
+          <input type="hidden" name="_token" value="{{ csrf }}">
+          <button class="btn btn--sm btn--ghost" type="submit">退出</button>
+        </form>
+      </div>
+    </header>
+
+    {# 窄屏（≤860）是「巡检视图」：看得到、能定位问题就够了；发布、编辑、批量操作在手机上
+       既容易点错，也因为 1300 篇的主操作面塞不进 390。纯 CSS 控制显隐（服务端不知道视口），
+       文案不写「已禁用」—— 按钮确实还在，写错会让人以为点了没用。 #}
+    <div class="narrowbar">
+      <span class="narrowbar__label">窄屏 · 巡检视图</span>
+      <span class="narrowbar__text">列表可左右滑动看全；发布、编辑、批量操作建议在桌面端（≥1024）进行。</span>
+    </div>
+
+    <div class="content">
+      {% for f in flashes %}
+        <div class="flash flash--{{ f.level }}">{{ f.text }}</div>
+      {% endfor %}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+<script src="/assets/admin.js"></script>
+{# 页面级脚本槽：CSP 里 script-src 是 'self'，内联脚本一律被拦，
+   所以需要额外脚本的页面只能挂外部文件，由这里统一留位。 #}
+{% block scripts %}{% endblock %}
+</body>
+</html>

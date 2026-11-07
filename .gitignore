@@ -1,0 +1,70 @@
+# ============================================================
+# 荒启科幻 · 站点仓库忽略规则
+# 仓库根 = 站点根，本机 D:\AITEST\huangqi-sci-fi 与服务器
+# /www/wwwroot/zha.ruletree.club 是同一结构的两个副本
+#
+# 原则：凭据 / 用户数据 / 依赖 / 本机调试产物 一律不进库
+# server/.gitignore 依然生效，两套规则叠加
+# ============================================================
+
+# ---- 凭据：最高优先级，一行都不能进库 ----
+server/.env
+server/.env.*
+!server/.env.example
+*.cnf
+*.pem
+*.key
+000_bootstrap.sql
+000_bootstrap.executed.sql
+
+# ---- 依赖与二进制：换机重下即可，不随仓库分发 ----
+server/vendor/
+server/composer.phar
+server/.composer/
+node_modules/
+
+# ---- 用户上传与运行时数据 ----
+# 以服务器为准。certs 含证书私钥，agent-tasks/backups 属运行产物，
+# 全部挡在库外，避免任何一次 clone 或 reset 触碰真实数据
+server/storage/*
+!server/storage/uploads/
+!server/storage/artifacts/
+!server/storage/cache/
+!server/storage/logs/
+server/storage/uploads/*
+server/storage/artifacts/*
+server/storage/cache/*
+server/storage/logs/*
+!server/storage/**/.gitkeep
+
+# ---- 数据库导出与备份 ----
+*.sql.gz
+*.dump
+*.bak
+server/backups/
+
+# ---- 测试与调试产物 ----
+server/tests/_output/
+.phpunit.result.cache
+coverage/
+
+# ---- 前端调试产物 ----
+# .build 下的 .cjs 验收脚本要进库，但字体副本（25MB）、
+# 截图基线和构建中间件不进
+.build/fonts/
+.build/audit-baseline/
+.build/pages/
+.build/css-parts/
+
+# ---- 本机与服务器环境差异 ----
+.user.ini
+.well-known/
+.idea/
+.vscode/
+*.swp
+.swo
+.DS_Store
+Thumbs.db
+
+# ---- 孤立临时文件 ----
+w1440

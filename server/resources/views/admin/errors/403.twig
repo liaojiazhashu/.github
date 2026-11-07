@@ -1,0 +1,45 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}无权操作{% endblock %}
+{% block heading %}无权操作{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">
+      {% if need %}你的角色没有「{{ need }}」这项权限{% else %}这个动作没有开放给你{% endif %}
+    </div>
+    <span class="badge">403</span>
+  </div>
+
+  {% if need %}
+    <p class="dim">
+      当前的权限由角色决定，角色只有四档：管理员、编辑、审校、只读。
+      如果你确实需要这项操作，请让管理员在「用户与角色」里调整你的角色，而不是换个地址再试一次。
+    </p>
+  {% else %}
+    <p class="dim">这次请求被权限层拦下了。若是误拦，请把这个地址告诉管理员。</p>
+  {% endif %}
+
+  <details class="kv-details">
+    <summary>技术细节（排查用）</summary>
+    <dl class="kv">
+      <dt>原因</dt><dd><code>{{ reason }}</code></dd>
+      <dt>当前账号</dt><dd>{{ user.username|default('') }}{% if user.role_label is defined %} · {{ user.role_label }}{% endif %}</dd>
+      <dt>本次已持有</dt>
+      <dd>
+        {% for code in user.permissions|default([]) %}
+          <span class="chip">{{ code|perm_label }}</span>
+        {% else %}
+          <span class="dim">无</span>
+        {% endfor %}
+      </dd>
+    </dl>
+  </details>
+
+  <div class="form-actions">
+    <a class="btn btn--primary" href="/admin/works">回到作品列表</a>
+    <a class="btn btn--ghost" href="/admin">概览</a>
+  </div>
+</div>
+{% endblock %}

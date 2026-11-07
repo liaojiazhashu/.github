@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>词条图版 / 书封 样张</title>
+<style>
+  :root { --ink:#0B0E14; --ice:#4FC1E0; --line:#242E3E; --text:#EDF2F8; --dim:#8B98A9; }
+  body { margin:0; padding:40px 32px 64px; background:#0f131b; color:var(--text);
+         font-family:"Noto Sans SC","Microsoft YaHei",system-ui,sans-serif; }
+  h1 { font-size:20px; margin:0 0 6px; }
+  p.lead { margin:0 0 34px; color:var(--dim); font-size:13px; line-height:1.8; max-width:60em; }
+  h2 { font-size:14px; font-weight:600; color:var(--ice); margin:38px 0 14px;
+       padding-bottom:8px; border-bottom:1px solid var(--line); }
+  .row { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
+  figure { margin:0; }
+  figure img { display:block; border:1px solid var(--line); border-radius:3px; }
+  figcaption { margin-top:8px; font-size:11.5px; color:var(--dim); line-height:1.6; }
+  .w-wide img { width:620px; }
+  .w-tall img { width:230px; }
+  .w-cover img { width:200px; }
+  .w-thumb img { width:100px; }
+</style>
+</head>
+<body>
+<h1>词条图版与作品封面 · 样张</h1>
+<p class="lead">
+  全部由 <code>bin/media-build.php</code> 从馆内数据画出，不引用任何外部图片。
+  词条图版 681 个词条 × 横竖两版；书封 163 部不重复的作品 × 大小两版。
+</p>
+
+<h2>词条图版 · 宽屏 1200×675（星图）</h2>
+<div class="row">
+  <figure class="w-wide">
+    <img src="http://127.0.0.1:8090/media/terms/t2404.webp" alt="">
+    <figcaption>第一接触 · 科幻设定 · 5 个共现词</figcaption>
+  </figure>
+  <figure class="w-wide">
+    <img src="http://127.0.0.1:8090/media/terms/t2408.webp" alt="">
+    <figcaption>废墟 · 科幻意象（用雾蓝以外的冰青，世界观才用雾蓝）</figcaption>
+  </figure>
+</div>
+
+<h2>词条图版 · 窄屏 900×900（排行条形，另一个版式）</h2>
+<div class="row">
+  <figure class="w-tall">
+    <img src="http://127.0.0.1:8090/media/terms/m2404.webp" alt="">
+    <figcaption>不要把它看成横图缩小的结果：字号放大、条目减少，条形只跟同图最大项成比例</figcaption>
+  </figure>
+</div>
+
+<h2>经典作品 · 排印书封 600×900</h2>
+<div class="row">
+  <figure class="w-cover">
+    <img src="http://127.0.0.1:8090/media/covers/c903152c7aaa9.webp" alt="">
+    <figcaption>书名均分折行，不留孤字</figcaption>
+  </figure>
+  <figure class="w-cover">
+    <img src="http://127.0.0.1:8090/media/covers/c527cd376cb41.webp" alt="">
+    <figcaption>单行书名</figcaption>
+  </figure>
+  <figure class="w-thumb">
+    <img src="http://127.0.0.1:8090/media/covers/c903152c7aaa9-s.webp" alt="">
+    <figcaption>列表里用的 300×450 缩略版式</figcaption>
+  </figure>
+</div>
+
+</body>
+</html>

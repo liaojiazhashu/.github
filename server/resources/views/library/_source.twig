@@ -1,0 +1,25 @@
+{# 这份拆解是怎么来的：机器可核对的信息，不写成宣传语 #}
+<section class="sec sec--meta" id="source">
+  <div class="sec__head">
+    <div>
+      <h2 class="h2 h2--sm">这份拆解是怎么来的</h2>
+    </div>
+  </div>
+
+  <dl class="meta">
+    <div><dt>模型</dt><dd class="mono">{{ work.model }}</dd></div>
+    <div><dt>提示词版本</dt><dd class="mono">{{ work.prompt_version }}</dd></div>
+    <div><dt>分析产出</dt><dd class="mono">{{ work.analysis_created_at|slice(0,16) }}</dd></div>
+    <div><dt>发布</dt><dd class="mono">{{ work.analysis_published_at ? work.analysis_published_at|slice(0,16) : '—' }}</dd></div>
+    <div><dt>分析编号</dt><dd class="mono">{{ work.analysis_code }}</dd></div>
+  </dl>
+
+  {% if edits is not empty %}
+    <p class="honest honest--edited">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M11.2 2.3 13.7 4.8 5.4 13.1 2.3 13.7l.6-3.1z"></path></svg>
+      本拆解由 DeepSeek 生成，<b>编辑于 {{ edits[0].created_at|slice(0,10) }}</b>（{{ edits[0].note }}）。编辑后的结论与模型原始输出不完全一致。
+    </p>
+  {% else %}
+    <p class="honest">本拆解由 DeepSeek 自动生成，未经人工改动。</p>
+  {% endif %}
+</section>

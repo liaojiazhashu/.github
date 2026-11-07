@@ -1,0 +1,274 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}拆解实况{% endblock %}
+{% block heading %}拆解实况{% endblock %}
+
+{#
+  实况页 = 只读仪表盘，自己会动。
+  --------------------------------------------------------------------------
+  页面顺序按「一分钟内想知道的四件事」排：
+     还剩多少 → 机器跑得多快 → 什么时候完 → 还要花多少钱
+  下面两块是证据：吞吐曲线回答「刚才确实在动吗」，最近完成回答「产出对不对」。
+
+  数字的初值由 Twig 直出，之后 progress.js 每 5 秒覆盖一次。
+  每个会变的数字都带 data-field，指向 JSON 里的同名字段 —— 字段名只在这里写一遍，
+  JS 靠路径取值，所以后端加字段不需要改前端代码。
+#}
+
+{% block content %}
+{% set p = snapshot.progress %}
+{% set s = snapshot.spend %}
+{% set e = snapshot.eta %}
+{% set pc = snapshot.pace %}
+
+<div class="livepage">
+
+{# ---------------- 0. 心跳条 ---------------- #}
+<div class="card">
+  <div class="row-between">
+    <div>
+      <div class="card__title">
+        正在监控
+        <span class="badge {{ snapshot.paused ? 'badge--analyzing' : 'badge--published' }}">
+          {{ snapshot.paused ? '闸门已暂停' : '闸门通畅' }}
+        </span>
+      </div>
+      <div class="card__hint">
+        模型 <span class="mono">{{ snapshot.model }}</span>
+        ·
+        {% if snapshot.workers is empty %}
+          当前没有 worker 在跑
+        {% else %}
+          {{ snapshot.workers|length }} 个 worker 在跑
+        {% endif %}
+        {% if snapshot.last_call_ago is not null %}
+          · 最近一次模型调用 {{ snapshot.last_call_ago }} 秒前
+        {% endif %}
+      </div>
+    </div>
+    <div class="livebar">
+      <span class="livedot" data-live-dot></span>
+      <span data-live-state>实时</span>
+      <span class="dim">·</span>
+      <span>每 {{ (pollMs / 1000)|round }} 秒刷新</span>
+      <span class="dim">·</span>
+      <span>最后更新 <b data-live-clock>{{ snapshot.at_hms }}</b></span>
+    </div>
+  </div>
+
+  {% if snapshot.warnings is not empty %}
+    <div class="lwarn" data-warnings>
+      {% for w in snapshot.warnings %}
+        <div class="notice notice--warn">{{ w }}</div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="lwarn" data-warnings hidden></div>
+  {% endif %}
+</div>
+
+{# ---------------- 1. 总进度 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">拆解进度</div>
+    <span class="card__hint">按作品计：已拆解 = 已公开 + 仅后台保留</span>
+  </div>
+
+  <div class="lbig">
+    <div class="lbig__num">
+      <b data-field="progress.percent" data-format="pct">{{ p.percent }}</b><i>%</i>
+    </div>
+    <div class="lbig__meta">
+      已完成 <b data-field="progress.done" data-format="int">{{ num(p.done) }}</b> /
+      <b data-field="progress.total" data-format="int">{{ num(p.total) }}</b> 篇
+      <span class="dim">· 还剩 <b data-field="progress.remaining" data-format="int">{{ num(p.remaining) }}</b> 篇</span>
+    </div>
+  </div>
+
+  <div class="lbar" role="img" aria-label="拆解进度分布">
+    <div class="lbar__seg lbar__seg--pub" data-seg="published"></div>
+    <div class="lbar__seg lbar__seg--ana" data-seg="analyzed"></div>
+    <div class="lbar__seg lbar__seg--ing" data-seg="analyzing"></div>
+  </div>
+
+  <div class="legend">
+    <span><i class="swatch swatch--done"></i>已公开 <b data-field="progress.published" data-format="int">{{ num(p.published) }}</b></span>
+    <span><i class="swatch swatch--ana"></i>仅后台保留 <b data-field="progress.analyzed" data-format="int">{{ num(p.analyzed) }}</b></span>
+    <span><i class="swatch swatch--ing"></i>处理中 <b data-field="progress.analyzing" data-format="int">{{ num(p.analyzing) }}</b></span>
+    <span><i class="swatch swatch--rest"></i>待拆解 <b data-field="progress.imported" data-format="int">{{ num(p.imported) }}</b></span>
+  </div>
+</div>
+
+{# ---------------- 2. 四个当下结论 ---------------- #}
+<div class="grid grid--4 card--gap">
+  <div class="kpi">
+    <div class="kpi__label">待拆解</div>
+    <div class="kpi__value"><b data-field="progress.remaining" data-format="int">{{ num(p.remaining) }}</b><span>篇</span></div>
+    <div class="lkpi__delta" data-delta="remaining">与打开时持平</div>
+  </div>
+
+  <div class="kpi">
+    <div class="kpi__label">当前速率</div>
+    <div class="kpi__value"><b data-field="pace.rate_per_minute" data-format="rate">{{ pc.rate_per_minute }}</b><span>篇/分</span></div>
+    {# 这句是「速率的证据」：多少篇、在多长时间窗口里跑完的。脚本更新时会在后面
+       追加「较打开 ±X」，所以初值就写成同样的形状，避免刷新瞬间文字跳变。 #}
+    <div class="lkpi__delta" data-delta="rate">
+      近 {{ pc.window }} 分钟完成 {{ pc.measured }} 篇
+    </div>
+  </div>
+
+  <div class="kpi kpi--accent">
+    <div class="kpi__label">预计完成</div>
+    <div class="kpi__value"><b data-field="eta.label" data-format="text">{{ e.label }}</b></div>
+    <div class="lkpi__delta" data-delta="eta">
+      {% if e.finish_at %}{{ e.finish_day }} {{ e.finish_at }}{% else %}无法估算{% endif %}
+    </div>
+  </div>
+  <div class="kpi">
+    <div class="kpi__label">剩余预计支出</div>
+    <div class="kpi__value">¥ <b data-field="spend.projected_yuan" data-format="yuan2">{{ s.projected_yuan }}</b></div>
+    <div class="lkpi__delta" data-delta="projected">与打开时持平</div>
+  </div>
+</div>
+
+{# ---------------- 3. 支出 + 吞吐 ---------------- #}
+<div class="grid grid--2 card--gap">
+
+  <div class="card">
+    <div class="card__head">
+      <div class="card__title">今日支出</div>
+      <span class="card__hint">日预算 ¥{{ num(s.budget_yuan) }}</span>
+    </div>
+
+    <div class="lbig">
+      <div class="lbig__num"><i>¥</i><b data-field="spend.today_yuan" data-format="yuan2">{{ s.today_yuan }}</b></div>
+      <div class="lbig__meta">
+        预算已用 <b data-field="spend.budget_used_pct" data-format="pct">{{ s.budget_used_pct }}</b>%
+        <span class="dim">· 剩余 ¥<span data-field="spend.budget_left_yuan" data-format="yuan2">{{ s.budget_left_yuan }}</span></span>
+      </div>
+    </div>
+
+    <div class="lbar lbar--budget">
+      <div class="lbar__seg lbar__seg--budget" data-seg="budget"></div>
+    </div>
+
+    <dl class="dl ldl">
+      <dt>今日调用</dt>
+      <dd><span data-field="spend.today_calls" data-format="int">{{ num(s.today_calls) }}</span> 次</dd>
+
+      <dt>单篇均价</dt>
+      <dd>
+        ¥<span data-field="spend.avg_yuan" data-format="yuan3">{{ s.avg_yuan }}</span>
+        <span class="dim">（{{ pc.samples }} 篇实测{{ pc.estimated ? '，样本不足为估' : '' }}）</span>
+      </dd>
+
+      <dt>剩余预计</dt>
+      <dd>¥<span data-field="spend.projected_yuan" data-format="yuan2">{{ s.projected_yuan }}</span></dd>
+
+      <dt>今日预计累计</dt>
+      <dd>
+        ¥<span data-field="spend.projected_total_yuan" data-format="yuan2">{{ s.projected_total_yuan }}</span>
+        <span class="badge {{ s.over_budget ? 'badge--danger' : 'badge--published' }}" data-budget-tag>
+          {{ s.over_budget ? '将超预算' : '预算内' }}
+        </span>
+      </dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <div class="card__head">
+      <div class="card__title">近 60 分钟吞吐</div>
+      <span class="card__hint">
+        每根柱 5 分钟 · 峰值 <b data-field="series_peak" data-format="int">{{ snapshot.series_peak }}</b> 篇
+        · 合计 <b data-field="series_total" data-format="int">{{ snapshot.series_total }}</b> 篇
+      </span>
+    </div>
+
+    <div class="lchart">
+      {% for row in snapshot.series %}
+        <div class="lchart__col">
+          <i class="lchart__bar{% if loop.last %} is-last{% endif %}" data-chart-bar="{{ loop.index0 }}" title="{{ row.label }} · {{ row.done }} 篇"></i>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="lchart__labels">
+      {% for row in snapshot.series %}
+        <span data-chart-label="{{ loop.index0 }}">{{ loop.index0 is divisible by(3) ? row.label : '' }}</span>
+      {% endfor %}
+    </div>
+
+    <div class="qstats lqstats">
+      <div class="qstat"><b data-field="queue.queued" data-format="int">{{ num(snapshot.queue.queued) }}</b><span>排队</span></div>
+      <div class="qstat"><b data-field="queue.running" data-format="int">{{ snapshot.queue.running }}</b><span>执行中</span></div>
+      <div class="qstat"><b data-field="queue.succeeded" data-format="int">{{ num(snapshot.queue.succeeded) }}</b><span>成功</span></div>
+      <div class="qstat"><b data-field="queue.failed" data-format="int" class="{{ snapshot.queue.failed > 0 ? 'is-danger' : '' }}">{{ snapshot.queue.failed }}</b><span>失败</span></div>
+    </div>
+  </div>
+</div>
+
+{# ---------------- 4. 最近完成 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">最近完成</div>
+    <span class="card__hint">最新的 8 篇 · 花费与耗时均为单篇实测</span>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table-fixed table-run">
+      <thead>
+        <tr>
+          <th scope="col">标题</th>
+          <th class="num" scope="col">花费</th>
+          <th class="num" scope="col">耗时</th>
+          <th scope="col">去向</th>
+          <th scope="col">完成时刻</th>
+        </tr>
+      </thead>
+      <tbody data-recent>
+        {% for r in snapshot.recent %}
+          <tr>
+            <td><a href="/admin/works/{{ r.code }}">{{ r.title }}</a></td>
+            <td class="num mono">¥{{ r.yuan }}</td>
+            <td class="num mono">{{ r.secs }}s</td>
+            <td>
+              {% if r.visibility == 'hidden' %}
+                <span class="badge">仅后台</span>
+              {% else %}
+                <span class="badge badge--published">已公开</span>
+              {% endif %}
+            </td>
+            <td class="dim mono">{{ r.finished_at|slice(11, 8) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="workerline">
+    {% if snapshot.workers is empty %}
+      <span class="dot dot--off"></span>
+      <span>没有正在执行的 worker。启动：
+        <code class="mono">server\启动拆解worker.bat</code>
+      </span>
+    {% else %}
+      {% for w in snapshot.workers %}
+        <span class="dot{{ w.alive ? '' : ' dot--off' }}"></span>
+        <span class="mono">{{ w.name }}</span>
+        <span class="dim">在跑 {{ w.jobs }} 条 · 静默 {{ w.idle_seconds }} 秒</span>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+<div class="lfoot">
+  自打开本页起：观察 <b data-baseline="elapsed">0 秒</b> ·
+  新完成 <b data-baseline="done">0</b> 篇 ·
+  新增花费 <b data-baseline="spend">¥0.00</b>
+  <span class="dim">（下方绿色/警示色的小字都是与「打开本页那一刻」相比）</span>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/assets/progress.js" data-poll-ms="{{ pollMs }}"></script>
+{% endblock %}

@@ -1,0 +1,281 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}站内文章{% endblock %}
+{% block heading %}站内文章{% endblock %}
+
+{#
+  官网内容源
+  --------------------------------------------------------------------------
+  「全站 1843 → 参加练笔 1375 → 可用 1197」这三个数字必须能对上，
+  中间那两个差额就是被删/未公开的部分。运营要判断「还差多少篇没进馆」，
+  靠的就是把这三个数字摆在一起看。
+
+  期次表是这一页的主干：一期一行，把「多少篇、多少字、多少人」摊开。
+  拆解是接着期次排期的，所以这张表不是统计报表，是排期依据 ——
+  期号必须与馆内 hq_issue.no 对得上，日期以官网截稿为准（见 show.twig 的说明）。
+
+  这里只读：不写官网，也不自动导入馆藏。导入要决定「算作品还是素材」
+  「作者账号怎么认领」，那是另一件事，不该在这一页顺手做掉。
+  但**导出**是本页的正当出口：拆解需要一份带期号、作者、字数的清单。
+#}
+
+{% block content %}
+{% set canWrite = can(user.permissions|default([]), 'work.write') %}
+
+{% if missing %}
+  <div class="card">
+    <div class="card__head">
+      <div class="card__title">还没有同步过</div>
+      <div class="card__hint">先把官网全站目录拉一份到本地，之后翻页是本地读盘，很快</div>
+    </div>
+    <p class="dim" style="margin:0 0 16px">
+      全站 1800 多篇、每页上限 50 条，第一次同步要翻 37 页、大约二十秒。
+      期间页面会一直转，请勿刷新。
+    </p>
+    {% if canWrite %}
+      <form method="post" action="/admin/source/sync">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <button class="btn btn--primary" type="submit">同步官网目录</button>
+      </form>
+    {% else %}
+      <div class="empty">当前账号没有同步权限（需要 work.write）。</div>
+    {% endif %}
+  </div>
+{% else %}
+
+{# ---------------- 口径总览 ---------------- #}
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">口径</div>
+    <div class="card__hint">
+      数据截至 {{ stats.fetched_at|date('Y-m-d H:i') }}
+      {% if stats.pages %}· {{ stats.pages }} 页{% endif %}
+    </div>
+  </div>
+  <div class="qstats">
+    <div class="qstat"><b>{{ stats.all }}</b><span>全站文章</span></div>
+    <div class="qstat"><b>{{ stats.practice }}</b><span>参加练笔</span></div>
+    <div class="qstat"><b>{{ stats.practice_ready }}</b><span>练笔可用</span></div>
+    <div class="qstat"><b>{{ stats.deleted }}</b><span>已删除</span></div>
+    <div class="qstat"><b>{{ stats.closed }}</b><span>未公开</span></div>
+    <div class="qstat"><b>{{ stats.unpublished }}</b><span>非发布</span></div>
+  </div>
+  <p class="dim" style="margin:14px 0 0">
+    「练笔可用」= 参加练笔 ∧ 未删除 ∧ 公开 ∧ 已发布。
+    剩下的 {{ stats.practice - stats.practice_ready }} 篇练笔作品被删除或未公开展示，已从这里排除。
+  </p>
+</div>
+
+{# ---------------- 期次表 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">按期次</div>
+    <div class="card__hint">期号取自活动名「荒启科幻练笔第 X 期」；截稿时间取自官网活动</div>
+  </div>
+
+  {% if issues is empty %}
+    <div class="empty">目录里没有解析出任何练笔期次。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table class="issue-table">
+        <thead>
+          <tr>
+            <th scope="col">期次</th>
+            <th scope="col">官网截稿</th>
+            <th scope="col">揭晓</th>
+            <th class="num" scope="col">参加</th>
+            <th class="num" scope="col">可用</th>
+            <th class="num" scope="col">可用字数</th>
+            <th class="num" scope="col">平均字数</th>
+            <th class="num" scope="col">作者</th>
+            <th class="num" scope="col">匿名</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set sumTotal = 0 %}{% set sumReady = 0 %}{% set sumWords = 0 %}
+          {% for row in issues %}
+            {% set sumTotal = sumTotal + row.total %}
+            {% set sumReady = sumReady + row.ready %}
+            {% set sumWords = sumWords + row.words %}
+            <tr{% if issue == row.no %} class="is-current"{% endif %}>
+              <td><b>{{ row.label }}</b></td>
+              <td class="dim mono">{{ row.endsAt ? row.endsAt|date('Y-m-d H:i') : '—' }}</td>
+              <td class="dim mono">
+                {{ row.revealAt ? row.revealAt|date('Y-m-d') : '—' }}
+                {% if row.anon > 0 %}<span class="tag tag--warn">未揭晓</span>{% endif %}
+              </td>
+              <td class="num mono">{{ row.total }}</td>
+              <td class="num mono">{{ row.ready }}</td>
+              <td class="num mono">{{ row.words|number_format }}</td>
+              <td class="num mono dim">{{ row.avg|number_format }}</td>
+              <td class="num mono">{{ row.authors }}</td>
+              <td class="num mono dim">{{ row.anon ? row.anon : '—' }}</td>
+              <td class="num">
+                <a class="btn btn--sm btn--ghost"
+                   href="/admin/source?scope=practice_ready&amp;issue={{ row.no }}">看这期</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="col">合计</th>
+            <th></th>
+            <th></th>
+            <th class="num mono" scope="col">{{ sumTotal }}</th>
+            <th class="num mono" scope="col">{{ sumReady }}</th>
+            <th class="num mono" scope="col">{{ sumWords|number_format }}</th>
+            <th class="num mono dim" scope="col">
+              {{ sumReady > 0 ? (sumWords / sumReady)|round(0, 'floor')|number_format : '—' }}
+            </th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <p class="dim" style="margin:12px 0 0">
+      字数取官网的 <code>size</code> 字段，口径是正文去掉 HTML 标签后的字符数（含标点与空白）。
+      「平均字数」只算可用篇目。<br>
+      <b>匿名</b>这一列要当心：练笔在揭晓前，官网把作者统一显示成「匿名用户」，连作者 UID 都是临时的。
+      第 25、26 期整期都处于这个状态，<b>这两期的作者名现在拿不到</b>，要等揭晓日之后重新同步才会出现。
+      作者人数按「UID + 名字」去重，所以匿名期的这个数字要打个问号。
+    </p>
+  {% endif %}
+</div>
+
+{# ---------------- 筛选 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">浏览</div>
+    <div class="card__hint">点标题看全文；全文从官网实时取，不走本地缓存</div>
+    {% if canWrite %}
+      <form method="post" action="/admin/source/sync" style="margin-left:auto">
+        <input type="hidden" name="_token" value="{{ csrf }}">
+        <button class="btn btn--sm" type="submit"
+                data-confirm="重新拉取全站目录？大约需要二十秒，期间后台会短暂无响应。">重新同步</button>
+      </form>
+    {% endif %}
+  </div>
+
+  <form method="get" action="/admin/source" class="filter-row filter-row--wide">
+    <div class="field">
+      <label for="scope">范围</label>
+      <select id="scope" name="scope">
+        {% for value, label in scopes %}
+          <option value="{{ value }}"{% if scope == value %} selected{% endif %}>
+            {{ label }}（{{ value == 'practice_ready' ? stats.practice_ready : (value == 'practice' ? stats.practice : stats.all) }}）
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="issue">期次</label>
+      <select id="issue" name="issue">
+        <option value="0"{% if issue == 0 %} selected{% endif %}>全部期次</option>
+        {% for row in issues %}
+          <option value="{{ row.no }}"{% if issue == row.no %} selected{% endif %}>
+            {{ row.label }}（可用 {{ row.ready }}）
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="q">关键词</label>
+      <input id="q" type="search" name="q" value="{{ q }}" placeholder="标题 / 作者 / 期次">
+    </div>
+    <div class="field field--action">
+      <button class="btn" type="submit">筛选</button>
+      <a class="btn btn--ghost" href="/admin/source?scope={{ scope }}&amp;issue={{ issue }}">重置</a>
+    </div>
+  </form>
+
+  <div class="export-row">
+    <a class="btn btn--sm"
+       href="/admin/source/export?scope={{ scope }}&amp;issue={{ issue }}&amp;q={{ q|url_encode }}">导出当前筛选（CSV）</a>
+    <span class="dim">
+      导出的列：cid、期号、期次、标题、作者、作者 UID、字数、发布时间、状态、原文链接。
+      文件带 UTF-8 BOM，Excel 直接双击不乱码。
+    </span>
+  </div>
+
+  {% if items is empty %}
+    <div class="empty">
+      {% if q %}没有匹配「{{ q }}」的文章。{% else %}这个范围下暂时没有文章。{% endif %}
+    </div>
+  {% else %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">标题</th>
+            <th scope="col">作者</th>
+            <th scope="col">期次</th>
+            <th class="num" scope="col">字数</th>
+            <th scope="col">发布</th>
+            <th scope="col">状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for it in items %}
+            <tr>
+              <td>
+                <a href="/admin/source/{{ it.cid }}">{{ it.title }}</a>
+                {% if it.categories %}
+                  <span class="dim"> · {{ it.categories|join('、') }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {{ it.authorName|default('—') }}
+                {% if it.authorName in ['', '匿名用户'] %}
+                  <span class="tag tag--warn">匿名</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if it.issueNo %}
+                  <a href="/admin/source?scope=practice_ready&amp;issue={{ it.issueNo }}">{{ it.issueLabel }}</a>
+                {% else %}
+                  <span class="dim">—</span>
+                {% endif %}
+              </td>
+              <td class="num mono">
+                {% if it.wordCount %}{{ it.wordCount|number_format }}{% else %}<span class="dim">0</span>{% endif %}
+              </td>
+              <td class="dim mono">{{ it.created ? it.created|date('Y-m-d') : '—' }}</td>
+              <td>
+                {% if it.isDelete %}
+                  <span class="tag tag--danger">已删除</span>
+                {% elseif it.isopen == 0 %}
+                  <span class="tag tag--warn">未公开</span>
+                {% elseif it.status != 'publish' %}
+                  <span class="tag tag--warn">{{ it.status }}</span>
+                {% else %}
+                  <span class="tag">正常</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if pagination.pages > 1 %}
+      <div class="pager">
+        <span class="dim">共 {{ pagination.total }} 篇 · 第 {{ pagination.page }} / {{ pagination.pages }} 页</span>
+        {% if pagination.page > 1 %}
+          <a href="/admin/source?scope={{ scope }}&amp;issue={{ issue }}&amp;q={{ q|url_encode }}&amp;page={{ pagination.page - 1 }}">上一页</a>
+        {% endif %}
+        {% if pagination.page < pagination.pages %}
+          <a href="/admin/source?scope={{ scope }}&amp;issue={{ issue }}&amp;q={{ q|url_encode }}&amp;page={{ pagination.page + 1 }}">下一页</a>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="dim" style="margin-top:12px">共 {{ pagination.total }} 篇</div>
+    {% endif %}
+  {% endif %}
+</div>
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'library/layout.twig' %}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap">
+    <div class="whead__crumbs">
+      <a href="/library/terms">科幻词库</a><span>/</span>
+      <a href="/library/terms?cat={{ term.category }}">{{ term.category|category_label }}</a>
+    </div>
+    <h1 class="h1">{{ term.canonical }}</h1>
+    <div class="whead__meta">
+      <span>{{ term.category|category_label }}</span>
+      <span>馆内作品 <b class="mono">{{ works|length }}</b> 篇</span>
+    </div>
+    {% if term.definition %}<p class="lede">{{ term.definition }}</p>{% endif %}
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="split">
+    <div class="split__main">
+
+      {# ── 要素二：起源与发展 ── #}
+      {% if enc and enc.history %}
+        <section class="sec sec--flat" id="s-history">
+          <div class="sec__head">
+            <div>
+              <h2 class="h2 h2--sm">01 · 起源与发展</h2>
+            </div>
+          </div>
+          <p class="ency-history">{{ enc.history }}</p>
+        </section>
+      {% endif %}
+
+      {# ── 要素三：世界科幻中的它（至多 3 部） ── #}
+      {% if enc and enc.classics is not empty %}
+        <section class="sec sec--flat" id="s-classics">
+          <div class="sec__head">
+            <div>
+              <h2 class="h2 h2--sm">02 · 世界科幻中的它</h2>
+            </div>
+          </div>
+          <ul class="classics">
+            {% for c in enc.classics %}
+              <li class="classic">
+                <div class="classic__head">
+                  <b class="classic__t">《{{ c.title }}》</b>
+                  <span class="classic__m">{{ c.author }} · <span class="mono">{{ c.year }}</span></span>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {# ── 要素四：馆内作品（全部相关作品） ── #}
+      <section class="sec sec--flat" id="s-works">
+        <div class="sec__head">
+          <div>
+            <h2 class="h2 h2--sm">03 · 馆内作品</h2>
+          </div>
+          {% if works_total > works|length %}
+            <a class="more" href="/library/works?term={{ term.id }}">全部 {{ num(works_total) }} 篇
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+            </a>
+          {% endif %}
+        </div>
+
+        {% if works is empty %}
+          <p class="dim">这个词目前还没有关联的已发布作品。</p>
+        {% else %}
+          <ul class="hitlist">
+            {% for w in works %}
+              <li class="hit">
+                {# 徽章跟在标题后面，而不是另起一行：
+                   否则「核心设定」的行比其他行高出一整行，五十多篇排下来节奏是参差的。 #}
+                <div class="hit__head">
+                  <span class="hit__lead">
+                    <a class="hit__t" href="/library/works/{{ w.code }}">{{ w.title }}</a>
+                    {% if w.role == 'main' %}<span class="chip chip--main">核心设定</span>{% endif %}
+                  </span>
+                  <span class="hit__m">{% if w.author_code %}<a class="hit__a" href="/library/authors/{{ w.author_code }}">{{ w.author_name }}</a>{% else %}{{ w.author_name }}{% endif %}{% if w.issue_label %} · {{ w.issue_label }}{% endif %} · <span class="mono">{{ num(w.word_count) }}</span> 字</span>
+                </div>
+                {% if w.evidence %}<p class="hit__ev">「{{ w.evidence }}」</p>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </section>
+
+      {% if related is not empty %}
+        <section class="sec sec--flat" id="s-related">
+          <div class="sec__head">
+            <div>
+              <h2 class="h2 h2--sm">同一类里的别的词</h2>
+            </div>
+            <a class="more" href="/library/terms?cat={{ term.category }}">这一类全部
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+            </a>
+          </div>
+          <div class="chips">
+            {% for r in related %}
+              <a class="chip chip--lg" href="/library/terms/{{ r.id }}">{{ r.canonical }}<i class="mono">{{ r.works }}</i></a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+    </div>
+
+    <aside class="split__aside">
+      {# 词条页正文能到四五千像素，右栏只有「常与它一起出现」时会一直空到底。
+         一块吸顶的本页索引既填住右栏，也让读者不必滚回去找「馆内作品」在哪。 #}
+      <div class="aside-sticky">
+        <nav class="panel" aria-label="本页索引">
+          <div class="panel__l">本页</div>
+          <ul class="toc">
+            {% if enc and enc.history %}<li><a href="#s-history">起源与发展</a></li>{% endif %}
+            {% if enc and enc.classics is not empty %}<li><a href="#s-classics">世界科幻中的它</a></li>{% endif %}
+            <li><a href="#s-works">馆内作品</a></li>
+            {% if related is not empty %}<li><a href="#s-related">同一类里的别的词</a></li>{% endif %}
+          </ul>
+        </nav>
+
+        {% if cooccur is not empty %}
+          <section class="panel">
+            <div class="panel__l">常与它一起出现</div>
+            <div class="chips">
+              {% for c in cooccur %}
+                <a class="chip" href="/library/terms/{{ c.id }}">{{ c.canonical }}<i class="mono">{{ c.n }}</i></a>
+              {% endfor %}
+            </div>
+          </section>
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+</div>
+{% endblock %}

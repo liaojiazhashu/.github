@@ -1,0 +1,191 @@
+{% extends 'library/layout.twig' %}
+
+{# ==========================================================================
+   作者视角
+   --------------------------------------------------------------------------
+   这一页只回答两件事：**哪里有问题**、**先改哪一处最划算**。
+   剧情节点轴与伏笔台账放在这里而不是读者页，因为它们服务于「怎么写」；
+   读者关心的是「写成了什么」，那是另一页的事。
+   ========================================================================== #}
+
+{% block content %}
+{% set card = artifacts.index_card %}
+{% set revision = artifacts.revision %}
+
+<article class="work">
+  <header class="whead">
+    <div class="wrap">
+      <div class="whead__crumbs">
+        <a href="/library/works">馆藏作品</a>
+        <span>/</span>
+        {% if work.issue_no %}<a href="/library/issues/{{ work.issue_no }}">{{ work.issue_label }}</a>{% else %}<span>未分期</span>{% endif %}
+      </div>
+
+      <h1 class="h1">{{ work.title }}</h1>
+      {% if work.subtitle %}<p class="whead__sub">{{ work.subtitle }}</p>{% endif %}
+
+      <div class="whead__meta">
+        {% if work.author_name %}
+          <span>作者
+            {%- if work.author_code %} <a class="whead__author" href="/library/authors/{{ work.author_code }}"><b>{{ work.author_name }}</b></a>
+            {%- else %} <b>{{ work.author_name }}</b>{% endif %}
+          </span>
+        {% endif %}
+        <span>正文 <b class="mono">{{ num(work.word_count) }}</b> 字</span>
+        {% if work.genre_name %}<span>{{ work.genre_name }}</span>{% endif %}
+        {% if work.published_at %}<span class="mono">{{ work.published_at|slice(0,10) }}</span>{% endif %}
+      </div>
+
+      {% if card and card.theme_note %}
+        <p class="whead__hook whead__hook--author">{{ card.theme_note }}</p>
+      {% endif %}
+
+      <p class="whead__notice">
+        这一页分三节：剧情节点、文学上的优劣、修改方向。想判断值不值得读，用下面的「读者视角」。
+      </p>
+    </div>
+  </header>
+
+  {% include 'library/_views.twig' with { view: 'author', work: work } %}
+
+  <div class="wrap wbody">
+
+    {# ------------------------------------------------------- 01 节点轴 #}
+    <section class="sec" id="plot">
+      <div class="sec__head">
+        <div>
+          <h2 class="h2">剧情节点</h2>
+        </div>
+      </div>
+
+      {% if axis.points is not empty %}
+        <div class="axiswrap">
+          <div class="axislegend">
+            {% for ph in ['start', 'turn', 'crisis', 'end'] %}
+              <span class="axislegend__i"><i class="axislegend__sw axislegend__sw--{{ ph }}"></i>{{ ph|phase_label }}</span>
+            {% endfor %}
+          </div>
+          <svg class="axis" viewBox="0 0 {{ axis.width }} {{ axis.height }}" role="img" aria-label="剧情节点轴">
+            <line class="axis__base" x1="48" y1="{{ axis.y }}" x2="952" y2="{{ axis.y }}"></line>
+            {% for b in axis.phases %}
+              <line class="axis__band axis__band--{{ b.phase }}" x1="{{ b.x1 }}" y1="{{ axis.y }}" x2="{{ b.x2 }}" y2="{{ axis.y }}"></line>
+            {% endfor %}
+            {% for p in axis.points %}
+              <line class="axis__stem" x1="{{ p.x }}" y1="{{ axis.y }}" x2="{{ p.x }}" y2="{{ p.stem_y }}"></line>
+              <circle class="axis__dot axis__dot--{{ p.phase }}" cx="{{ p.x }}" cy="{{ axis.y }}" r="4"></circle>
+              {# 轴上的标题按可用宽度截断（节点挤在一起时，长标题只能让位）；
+                 全名放进 <title>，鼠标停一下就能看到，不用改轴的排法 #}
+              <text class="axis__t" x="{{ p.tx }}" y="{{ p.y }}" text-anchor="middle">{{ p.label }}<title>{{ p.seq }} · {{ p.title }}（{{ p.pct }}%）</title></text>
+            {% endfor %}
+          </svg>
+          {# 窄屏下横轴的字会缩到读不出来，换成一条纵向清单：同样的信息，换成不会坏的排法 #}
+          <ol class="axislist">
+            {% for p in axis.points %}
+              <li class="axislist__i">
+                <span class="axislist__no mono">{{ p.seq }}</span>
+                <i class="axislist__dot axislist__dot--{{ p.phase }}"></i>
+                <span class="axislist__t">{{ p.title }}</span>
+                <span class="axislist__p mono">{{ p.pct }}%</span>
+              </li>
+            {% endfor %}
+          </ol>
+        </div>
+      {% endif %}
+
+      {% if artifacts.foreshadows is not empty %}
+        <div class="fore">
+          <div class="fore__l">伏笔台账<span class="dim">（{{ artifacts.foreshadows|length }} 条）</span></div>
+          <table class="table">
+            <thead><tr><th scope="col">埋下</th><th scope="col">内容</th><th scope="col">回收</th><th scope="col">状态</th></tr></thead>
+            <tbody>
+              {% for f in artifacts.foreshadows %}
+                <tr>
+                  <td class="mono">{{ f.setup ? f.setup.seq : '—' }}</td>
+                  <td>{{ f.content }}</td>
+                  <td class="mono">{{ f.payoff ? f.payoff.seq : '—' }}</td>
+                  <td><span class="state state--{{ f.state }}">{{ f.state == 'paid' ? '已回收' : '未回收' }}</span></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    </section>
+
+    {# ------------------------------------------------------- 02 建议 #}
+    <section class="sec" id="advice">
+      <div class="sec__head">
+        <div>
+          <h2 class="h2">文学上的优劣</h2>
+        </div>
+      </div>
+
+      {% for layer in ['structure', 'execution', 'detail'] %}
+        {% set items = artifacts.suggestions|filter(s => s.layer == layer) %}
+        {% if items is not empty %}
+          <div class="layer">
+            <div class="layer__l">{{ layer|layer_label }}<i class="mono">{{ items|length }}</i></div>
+            {% for s in items %}
+              <div class="sug">
+                <h3 class="sug__t">{{ s.title }}</h3>
+                <p class="sug__p">{{ s.problem }}</p>
+                {% if s.impact %}<p class="sug__i"><span>影响</span>{{ s.impact }}</p>{% endif %}
+                <ul class="paths">
+                  {% for p in s.paths %}
+                    <li class="path path--{{ p.style }}">
+                      <span class="path__s">{{ {'conservative': '保守', 'neutral': '中性', 'radical': '激进'}[p.style]|default(p.style) }}</span>
+                      <span class="path__c">{{ p.content }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </section>
+
+    {# ------------------------------------------------------- 03 修改方向 #}
+    <section class="sec" id="revision">
+      <div class="sec__head">
+        <div>
+          <h2 class="h2">修改方向</h2>
+        </div>
+      </div>
+
+      {% if revision %}
+        {% if revision.summary %}<p class="lead-block">{{ revision.summary }}</p>{% endif %}
+        <ol class="rev">
+          {% for item in revision.items %}
+            <li class="rev__i">
+              <div class="rev__rank mono">{{ loop.index }}</div>
+              <div class="rev__body">
+                <div class="rev__target">{{ item.target }}</div>
+                <p class="rev__action">{{ item.action }}</p>
+                <div class="ways">
+                  <div class="way way--c">
+                    <span class="way__l">保守</span>
+                    <p>{{ item.conservative }}</p>
+                  </div>
+                  <div class="way way--r">
+                    <span class="way__l">激进</span>
+                    <p>{{ item.radical }}</p>
+                  </div>
+                </div>
+                {% if item.impact_scope %}<p class="rev__scope"><span>影响面</span>{{ item.impact_scope }}</p>{% endif %}
+                {% if item.decision_note %}<p class="rev__note"><span>取舍</span>{{ item.decision_note }}</p>{% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ol>
+      {% else %}
+        <p class="dim">这次分析没有产出修改方向。</p>
+      {% endif %}
+    </section>
+
+    {% include 'library/_source.twig' with { work: work, edits: edits } %}
+
+    {% include 'library/_related.twig' %}
+  </div>
+</article>
+{% endblock %}

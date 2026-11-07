@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>关于荒启 · 品牌全景 | 荒启科幻</title>
+<meta name="description" content="荒启科幻：公益社群、公司提供的平台工具与银河图书馆的三重关系，公司定位、主体信息、核心价值与发展脉络。">
+<meta name="theme-color" content="#0B0E14">
+<meta property="og:title" content="关于荒启 · 品牌全景 | 荒启科幻">
+<meta property="og:description" content="荒启科幻：公益社群、公司提供的平台工具与银河图书馆的三重关系，公司定位、主体信息、核心价值与发展脉络。">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/logo/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/noto-sans-sc-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/noto-sans-sc-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+<script>/* 首帧前应用主题，避免闪色；图书馆链接带上当前主题，馆里首帧就同色 */(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('hq-theme')||'night')}catch(e){}})();
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*="/library"]');if(!a)return;try{var t=localStorage.getItem('hq-theme');if(t==='day'||t==='night'){var u=new URL(a.href,location.href);u.searchParams.set('theme',t);a.href=u.toString()}}catch(err){}},true);</script>
+</head>
+<body id="top" data-scene="about">
+<a class="skip-link" href="#main">跳到主要内容</a>
+
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<div class="bg-overlay" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-stars"></div>
+  <svg class="bg-constellation" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <!-- 银河带：边界虚线 + 半透明带 + 带内碎星 -->
+      <g fill="currentColor" opacity="0.055">
+        <path d="M470 -40 C 620 120 740 260 790 400 C 840 540 850 720 830 940 L 660 940 C 700 740 690 600 620 470 C 550 340 460 160 400 -40 Z"/>
+      </g>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.16" stroke-dasharray="2 10">
+        <path d="M470 -40 C 620 120 740 260 790 400 C 840 540 850 720 830 940"/>
+        <path d="M400 -40 C 460 160 550 340 620 470 C 690 600 700 740 660 940"/>
+      </g>
+      <g fill="currentColor" opacity="0.5">
+        <circle cx="560" cy="60" r="1.1"/><circle cx="640" cy="150" r="1.3"/><circle cx="700" cy="240" r="1.1"/>
+        <circle cx="740" cy="330" r="1.4"/><circle cx="790" cy="430" r="1.2"/><circle cx="810" cy="520" r="1.5"/>
+        <circle cx="800" cy="610" r="1.2"/><circle cx="780" cy="700" r="1.4"/><circle cx="760" cy="790" r="1.2"/>
+        <circle cx="700" cy="850" r="1.3"/><circle cx="850" cy="120" r="1"/><circle cx="760" cy="90" r="1"/>
+      </g>
+      <!-- 远景散星（无连线） -->
+      <g fill="#EDF2F8">
+        <circle cx="60" cy="420" r="1.3" opacity="0.4"/><circle cx="180" cy="640" r="1" opacity="0.3"/>
+        <circle cx="460" cy="380" r="1.2" opacity="0.35"/><circle cx="1010" cy="180" r="1.2" opacity="0.4"/>
+        <circle cx="1130" cy="330" r="1" opacity="0.3"/><circle cx="1310" cy="430" r="1.3" opacity="0.4"/>
+        <circle cx="1430" cy="620" r="1" opacity="0.3"/><circle cx="1530" cy="240" r="1.2" opacity="0.35"/>
+        <circle cx="980" cy="740" r="1" opacity="0.3"/><circle cx="240" cy="300" r="1" opacity="0.3"/>
+      </g>
+      <!-- 北斗七星（西北天，右上）：天枢→天璇→天玑→天权→玉衡→开阳→摇光 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.4" fill="none">
+        <polyline points="1240,140 1300,120 1350,135 1390,110 1440,120 1490,95 1545,105"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="1240" cy="140" r="2.2"/><circle cx="1300" cy="120" r="2.2"/><circle cx="1350" cy="135" r="2"/>
+        <circle cx="1390" cy="110" r="2"/><circle cx="1440" cy="120" r="2.2"/><circle cx="1490" cy="95" r="2.2"/>
+        <circle cx="1545" cy="105" r="2.2"/>
+      </g>
+      <!-- 仙后座 W（东北天，左上） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.35" fill="none">
+        <polyline points="140,130 200,105 265,135 330,100 395,125"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.65">
+        <circle cx="140" cy="130" r="1.8"/><circle cx="200" cy="105" r="1.8"/><circle cx="265" cy="135" r="1.8"/>
+        <circle cx="330" cy="100" r="1.8"/><circle cx="395" cy="125" r="1.8"/>
+      </g>
+      <!-- 天琴座：织女星 + 平行四边形 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="648,215 682,232 668,276 634,258 648,215"/>
+      </g>
+      <circle cx="620" cy="170" r="3.4" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="620" cy="170" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.7">
+        <circle cx="648" cy="215" r="1.8"/><circle cx="682" cy="232" r="1.6"/><circle cx="668" cy="276" r="1.6"/><circle cx="634" cy="258" r="1.6"/>
+      </g>
+      <!-- 天鹅座（北十字）：天津四 → 天津一 → 辇道增七，两翼 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="880,120 852,212 822,322"/>
+        <polyline points="772,190 852,212 932,252"/>
+      </g>
+      <circle cx="880" cy="120" r="3.2" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="880" cy="120" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="852" cy="212" r="2.4"/><circle cx="822" cy="322" r="2.2"/>
+        <circle cx="772" cy="190" r="1.8"/><circle cx="932" cy="252" r="1.8"/>
+      </g>
+      <!-- 天鹰座：牛郎星 + 扁担双星（河鼓一 / 河鼓三） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="665,445 700,482 736,518"/>
+      </g>
+      <circle cx="700" cy="482" r="3.2" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="700" cy="482" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="665" cy="445" r="2"/><circle cx="736" cy="518" r="2"/>
+        <circle cx="780" cy="570" r="1.6"/><circle cx="816" cy="608" r="1.5"/>
+      </g>
+      <!-- 天蝎座：三星头弧 → 心宿二（红色超巨星） → 尾钩 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="1080,575 1120,560 1160,575"/>
+        <polyline points="1120,630 1160,690 1195,735 1178,795 1122,822 1066,806 1042,762"/>
+      </g>
+      <circle cx="1120" cy="630" r="3" fill="#E88B8B" opacity="0.9"/>
+      <circle cx="1120" cy="630" r="9" fill="none" stroke="#E88B8B" stroke-width="1" opacity="0.55"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="1080" cy="575" r="1.9"/><circle cx="1120" cy="560" r="2"/><circle cx="1160" cy="575" r="1.9"/>
+        <circle cx="1160" cy="690" r="1.9"/><circle cx="1195" cy="735" r="1.9"/><circle cx="1178" cy="795" r="1.9"/>
+        <circle cx="1122" cy="822" r="1.7"/><circle cx="1066" cy="806" r="1.7"/><circle cx="1042" cy="762" r="1.7"/>
+      </g>
+      <!-- 人马座茶壶（银河中心方向） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="790,692 850,672 898,702 893,756 834,776 786,746 790,692"/>
+        <polyline points="786,746 752,722"/>
+        <polyline points="850,672 872,640"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="790" cy="692" r="1.9"/><circle cx="850" cy="672" r="2"/><circle cx="898" cy="702" r="1.9"/>
+        <circle cx="893" cy="756" r="1.9"/><circle cx="834" cy="776" r="1.9"/><circle cx="786" cy="746" r="1.9"/>
+        <circle cx="752" cy="722" r="1.6"/><circle cx="872" cy="640" r="1.6"/>
+      </g>
+      <!-- 织女星坐标十字（织女一是夏季夜空最易辨认的恒星之一） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.5">
+        <path d="M620 152 V165 M620 175 V188 M602 170 H615 M625 170 H638"/>
+      </g>
+    </svg>
+  <svg class="bg-shard bg-shard--a" viewBox="0 0 320 320" aria-hidden="true">
+      <path d="M60 40 L200 120 L110 230 Z" fill="currentColor" opacity="0.07"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+        <polyline points="40,240 110,150 190,190 250,90"/>
+        <path d="M210 60 A 80 80 0 0 1 268 140" stroke-dasharray="1 6"/>
+      </g>
+      <g fill="currentColor">
+        <circle cx="40" cy="240" r="2.6"/><circle cx="110" cy="150" r="3"/>
+        <circle cx="190" cy="190" r="3.4"/><circle cx="250" cy="90" r="2.6"/>
+      </g>
+      <circle cx="190" cy="190" r="8" fill="none" stroke="currentColor" stroke-width="1" opacity="0.65"/>
+      <g stroke="currentColor" stroke-width="1" opacity="0.55">
+        <path d="M250 78 V88 M250 92 V102 M240 90 H250 M254 90 H264"/>
+      </g>
+      <rect x="30" y="264" width="20" height="20" fill="currentColor" opacity="0.8"/>
+    </svg>
+  <svg class="bg-shard bg-shard--b" viewBox="0 0 320 320" aria-hidden="true">
+      <path d="M160 160 L268 122 A 118 118 0 0 1 262 202 Z" fill="currentColor" opacity="0.09"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+        <circle cx="160" cy="160" r="110"/>
+        <circle cx="160" cy="160" r="72" stroke-dasharray="2 8" opacity="0.6"/>
+        <ellipse cx="160" cy="160" rx="132" ry="44" transform="rotate(-18 160 160)" opacity="0.8"/>
+      </g>
+      <g stroke="currentColor" stroke-width="1" opacity="0.5">
+        <path d="M160 132 V156 M160 164 V188 M132 160 H156 M164 160 H188"/>
+      </g>
+      <circle cx="160" cy="160" r="4" fill="currentColor" opacity="0.9"/>
+      <circle cx="52" cy="196" r="5" fill="currentColor"/>
+      <circle cx="41" cy="188" r="2" fill="currentColor" opacity="0.7"/>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.35">
+        <path d="M52 196 L160 160"/>
+      </g>
+    </svg>
+  <svg class="bg-daysky" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <mask id="daysky-moon-mask">
+          <rect x="100" y="700" width="150" height="130" fill="#fff"/>
+          <circle cx="145" cy="767" r="30" fill="#000"/>
+        </mask>
+      </defs>
+      <!-- 锐利斜切色块：深空平面，全部直线边界 -->
+      <polygon points="0,900 0,560 640,900" fill="var(--c-data, #4A5FA8)" opacity="0.10"/>
+      <polygon points="1600,900 1600,470 960,900" fill="var(--c-data, #4A5FA8)" opacity="0.08"/>
+      <polygon points="1600,0 1600,280 1270,0" fill="#FFFFFF" opacity="0.55"/>
+      <polygon points="0,0 320,0 0,200" fill="#FFFFFF" opacity="0.40"/>
+      <line x1="0" y1="742" x2="1600" y2="548" stroke="var(--c-data, #4A5FA8)" stroke-width="1" opacity="0.14"/>
+      <!-- 光照阶梯带（v2.3.7）：以太阳为圆心的三层平涂同心圆，
+           亮度逐层衰减 —— 用「色阶」而非渐变表达「这一片天光来自太阳」 -->
+      <g fill="var(--sun, #F5C445)">
+        <circle cx="1400" cy="540" r="1000" opacity="0.025"/>
+        <circle cx="1400" cy="540" r="860" opacity="0.045"/>
+        <circle cx="1400" cy="540" r="700" opacity="0.07"/>
+      </g>
+      <!-- 放射光线：自日面外侧射出的直线光束（几何、锐利，非卡通短刺） -->
+      <g class="daysky__rays" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.14">
+        <path d="M1682.5 1029.3 L1900 1406 M1400 1105 L1400 1540 M910.7 822.5 L534 1040
+                 M835 540 L400 540 M910.7 257.5 L534 40 M1117.5 50.7 L900 -326
+                 M1400 -25 L1400 -460 M1682.5 50.7 L1900 -326"/>
+      </g>
+      <!-- 巨物太阳：r=520、圆心 (1400,540) —— 左侧与上方 limb 完整落在
+           画幅内、右下两向出画。直径 1040 已超过画幅高 900，比 v2.3.7 的
+           r=400 再放大 1.3 倍：太阳从此不是「画面里的一个圆」，
+           而是「画面装不下的一个天体」 -->
+      <g class="daysky__rings">
+        <circle cx="1400" cy="540" r="575" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.12"/>
+        <circle cx="1400" cy="540" r="554" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.20"/>
+        <circle cx="1400" cy="540" r="536" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1.2" opacity="0.34"/>
+      </g>
+      <g class="daysky__sun">
+        <!-- 平涂内盘（v2.3.16）：五层同心、半径逐级收 74、透明度逐级 +0.05。
+             日面跨度 1040，只用一层均匀填色时读作「一片浅黄雾」而不是球体；
+             五级台阶叠出「中心亮、边缘暗」的亮度梯度，全站禁渐变，
+             这是唯一能表达「发光球体」的语言 —— 与「光照阶梯带」同一套做法。 -->
+        <circle cx="1400" cy="540" r="520" fill="var(--sun, #F5C445)" opacity="0.26"/>
+        <circle cx="1400" cy="540" r="446" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="372" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="298" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="224" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <!-- 赤道与子午两条对角基准线（几何线稿语言） -->
+        <path d="M800 -60 L2000 1140 M2000 -60 L800 1140" stroke="var(--sun-line, #D9A32B)" stroke-width="1" fill="none" opacity="0.22"/>
+        <!-- 日面边缘：加粗一档并提亮 —— 直径超过画幅后，这条弧是唯一
+             能让人读出「这是个球、不是色块」的证据，必须给足 -->
+        <circle cx="1400" cy="540" r="520" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="3" opacity="0.72"/>
+        <circle cx="1400" cy="540" r="492" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1.2" opacity="0.34"/>
+      </g>
+      <!-- 黯淡的月亮：画面左下，亮面朝向太阳（光源方向一致），
+           mask 硬裁出锐利明暗界线 -->
+      <g class="daysky__moon" opacity="0.5">
+        <circle cx="170" cy="760" r="30" fill="#DDE7EF" mask="url(#daysky-moon-mask)"/>
+        <circle cx="170" cy="760" r="30" fill="none" stroke="var(--c-data, #4A5FA8)" stroke-width="1" opacity="0.35"/>
+      </g>
+      <!-- 几点黯淡星光：低存在感圆点与十字亮星（极慢漂移） -->
+      <g class="daysky__stars" fill="var(--c-data, #4A5FA8)">
+        <circle cx="520" cy="212" r="2" opacity="0.35"/>
+        <circle cx="760" cy="332" r="1.5" opacity="0.28"/>
+        <circle cx="984" cy="140" r="2" opacity="0.30"/>
+        <circle cx="700" cy="560" r="1.8" opacity="0.25"/>
+        <circle cx="1084" cy="692" r="2.2" opacity="0.28"/>
+        <circle cx="222" cy="322" r="1.6" opacity="0.30"/>
+        <circle cx="1448" cy="424" r="1.8" opacity="0.30"/>
+        <path d="M880 458 V482 M868 470 H892" stroke="var(--c-data, #4A5FA8)" stroke-width="1" fill="none" opacity="0.30"/>
+        <path d="M1494 640 V660 M1484 650 H1504" stroke="var(--c-data, #4A5FA8)" stroke-width="1" fill="none" opacity="0.26"/>
+      </g>
+    </svg>
+  <div class="bg-vignette"></div>
+</div>
+
+  <header class="site-header">
+    <div class="container container--wide site-header__inner">
+      <a class="brand" href="index.html" aria-label="荒启科幻 首页">
+        <img class="brand__img brand__img--night" src="assets/logo/logo-full-white.png" alt="荒启科幻 HUANGQI SCI-FI" width="880" height="334">
+        <img class="brand__img brand__img--day" loading="lazy" src="assets/logo/logo-full-dark.png" alt="荒启科幻 HUANGQI SCI-FI" width="880" height="334">
+      </a>
+
+      <nav class="nav" aria-label="主导航">
+        <ul class="nav" style="display:contents">
+        <li class="nav__item">
+          <a class="nav__link" href="index.html">首页</a>
+        </li>
+        <li class="nav__item is-current">
+          <a class="nav__link" href="about.html">关于荒启</a>
+        </li>
+        <li class="nav__item has-drop">
+          <span class="nav__group">
+            <a class="nav__link nav__link--parent" href="index.html#business">三大板块</a>
+            <button class="nav__caret-btn" type="button" aria-expanded="false" aria-haspopup="true" aria-label="展开「三大板块」子菜单">
+              <svg class="ico nav__caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </span>
+          <div class="nav__drop">
+            <a class="drop-item" href="community.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.4a3.4 3.4 0 0 1 0 6.6"/><path d="M18 14.4A6.2 6.2 0 0 1 21.2 20"/></svg></span>
+              <span>
+                <span class="drop-item__title">科幻社群</span>
+                <span class="drop-item__desc">成员自主运营的公益写作社群，每年九期练笔</span>
+              </span>
+            </a>
+            <a class="drop-item" href="tools.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="5.4"/><path d="M20.6 12h-3.2M12 20.6v-3.2M3.4 12h3.2M12 3.4v3.2M18.08 18.08l-2.26-2.26M5.92 18.08l2.26-2.26M5.92 5.92l2.26 2.26M18.08 5.92l-2.26 2.26"/></svg></span>
+              <span>
+                <span class="drop-item__title">数字化产品开发</span>
+                <span class="drop-item__desc">社区、教育、AI 与定制开发，源码可交付</span>
+              </span>
+            </a>
+            <a class="drop-item" href="library.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="17" r="2.2"/><circle cx="19" cy="17" r="2.2"/><path d="M10.4 6.6 6.6 15M13.6 6.6 17.4 15M7.2 17h9.6"/></svg></span>
+              <span>
+                <span class="drop-item__title">银河图书馆</span>
+                <span class="drop-item__desc">免费开放的在线索引馆，一篇两页：读者一页、作者一页</span>
+              </span>
+            </a>
+          </div>
+        </li>
+        <li class="nav__item">
+          <a class="nav__link" href="contact.html">联系我们</a>
+        </li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到白天模式" aria-pressed="false">
+          <svg class="ico ico-20 theme-toggle__ico theme-toggle__ico--to-day" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/></svg>
+          <svg class="ico ico-20 theme-toggle__ico theme-toggle__ico--to-night" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 14.4A8.5 8.5 0 0 1 9.6 3.4a8.5 8.5 0 1 0 11 11Z"/></svg>
+        </button>
+        
+        
+        <a class="btn btn--outline btn--sm btn--read" href="/library" target="_blank" rel="noopener"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h6a3 3 0 0 1 3 3V20a2.4 2.4 0 0 0-2.4-2.4H4z"/><path d="M20 4.5h-6a3 3 0 0 0-3 3V20a2.4 2.4 0 0 1 2.4-2.4H20z"/></svg>银河图书馆</a>
+        <a class="btn btn--outline btn--sm btn--read" href="/h5/" target="_blank" rel="noopener" data-invite-open>在线阅读</a>
+        <a class="btn btn--outline btn--sm btn--download" href="/dt/荒启科幻.exe" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3.5v3.5M14 3.5v3.5M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></svg>下载客户端</a>
+        
+        <a class="btn btn--primary btn--sm" href="contact.html#invite"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12 11.3 14.1 15 10.4"/></svg>获取邀请码</a>
+        <button class="nav-toggle" type="button" aria-label="打开导航菜单" aria-controls="mobile-drawer">
+          <span class="nav-toggle__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+<main id="main" class="page">
+
+  <!-- ========================================================= 页面头 -->
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="面包屑">
+        <a href="index.html">首页</a>
+        <svg class="ico ico-18 breadcrumb__sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        <span class="breadcrumb__current">关于荒启</span>
+      </nav>
+
+      <h1 class="page-hero__title" data-reveal="up">关于荒启</h1>
+      <p class="page-hero__desc" data-reveal="up" style="--reveal-delay:90ms">
+        「荒启科幻」是科幻爱好者自主运营的纯公益社群，核心活动为「荒启科幻练笔」；
+        成都荒启文化传播有限公司为社群开发并提供网络平台工具，另承接软件开发与技术服务 ——
+        且只做这些事。
+      </p>
+
+      <div class="page-hero__stats" data-reveal="fade" style="--reveal-delay:200ms">
+        <div>
+          <p class="hero__meta-num"><span data-count="2024" data-count-plain>0</span></p>
+          <p class="hero__meta-label">练笔起步年份</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="25">0</span><small>期</small></p>
+          <p class="hero__meta-label">当前进行期次</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="9">0</span><small>期 / 年</small></p>
+          <p class="hero__meta-label">社群节奏</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="6">0</span></p>
+          <p class="hero__meta-label">分析维度</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 品牌释义 -->
+  <section class="section">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow" data-reveal="fade">品牌释义</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">荒启 · 名字的由来</h2>
+          <p class="body mt-6" data-reveal="up">
+            「荒启」二字取自两位把科幻带进中文的人。
+          </p>
+
+          <div class="deflist mt-7" data-reveal="up">
+            <div class="deflist__item">
+              <div class="deflist__term">荒江钓叟<small>ORIGIN · AUTHOR</small></div>
+              <div>
+                <p class="deflist__desc">
+                  第一位发表中文科幻小说的作者。中文科幻的书写由他起笔，
+                  这个体裁自诞生之日起，就带着中国人对未来的想象方式。
+                </p>
+              </div>
+            </div>
+            <div class="deflist__item">
+              <div class="deflist__term">梁启超<small>ORIGIN · TRANSLATOR</small></div>
+              <div>
+                <p class="deflist__desc">
+                  第一位将外文科幻译介至中国的译者。中文科幻的阅读视野由他打开，
+                  此后一百余年，域外科幻得以持续进入中文世界。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p class="body mt-7" data-reveal="up">
+            以此为名，是把这份敬意当作起点：既承接前人开出的道路，也继续为后来者铺路。
+          </p>
+        </div>
+
+        <aside class="split__aside" data-reveal="left">
+          <div class="logo-box logo-box--dark" style="min-height:280px">
+            <img loading="lazy" decoding="async" src="assets/logo/logo-full-white.png" alt="荒启科幻 标准字" width="880" height="334">
+            <span class="logo-box__label">STANDARD WORDMARK</span>
+          </div>
+          <p class="small mt-4">
+            标准字由「荒启科幻」中文黑体字形与 HUANGQI SCI-FI 西文衬线构成。
+            图形标识取材于超新星爆发时的放射状几何破片，象征想象力从一点向四周展开。
+          </p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ 定位 / 使命 / 愿景 -->
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">品牌定位</p>
+        <h2 class="section-head__title" data-reveal="up">我们是谁，以及我们要去哪</h2>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="card card--beacon" data-reveal="up">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M15.6 8.4 13.9 13.9 8.4 15.6l1.7-5.5z"/></svg></div>
+          <h3 class="card__title">定位</h3>
+          <p class="card__desc">
+            成都荒启文化传播有限公司是一家以科幻为特色方向的文化传播企业，登记经营范围以
+            数字内容制作、文艺创作、软件开发与销售、技术服务为主。
+            「文化」与「科技」不是两个并列标签，而是同一条链路的两端：
+            内容提供需求，技术提供可复制的解法。
+          </p>
+        </article>
+        <article class="card card--beacon" data-reveal="up" style="--reveal-delay:110ms">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="4.4"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg></div>
+          <h3 class="card__title">使命</h3>
+          <p class="card__desc">
+            连接科幻创作者与读者，为文学组织提供好用的平台工具，把作品整理成可检索、可复核的索引。
+            这三句话对应三类对象：人、组织、文本。它们是同一件事的三个切面。
+          </p>
+        </article>
+        <article class="card card--beacon" data-reveal="up" style="--reveal-delay:220ms">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.4"/><ellipse cx="12" cy="12" rx="9" ry="4.2" transform="rotate(-24 12 12)"/></svg></div>
+          <h3 class="card__title">愿景</h3>
+          <p class="card__desc">
+            持续完善面向科幻写作场景的平台工具，让每一篇作品都能被认真读到、认真评到、认真索引到。
+            我们的对标对象不是其他平台，而是「创作者被埋没的速度」。
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 主体信息 -->
+  <section class="section section--panel">
+    <div class="container container--narrow">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">主体信息</p>
+        <h2 class="section-head__title" data-reveal="up">品牌名与公司名</h2>
+        <p class="section-head__desc" data-reveal="up">
+          日常表达、内容发布、活动招募统一用「荒启科幻」；签约、开票、版权与授权用公司全称。
+          需要说明的是：「荒启科幻」也是练笔社群的名称 —— 社群由科幻爱好者组成、
+          成员自主运营，是纯公益社群，与公司不存在隶属或经营关系。
+        </p>
+        <p class="section-head__desc" data-reveal="up">
+          下列登记信息以营业执照为准，可凭统一社会信用代码在
+          <a class="link-arrow" href="https://www.gsxt.gov.cn/" rel="noopener noreferrer" target="_blank">国家企业信用信息公示系统</a>
+          核验。
+        </p>
+      </div>
+
+      <div class="kv mt-7" data-reveal="up">
+        <div class="kv__row"><span class="kv__key">公司全称</span><span class="kv__val">成都荒启文化传播有限公司</span></div>
+        <div class="kv__row"><span class="kv__key">统一社会信用代码</span><span class="kv__val mono">91510100MAEY15D64X</span></div>
+        <div class="kv__row"><span class="kv__key">企业类型</span><span class="kv__val">有限责任公司（自然人投资或控股）</span></div>
+        <div class="kv__row"><span class="kv__key">成立日期</span><span class="kv__val">2025 年 9 月 25 日</span></div>
+        <div class="kv__row"><span class="kv__key">注册地址</span><span class="kv__val">四川省成都高新区神仙树西路 3 号 1 栋 11 层 9 号</span></div>
+        <div class="kv__row"><span class="kv__key">品牌名称</span><span class="kv__val">荒启科幻 · HUANGQI SCI-FI</span></div>
+        <div class="kv__row"><span class="kv__key">经营范围（主要项）</span><span class="kv__val">组织文化艺术交流活动、数字内容制作服务（不含出版发行）、文艺创作、软件开发与销售、技术服务、版权代理</span></div>
+        <div class="kv__row"><span class="kv__key">对外渠道</span><span class="kv__val">官网、微信公众号「荒启科幻」、交流 QQ 群 280660235</span></div>
+      </div>
+
+      <p class="section-head__desc mt-5" data-reveal="up">
+        「经营范围（主要项）」仅列与本站相关的登记项目，完整口径以登记机关公示为准。
+        荒启科幻社群为纯公益社群，参加活动全程免费；公司不参与社群运营，
+        也不从社群活动中获取经营收益。
+      </p>
+    </div>
+  </section>
+
+  <!-- =================================================== 三大业务关系 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">三重关系</p>
+        <h2 class="section-head__title" data-reveal="up">社群开展活动，公司提供工具，图书馆沉淀索引</h2>
+        <p class="section-head__desc" data-reveal="up">
+          很多人第一次听说荒启科幻时，会以为这一切出自同一家公司。
+          实际上是三个主体、一条顺序：科幻迷社群先跑通了写作互助，
+          公司把支撑流程做成了平台工具，最后才有足够多的文本可供拆解与索引。
+        </p>
+      </div>
+
+      <div class="graph-stage mt-8" data-reveal="up">
+        <svg viewBox="0 0 960 380" role="img" aria-label="社群、平台工具与银河图书馆关系示意图">
+          <defs>
+            <marker id="rel-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0 0 L10 5 L0 10 z" fill="var(--accent-2)" fill-opacity="0.8"/>
+            </marker>
+          </defs>
+
+          <g fill="none" stroke="var(--accent-1-line)" stroke-width="1.4">
+            <path d="M232 108 H358" marker-end="url(#rel-arrow)"/>
+            <path d="M602 108 H728" marker-end="url(#rel-arrow)"/>
+            <path d="M820 168 V252 H128 V172" marker-end="url(#rel-arrow)" stroke-dasharray="5 5"/>
+          </g>
+
+          <g>
+            <rect x="52" y="56" width="180" height="104" rx="8" fill="var(--surface-2)" stroke="var(--line-2)"/>
+            <text x="142" y="94" text-anchor="middle" fill="var(--accent-2)" font-size="11" letter-spacing="2.4" font-family="Orbitron, sans-serif">STAGE 01</text>
+            <text x="142" y="122" text-anchor="middle" fill="var(--text-1)" font-size="17" font-weight="600" font-family="Noto Sans SC, sans-serif">科幻社群</text>
+            <text x="142" y="144" text-anchor="middle" fill="var(--text-4)" font-size="11.5" font-family="Noto Sans SC, sans-serif">成员自主开展练笔</text>
+          </g>
+
+          <g>
+            <rect x="358" y="56" width="244" height="104" rx="8" fill="var(--surface-2)" stroke="var(--line-2)"/>
+            <text x="480" y="94" text-anchor="middle" fill="var(--accent-2)" font-size="11" letter-spacing="2.4" font-family="Orbitron, sans-serif">STAGE 02</text>
+            <text x="480" y="122" text-anchor="middle" fill="var(--text-1)" font-size="17" font-weight="600" font-family="Noto Sans SC, sans-serif">平台工具（公司提供）</text>
+            <text x="480" y="144" text-anchor="middle" fill="var(--text-4)" font-size="11.5" font-family="Noto Sans SC, sans-serif">把社群流程做成工具</text>
+          </g>
+
+          <g>
+            <rect x="728" y="56" width="180" height="104" rx="8" fill="var(--surface-2)" stroke="var(--line-2)"/>
+            <text x="818" y="94" text-anchor="middle" fill="var(--accent-2)" font-size="11" letter-spacing="2.4" font-family="Orbitron, sans-serif">STAGE 03</text>
+            <text x="818" y="122" text-anchor="middle" fill="var(--text-1)" font-size="17" font-weight="600" font-family="Noto Sans SC, sans-serif">银河图书馆</text>
+            <text x="818" y="144" text-anchor="middle" fill="var(--text-4)" font-size="11.5" font-family="Noto Sans SC, sans-serif">沉淀为公开索引</text>
+          </g>
+
+          <g>
+            <rect x="128" y="252" width="704" height="82" rx="8" fill="var(--accent-1-soft)" stroke="var(--line-2)" stroke-dasharray="4 4"/>
+            <text x="480" y="286" text-anchor="middle" fill="var(--accent-1-hi)" font-size="13" font-family="Noto Sans SC, sans-serif">拆解成果回流社群，成为写作参照</text>
+            <text x="480" y="310" text-anchor="middle" fill="var(--text-4)" font-size="11.5" font-family="Noto Sans SC, sans-serif">下一期作品因此更成熟 —— 闭环完成</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 核心价值 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">核心价值</p>
+        <h2 class="section-head__title" data-reveal="up">四条不会因为规模变化而调整的原则</h2>
+      </div>
+
+      <div class="deflist mt-8">
+        <div class="deflist__item" data-reveal="up">
+          <div class="deflist__term">社群驱动<small>COMMUNITY FIRST</small></div>
+          <div>
+            <p class="deflist__desc">
+              文学反馈的质量取决于反馈者的水平与认真程度，而不是评分的算法复杂度。
+              因此社群坚持人工撰写评稿、坚持评稿只评作品不评作者，也不允许用任何 AI 工具代写 ——
+              即便这意味着成员要投入更多时间。
+            </p>
+          </div>
+        </div>
+
+        <div class="deflist__item" data-reveal="up">
+          <div class="deflist__term">技术赋能<small>TECH AS LEVERAGE</small></div>
+          <div>
+            <p class="deflist__desc">
+              文学社团的负责人往往身兼数职，最容易被消耗的是时间 —— 催稿、统计、汇总分数、核对签到。
+              公司提供的工具把这几件事从数天压到数分钟，并让结果可追溯、可导出、可交接。
+            </p>
+          </div>
+        </div>
+
+        <div class="deflist__item" data-reveal="up">
+          <div class="deflist__term">知识沉淀<small>KNOWLEDGE ASSET</small></div>
+          <div>
+            <p class="deflist__desc">
+              一次深度拆解不应只服务于一次讨论，它应当成为后来创作者可以反复取用的结构参照。
+              所以图书馆用索引词与节点轴而非纯文字报告来承载结论：结构化的内容可以被检索、被比较、被组合。
+            </p>
+          </div>
+        </div>
+
+        <div class="deflist__item" data-reveal="up">
+          <div class="deflist__term">正向循环<small>FULL CYCLE</small></div>
+          <div>
+            <p class="deflist__desc">
+              从社群创作到平台支持再到图书馆索引，三个环节互相加强。
+              单点能力很容易被复制，但一个自我加强的循环很难：作品中产生的问题会变成工具的需求，
+              工具沉淀的数据会变成拆解的语料，拆解的结论会回到社群成为下一期的起点。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 发展脉络 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="split split--top">
+        <div>
+          <p class="eyebrow" data-reveal="fade">发展脉络</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">从一期活动到一个闭环</h2>
+          <p class="body mt-5" data-reveal="up">
+            荒启科幻练笔第一期始于 2024 年 1 月 1 日，规则 4.1 版本自 2025 年 11 月 1 日起实行。
+            以下节点用于说明活动与工具的演进顺序，具体时间与事件以官方发布为准。
+          </p>
+        </div>
+
+        <div class="timeline" data-reveal="up">
+          <div class="tl-item">
+            <p class="tl-item__date">2024 年 1 月</p>
+            <h3 class="tl-item__title">社群起步</h3>
+            <p class="tl-item__desc">
+              以线上写作互助的形式启动第一期练笔，确立「投稿 + 评稿」的基本结构。
+              此阶段全部流程依靠人工推进，也因此暴露了大量可被工具化的重复劳动。
+            </p>
+          </div>
+          <div class="tl-item">
+            <p class="tl-item__date">2025 年 11 月</p>
+            <h3 class="tl-item__title">规则成型</h3>
+            <p class="tl-item__desc">
+              练笔活动正式规则 4.1 开始实行：评稿改为算法分配，
+              评分维度、去极值计分与纪律条款一并固定下来。
+            </p>
+          </div>
+          <div class="tl-item tl-item--active">
+            <p class="tl-item__date">现阶段</p>
+            <h3 class="tl-item__title">工具化与图书馆上线</h3>
+            <p class="tl-item__desc">
+              成都荒启文化传播有限公司开发的 APP「荒启科幻」承载投稿、评稿与评审中心的全流程，
+              是公司「社群工具」方向的示范性项目；公司同时启动银河图书馆，
+              把社群作品系统性拆解、沉淀为公开索引。
+            </p>
+          </div>
+          <div class="tl-item">
+            <p class="tl-item__date">规划中</p>
+            <h3 class="tl-item__title">索引开放</h3>
+            <p class="tl-item__desc">
+              将拆解成果以可检索、可比较的公开数据形式开放给创作者与研究者，
+              让图书馆从社群工具延伸为面向公众的公益基础设施。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 组织方式 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">分工方式</p>
+        <h2 class="section-head__title" data-reveal="up">社群与公司，各自负责什么</h2>
+        <p class="section-head__desc" data-reveal="up">
+          社群的活动由成员自主完成，公司的职责止步于工具与分析 —— 两条线不重叠，边界不混同。
+        </p>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="card" data-reveal="up">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.4a3.4 3.4 0 0 1 0 6.6"/><path d="M18 14.4A6.2 6.2 0 0 1 21.2 20"/></svg></div>
+          <h3 class="card__title">社群活动 · 成员自主</h3>
+          <p class="card__desc">
+            活动排期与节点把控、评稿任务的分配与催办、评稿质量抽查与社群纪律维护，
+            全部由社群成员自主完成；公司不参与社群的组织与运营。
+            这条线直接面向成员，是全站所有需求的第一来源。
+          </p>
+        </article>
+        <article class="card" data-reveal="up" style="--reveal-delay:110ms">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 8 5 12l4 4M15 8l4 4-4 4"/></svg></div>
+          <h3 class="card__title">技术研发 · 公司承担</h3>
+          <p class="card__desc">
+            公司负责四条业务线的研发与多端交付、外部组织的私有化部署与数据安全方案，
+            以及拆解侧的数据管道与索引管线。
+          </p>
+        </article>
+        <article class="card" data-reveal="up" style="--reveal-delay:220ms">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h6a3 3 0 0 1 3 3V20a2.4 2.4 0 0 0-2.4-2.4H4z"/><path d="M20 4.5h-6a3 3 0 0 0-3 3V20a2.4 2.4 0 0 1 2.4-2.4H20z"/></svg></div>
+          <h3 class="card__title">内容拆解 · 免费开放</h3>
+          <p class="card__desc">
+            公司负责作品拆解、索引标注、拆解卡撰写与方法论提炼，成果在银河图书馆免费公开，
+            同时作为社群内的写作参照。
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== CTA -->
+  <section class="section section--sm">
+    <div class="container">
+      <div class="cta-block" data-reveal="up">
+        <div class="cta-block__inner">
+          <div class="cta-block__text">
+            <h2 class="cta-block__title">想更具体地了解荒启科幻？</h2>
+            <p class="cta-block__desc">
+              三个板块各自有独立页面，包含完整的运作机制、功能清单与产出形式。
+            </p>
+          </div>
+          <div class="cta-block__actions">
+            <a class="btn btn--primary btn--lg" href="community.html">从社群机制看起 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn btn--outline btn--lg" href="contact.html">直接联系我们</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <footer class="site-footer">
+    <div class="container container--full">
+      <div class="site-footer__main">
+        <div class="site-footer__brand">
+          <img class="brand__img--night" src="assets/logo/logo-full-white.png" alt="荒启科幻" width="880" height="334">
+          <img class="brand__img--day" loading="lazy" src="assets/logo/logo-full-dark.png" alt="荒启科幻" width="880" height="334">
+          <p class="site-footer__tagline">从荒芜中开启新世界。连接科幻创作者与读者，用技术把重复劳动交给系统，用关键词索引解构科幻世界。</p>
+          <p class="footer-brand-line">HUANGQI SCI-FI</p>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">三大板块</h2>
+          <ul class="site-footer__links">
+            <li><a href="community.html">科幻社群</a></li>
+            <li><a href="tools.html">数字化产品开发</a></li>
+            <li><a href="library.html">银河图书馆</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">快速链接</h2>
+          <ul class="site-footer__links">
+            <li><a href="contact.html#start">客户端下载</a></li>
+            <li><a href="/h5/" target="_blank" rel="noopener">在线阅读</a></li>
+            <li><a href="/library" target="_blank" rel="noopener">进入银河图书馆</a></li>
+            <li><a href="about.html">关于荒启</a></li>
+            <li><a href="contact.html">联系与加入</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">联系我们</h2>
+          <ul class="site-footer__links">
+            <li><a href="contact.html#invite">加入社群（QQ 群 280660235）</a></li>
+            <li><a href="contact.html">联系方式与入群须知</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="site-footer__bottom">
+        <p>© <span data-year>2026</span> 成都荒启文化传播有限公司 · 荒启科幻。<a class="site-footer__icp" href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank"> 蜀ICP备2025169184号-1 </a></p>
+        <p class="site-footer__compliance">「荒启科幻」练笔社群由科幻爱好者组成、成员自主运营，为纯公益社群；成都荒启文化传播有限公司提供网络平台工具，不参与社群运营，不从中获取经营收益。</p>
+        <div class="site-footer__bottom-links">
+          <a href="about.html">品牌规范</a>
+          <a href="contact.html#privacy">隐私说明</a>
+          <a href="#top">返回顶部</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="drawer" id="mobile-drawer">
+    <div class="drawer__panel">
+      <button class="drawer__close" type="button" aria-label="关闭导航菜单">
+        <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="drawer__group">
+        <p class="drawer__label">页面</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="index.html">首页<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="about.html">关于荒启<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="contact.html">联系我们<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__group">
+        <p class="drawer__label">三大板块</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="community.html">科幻社群<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="tools.html">数字化产品开发<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="library.html">银河图书馆<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__group">
+        <p class="drawer__label">开始使用</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="contact.html#start">客户端下载<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="/h5/" target="_blank" rel="noopener">在线阅读<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="/library" target="_blank" rel="noopener">进入银河图书馆<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__cta">
+        <a class="btn btn--primary btn--block" href="contact.html"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.5 13.5"/><path d="M21 3l-6.8 18-3.7-7.5L3 9.8z"/></svg>加入社群</a>
+      </div>
+    </div>
+  </div>
+
+
+  <dialog class="invite-modal" id="invite-modal" aria-labelledby="invite-modal-title">
+    <div class="invite-modal__card">
+      <button class="invite-modal__close" type="button" data-invite-close aria-label="关闭弹窗">
+        <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <p class="invite-modal__eyebrow">邀请码准入</p>
+      <h2 class="invite-modal__title" id="invite-modal-title">注册与阅读之前，先拿邀请码</h2>
+      <p class="invite-modal__desc">
+        客户端安装包可以直接下载安装；<b>注册账号</b>与<b>在线阅读</b>都需要邀请码 ——
+        加入交流 QQ 群、在加群申请里回答「科幻的定义是什么？」即可获取，不收费，也不需要填表。
+      </p>
+      <p class="invite-modal__group">群号 <span class="mono">280660235</span><button class="copy-btn" type="button" data-copy="280660235" aria-label="复制群号 280660235">复制群号</button></p>
+      <p class="invite-modal__hint">电脑上扫二维码；手机上复制群号去搜索。</p>
+      <img class="invite-modal__qr" loading="lazy" decoding="async" src="assets/qq/qq-group-qr.png"
+           alt="荒启科幻交流群二维码，群号 280660235" width="216" height="216">
+      <div class="invite-modal__actions invite-modal__actions--stack">
+        <a class="btn btn--primary btn--sm" href="contact.html#invite"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12 11.3 14.1 15 10.4"/></svg>获取邀请码</a>
+                  <a class="btn btn--outline btn--sm" href="/dt/荒启科幻.exe" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3.5v3.5M14 3.5v3.5M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></svg>电脑端 Windows<span class="app-dl__ext">.exe</span></a>
+          <a class="btn btn--outline btn--sm" href="/dt/Huangqisf.apk" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.5 13.5"/><path d="M21 3l-6.8 18-3.7-7.5L3 9.8z"/></svg>安卓端 Android<span class="app-dl__ext">.apk</span></a>
+          <a class="btn btn--outline btn--sm" href="/dt/huangqisf.mobileconfig" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2"/><path d="M12 3.4c2.4 2.4 3.6 5.4 3.6 8.6s-1.2 6.2-3.6 8.6c-2.4-2.4-3.6-5.4-3.6-8.6S9.6 5.8 12 3.4Z"/></svg>iOS 端 iPhone / iPad<span class="app-dl__ext">.ipa</span></a>
+      </div>
+      <p class="invite-modal__foot">已有邀请码？<a href="/h5/" target="_blank" rel="noopener">进入在线阅读</a></p>
+    </div>
+  </dialog>
+
+
+<button class="to-top" type="button" aria-label="回到顶部">
+  <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

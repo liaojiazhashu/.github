@@ -1,0 +1,141 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}隐藏归档{% endblock %}
+{% block heading %}隐藏归档{% endblock %}
+
+{#
+  藏起来的东西最容易忘。
+  --------------------------------------------------------------------------
+  所以这里是「所有不在前台的」集中清点处：作品、拆解结果、词条各一栏，
+  每一条都带隐藏时刻与理由，可以就地放回去。
+
+  刻意不提供「全部恢复」：300 条隐藏里只要有一条是该继续藏着的，
+  一键放回去就等于把它也放了出去。恢复必须一条条来。
+#}
+
+{% block content %}
+{% set canHide = can(user.permissions|default([]), 'visibility.toggle') %}
+
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">总览</div>
+    <div class="card__hint">隐藏是「暂时不让看」，与「未发布」不同：数据都还在，随时可恢复</div>
+  </div>
+  <div class="qstats">
+    <div class="qstat"><b>{{ works|length }}</b><span>隐藏的作品</span></div>
+    <div class="qstat"><b>{{ held|length }}</b><span>收存的拆解</span></div>
+    <div class="qstat"><b>{{ terms|length }}</b><span>隐藏的词条</span></div>
+  </div>
+</div>
+
+{# ---------------- 作品 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">隐藏的作品（{{ works|length }}）</div>
+    <div class="card__hint">整篇从前台消失：列表、期次、词条关联、检索、sitemap 都不再出现</div>
+  </div>
+
+  {% if works is empty %}
+    <div class="empty">没有被隐藏的作品。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">作品</th><th scope="col">作者</th><th scope="col">期次</th><th scope="col">隐藏时间</th><th scope="col">理由</th><th></th></tr></thead>
+        <tbody>
+          {% for w in works %}
+            <tr>
+              <td><a href="/admin/works/{{ w.code }}">{{ w.title }}</a></td>
+              <td>{{ w.author_name|default('—') }}</td>
+              <td class="dim">{{ w.issue_label|default('—') }}</td>
+              <td class="dim mono">{{ w.hidden_at|default('—') }}</td>
+              <td class="small">{{ w.hidden_reason|default('—') }}</td>
+              <td>
+                {% if canHide %}
+                <form method="post" action="/admin/hidden/work/{{ w.id }}/restore">
+                  <input type="hidden" name="_token" value="{{ csrf }}">
+                  <button class="btn btn--sm btn--primary" type="submit">恢复</button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+{# ---------------- 拆解结果 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">收存的拆解结果（{{ held|length }}）</div>
+    <div class="card__hint">公开区等同于「这篇从未被拆解过」：作品从列表、期次、首页统计与 sitemap 中消失，作品页 404，只被它引用的词条一并退出词库</div>
+  </div>
+
+  {% if held is empty %}
+    <div class="empty">没有被收存的拆解结果。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">作品</th><th scope="col">分析</th><th scope="col">状态</th><th scope="col">隐藏时间</th><th scope="col">理由</th><th></th></tr></thead>
+        <tbody>
+          {% for a in held %}
+            <tr>
+              <td><a href="/admin/works/{{ a.work_code }}">{{ a.title }}</a></td>
+              <td class="mono dim">{{ a.code|slice(0, 10) }}…</td>
+              <td><span class="badge badge--{{ a.status }}">{{ a.status|status_label }}</span></td>
+              <td class="dim mono">{{ a.hidden_at|default('—') }}</td>
+              <td class="small">{{ a.hidden_reason|default('—') }}</td>
+              <td>
+                {% if canHide %}
+                <form method="post" action="/admin/hidden/analysis/{{ a.id }}/restore">
+                  <input type="hidden" name="_token" value="{{ csrf }}">
+                  <button class="btn btn--sm btn--primary" type="submit">恢复</button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+{# ---------------- 词条 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">隐藏的词条（{{ terms|length }}）</div>
+    <div class="card__hint">从词库、分类计数、共现、作品页标签、检索与 sitemap 中同时消失</div>
+  </div>
+
+  {% if terms is empty %}
+    <div class="empty">没有被隐藏的词条。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">词条</th><th scope="col">分类</th><th class="num" scope="col">关联</th><th scope="col">隐藏时间</th><th scope="col">理由</th><th></th></tr></thead>
+        <tbody>
+          {% for t in terms %}
+            <tr>
+              <td><a href="/admin/terms/{{ t.id }}">{{ t.canonical }}</a></td>
+              <td class="dim">{{ t.category }}</td>
+              <td class="num dim">{{ t.refs_all }}</td>
+              <td class="dim mono">{{ t.hidden_at|default('—') }}</td>
+              <td class="small">{{ t.hidden_reason|default('—') }}</td>
+              <td>
+                {% if canHide %}
+                <form method="post" action="/admin/hidden/term/{{ t.id }}/restore">
+                  <input type="hidden" name="_token" value="{{ csrf }}">
+                  <button class="btn btn--sm btn--primary" type="submit">恢复</button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

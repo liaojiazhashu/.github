@@ -1,0 +1,157 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}概览{% endblock %}
+{% block heading %}概览{% endblock %}
+
+{% block content %}
+{# 今天有没有事要做 —— 这是概览存在的第一个理由，所以真的排在任何数字之前。
+   有事逐条列（可点），没事一行说明白。不写「暂无」：它和「没加载出来」长得一样。
+   （初版把这段写在 KPI 网格后面，注释却声称「排在任何数字之前」——
+     注释比代码更像结论，这类落差最难被发现：画面没错、文字没错、只有两者的关系错了。） #}
+<div class="todobar{% if todo is not empty %} is-busy{% endif %}">
+  <span class="todobar__dot" aria-hidden="true"></span>
+  {% if todo is empty %}
+    {% if queue.queued > 0 %}
+      <span class="todobar__calm">队列在跑，没有需要处理的事。</span>
+    {% else %}
+      <span class="todobar__calm">队列是空的。新作品在「一键拆解」里派发。</span>
+    {% endif %}
+  {% else %}
+    <span class="todobar__l">今天要处理</span>
+    {% for t in todo %}
+      <a class="todobar__item is-{{ t.tone }}" href="{{ t.href }}">{{ t.label }}<b class="mono">{{ t.n }}</b></a>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<div class="grid grid--4">
+  <div class="kpi kpi--accent">
+    <div class="kpi__label">作品总数</div>
+    <div class="kpi__value">{{ num(stats.total) }}<span>篇</span></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi__label">本月新增</div>
+    <div class="kpi__value">{{ num(stats.this_month) }}<span>篇</span></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi__label">待分析</div>
+    <div class="kpi__value">{{ num(stats.pending) }}<span>篇</span></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi__label">已产出四件</div>
+    <div class="kpi__value">{{ num(stats.done) }}<span>篇</span></div>
+  </div>
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">最近导入</div>
+    <a class="card__hint" href="/admin/works">全部作品</a>
+  </div>
+
+  {% if recent is empty %}
+    <div class="empty">还没有作品。从「作品 → 新建导入」上传第一篇。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table class="table-fixed table-recent">
+        <thead>
+          <tr>
+            <th scope="col">标题</th>
+            <th scope="col">作者</th>
+            <th scope="col">期次</th>
+            <th class="num" scope="col">字数</th>
+            <th scope="col">状态</th>
+            <th scope="col">导入时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in recent %}
+            <tr>
+              <td><a href="/admin/works/{{ row.code }}">{{ row.title }}</a></td>
+              <td>{{ row.author_name|default('—') }}</td>
+              <td class="dim">{{ row.issue_label|default('—') }}</td>
+              <td class="num">{{ num(row.word_count) }}</td>
+              <td><span class="badge badge--{{ row.status }}">{{ row.status|status_label }}</span></td>
+              <td class="dim mono">{{ row.created_at|slice(0, 16) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">AI 用量与队列</div>
+    <span class="card__hint">计时档位：{{ peakLabel }}</span>
+  </div>
+
+  <div class="grid grid--4">
+    <div class="kpi">
+      <div class="kpi__label">今日成本</div>
+      <div class="kpi__value">¥ {{ yuan(todayYuan) }}<span>/ {{ num(budgetYuan) }} 元预算</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi__label">今日调用</div>
+      <div class="kpi__value">{{ num(today.calls) }}<span>次</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi__label">缓存复用</div>
+      <div class="kpi__value">{{ num(today.cached) }}<span>tokens</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi__label">队列</div>
+      <div class="kpi__value">{{ num(queue.queued) }}<span>排队</span></div>
+      <div class="kpi__foot">{{ queue.running }} 执行 · {{ queue.failed }} 失败</div>
+    </div>
+  </div>
+
+  <dl class="dl card--gap">
+    <dt>今日 token</dt>
+    <dd class="mono dim">输入 {{ num(today.tokens_in) }} / 输出 {{ num(today.tokens_out) }}</dd>
+
+    <dt>worker</dt>
+    <dd class="dim">
+      {% if queue.running > 0 %}
+        有任务正在执行。
+      {% elseif queue.queued > 0 %}
+        有 {{ queue.queued }} 条任务在排队，但当前没有 worker 在跑 —— 执行
+        <span class="mono">php -c php.ini bin/worker.php</span> 开始消费。
+      {% else %}
+        队列空闲。
+      {% endif %}
+    </dd>
+  </dl>
+</div>
+
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">运行状态</div>
+    <span class="card__hint">每项独立判定，任一异常不影响其余</span>
+  </div>
+  <dl class="dl">
+    <dt>数据库</dt>
+    <dd>
+      {% if health.db == 'ok' %}
+        <span class="badge badge--analyzed">正常</span>
+        <span class="dim mono">{{ health.version }} · {{ health.tables }} 张表</span>
+      {% else %}
+        <span class="badge badge--danger">不可用</span>
+      {% endif %}
+    </dd>
+    <dt>模型服务</dt>
+    <dd>
+      {% if health.ai == 'on' %}
+        <span class="badge badge--analyzed">已启用</span>
+        <span class="dim">六阶段流水线已接通，分析任务走队列</span>
+      {% else %}
+        <span class="badge badge--danger">已关闭</span>
+        <span class="dim">AI_ENABLED=false，分析请求会被拒绝</span>
+      {% endif %}
+    </dd>
+    <dt>运行环境</dt>
+    <dd class="mono dim">{{ health.env }} · PHP {{ constant('PHP_VERSION') }}</dd>
+  </dl>
+</div>
+{% endblock %}

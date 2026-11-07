@@ -1,0 +1,251 @@
+{% extends 'library/layout.twig' %}
+
+{% block content %}
+<section class="sec">
+  <div class="wrap">
+    <h1 class="h1">这套结果是怎么来的</h1>
+    <p class="lede">
+      一篇作品在馆里有两页：读者看它值不值得读，作者看它先改哪一处。
+      这一页只交代五件事 —— 词库怎么收词、两页各写什么、结论凭什么站得住、
+      它刻意不做什么，以及这座馆现在收谁的作品。
+    </p>
+    <nav class="pnav" aria-label="本页结构">
+      <a href="#terms">01 收词</a>
+      <a href="#pages">02 两页</a>
+      <a href="#trust">03 依据</a>
+      <a href="#limits">04 边界</a>
+      <a href="#scope">05 范围</a>
+    </nav>
+  </div>
+</section>
+
+<!-- ============================================================ 一 -->
+<section class="sec" id="terms">
+  <div class="wrap">
+    <div class="sec__head">
+      <div>
+        <h2 class="h2">词库收概念，不收暗号</h2>
+      </div>
+    </div>
+
+    <p class="lede">
+      词库只有一个用途：让一个人拿着概念找到作品。所以只收能被当作概念检索的东西，
+      题材与情绪一概不收 —— 它们描述文风，查不到实体。收进来的词分三类：
+    </p>
+
+    <div class="three">
+      <div class="three__i">
+        <div class="three__l">科幻设定</div>
+        <p>这篇用到的技术、装置或规则。用类型里通行的叫法 —— {{ samples|length ? samples|join('、') : '通用的技术名' }} —— 而不是作者自造的代号。</p>
+      </div>
+      <div class="three__i">
+        <div class="three__l">世界观</div>
+        <p>社会结构、制度与秩序。人怎么被组织起来、被什么约束、代价落在谁身上。收反乌托邦、配额制这类通用形态。</p>
+      </div>
+      <div class="three__i">
+        <div class="three__l">科幻意象</div>
+        <p>科幻类型里反复出现的场景：废墟、密闭空间、巨构建筑、永夜。不是一只具体的小道具，也不是纯文学里同样成立的景物。</p>
+      </div>
+    </div>
+
+    <h3 class="h3sub">收词的四条硬规矩</h3>
+    <ol class="rules">
+      <li class="rules__i">
+        <span class="rules__n mono">01</span>
+        <div>
+          <b>必须是科幻概念</b>
+          <p>拿掉这篇的科幻设定，这个词还站得住吗？「{{ samples[0] ?? '通行设定' }}」站不住，「茶」「信件」「影子」站得住 —— 站得住的一律不收。</p>
+        </div>
+      </li>
+      <li class="rules__i">
+        <span class="rules__n mono">02</span>
+        <div>
+          <b>一条词必须带一句定义</b>
+          <p>脱离这篇小说也读得懂：写「它是什么」，不写「这篇里它怎么样」。没有定义的词，离开本文就是暗号。</p>
+        </div>
+      </li>
+      <li class="rules__i">
+        <span class="rules__n mono">03</span>
+        <div>
+          <b>最多五条，五条是上限不是配额</b>
+          <p>省的是读者的判断时间：一篇作品出现在几十个词的作品清单里，等于没有入口。只找到三个就只写三个，凑满五个是最容易犯的错。</p>
+        </div>
+      </li>
+      <li class="rules__i">
+        <span class="rules__n mono">04</span>
+        <div>
+          <b>词必须能出现在别的作品里</b>
+          <p>收「黑洞」不收「WA0409黑洞」{% if merge %}，收「{{ merge.canonical }}」不收「{{ merge.alias }}」{% endif %}—— 只关联一篇的词是目录，不是索引。</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="callout">
+      全站共用一张词表：同一个概念只有一个入口，别的叫法一律归并到它名下。
+      已经有别的作品用过的词，会复用那一条与它校过的定义，不另起一条。
+    </div>
+
+    <div class="callout">
+      每个词条页固定四块内容：<b>释义</b>、<b>起源与发展</b>、<b>世界科幻中的它</b>（至多三部代表作）、
+      <b>馆内作品</b>（全部）。前两块回答「这个词本身是什么」，后两块回答「去哪读它」——
+      馆内查的是本馆作品，世界经典列的是整个类型的来路。
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 二 -->
+<section class="sec" id="pages">
+  <div class="wrap">
+    <div class="sec__head">
+      <div>
+        <h2 class="h2">同一堆材料，写两遍</h2>
+      </div>
+    </div>
+
+    <p class="lede">
+      读者和作者的问题不一样，一份「谁都能看、谁都不够用」的文档是偷懒。
+      所以同一批材料写两遍：读者页回答「要不要读」，作者页回答「先改哪」。
+    </p>
+
+    <div class="twocol">
+      <div class="twocol__g">
+        <div class="twocol__t">读者页 · 要不要读</div>
+        <div class="three three--stack">
+          <div class="three__i">
+            <div class="three__l">01 主线</div>
+            <p>谁、要什么、最后拿什么换的。三句话说清，读完应该能判断要不要往下读。</p>
+          </div>
+          <div class="three__i">
+            <div class="three__l">02 魅力</div>
+            <p>三条，都落在具体位置：这个效果是哪个设定、哪个处理方式做出来的，不写形容词。</p>
+          </div>
+          <div class="three__i">
+            <div class="three__l">03 影视化</div>
+            <p>色调、镜头、可对标的坐标，以及最适合做预告片的那一幕 —— 这一幕只能取自某个剧情节点。</p>
+          </div>
+        </div>
+      </div>
+      <div class="twocol__g">
+        <div class="twocol__t">作者页 · 先改哪</div>
+        <div class="three three--stack">
+          <div class="three__i">
+            <div class="three__l">01 节点</div>
+            <p>只把改变主角处境的事件排进轴，伏笔单独立账：埋在哪、收在哪、哪些还没收。</p>
+          </div>
+          <div class="three__i">
+            <div class="three__l">02 建议</div>
+            <p>分结构层、执行层、细节层。上一层不成立就不谈下一层，每条至少两种走法。</p>
+          </div>
+          <div class="three__i">
+            <div class="three__l">03 方向</div>
+            <p>三到五条，按「先改哪一处最划算」排。改不改、怎么改，由作者决定。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      读者页里有一栏叫「谁会觉得不值」。它和「适合谁」同等重要 ——
+      对找作品的人来说，知道自己不属于这篇的读者，比多一条推荐更有用。
+    </div>
+    <div class="callout callout--accent">
+      <b>影视化那一块只有文字，没有图。</b>它描述的是这篇的视觉<b>可能</b>长什么样，
+      而不是宣布它<b>就该</b>长这样，所以每一格都标了「判断」而不是「设定」。
+      馆里不生成图：一张生成的画面无论标注得多清楚，读者都会先看图，再把它当成作者的原意。
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 三 -->
+<section class="sec sec--tint" id="trust">
+  <div class="wrap">
+    <div class="sec__head">
+      <div>
+        <h2 class="h2">每条判断都要能回到原文</h2>
+      </div>
+    </div>
+
+    <div class="three">
+      <div class="three__i">
+        <div class="three__l">① 指回位置</div>
+        <p>每个词条都附原文引句，每条建议都落到具体章节或节点。找不到位置的说法一律不写。</p>
+      </div>
+      <div class="three__i">
+        <div class="three__l">② 数据不全就重跑</div>
+        <p>词条数、定义、节点、两页的字段都由程序校验。缺项不硬凑，退回重跑；重跑仍不齐就标出来。</p>
+      </div>
+      <div class="three__i">
+        <div class="three__l">③ 不给分</div>
+        <p>不评分、不排名、不设推荐语。打分是评稿的事，两套结论互不引用。</p>
+      </div>
+    </div>
+
+    <p class="lede">
+      机器先写，人再校。出现在馆里的每一页，都是有人看过一遍的；
+      判断与措辞被改过的地方，以改后的为准。
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================ 四 -->
+<section class="sec" id="limits">
+  <div class="wrap">
+    <div class="sec__head">
+      <div>
+        <h2 class="h2">它不做什么</h2>
+      </div>
+    </div>
+
+    <div class="three">
+      <div class="three__i">
+        <div class="three__l">不是书评</div>
+        <p>不判断好不好看，不写推荐语。拆解只解释「这个效果是怎么实现的」，价值判断留白。</p>
+      </div>
+      <div class="three__i">
+        <div class="three__l">不是改稿</div>
+        <p>给走法与代价，不动一个字。作者可以只取其中一条，也可以一条都不取。</p>
+      </div>
+      <div class="three__i">
+        <div class="three__l">不是评分</div>
+        <p>不进评稿、不算奖金、不影响排名。同一篇在两套流程里各走各的，结论互不引用。</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      如果你在某一页看到指不回原文的判断，那是我们的问题。
+      欢迎在交流群里指出来 —— 这类反馈比任何夸奖都有用。
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 五 -->
+<section class="sec sec--tint" id="scope">
+  <div class="wrap">
+    <div class="sec__head">
+      <div>
+        <h2 class="h2">这座馆收谁的作品</h2>
+      </div>
+    </div>
+
+    <p class="lede">
+      银河图书馆以拆解<strong>全部中文科幻小说</strong>为目标，不隶属荒启练笔。
+      但拆解要逐篇拿到作者授权 —— 现阶段唯一能拿到授权的通道是荒启练笔的投稿，
+      所以馆藏暂时只来自练笔，跟着练笔的节奏一年九期地长。授权范围扩大之后，
+      任何作者的作品都可以进馆；稿件仅用于拆解，词条入库，正文不公开。
+    </p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap ctaband">
+    <div>
+      <h2 class="h2">看一条真的</h2>
+      <p class="sub">挑一个词，看它下面挂着哪几篇；再点开一篇，页头切一次就是另一页。</p>
+    </div>
+    <div class="ctaband__acts">
+      <a class="btn btn--primary" href="/library/terms">去词库</a>
+      <a class="btn" href="/library/works">浏览馆藏</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,449 @@
+{
+  "target": "site",
+  "when": "2026-11-03T01:54:57.412Z",
+  "widths": [
+    1440,
+    390
+  ],
+  "pages": [
+    {
+      "name": "index",
+      "width": 1440,
+      "height": 4524,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 3,
+          "items": [
+            {
+              "text": "关于荒启",
+              "n": 2
+            },
+            {
+              "text": "在线阅读",
+              "n": 2
+            },
+            {
+              "text": "获取邀请码",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "about",
+      "width": 1440,
+      "height": 8602,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 3,
+          "items": [
+            {
+              "text": "首页",
+              "n": 2
+            },
+            {
+              "text": "关于荒启",
+              "n": 2
+            },
+            {
+              "text": "在线阅读",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "community",
+      "width": 1440,
+      "height": 13673,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 3,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            },
+            {
+              "el": "div.table-wrap.mt-7>table.data-table>caption.sr-only",
+              "kind": "Y",
+              "over": 22,
+              "text": ""
+            },
+            {
+              "el": "div.table-wrap.mt-7>table.data-table>caption.sr-only",
+              "kind": "Y",
+              "over": 22,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 4,
+          "items": [
+            {
+              "text": "首页",
+              "n": 2
+            },
+            {
+              "text": "关于荒启",
+              "n": 2
+            },
+            {
+              "text": "业务板块",
+              "n": 2
+            },
+            {
+              "text": "在线阅读",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tools",
+      "width": 1440,
+      "height": 12251,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 4,
+          "items": [
+            {
+              "text": "首页",
+              "n": 2
+            },
+            {
+              "text": "关于荒启",
+              "n": 2
+            },
+            {
+              "text": "业务板块",
+              "n": 2
+            },
+            {
+              "text": "在线阅读",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "library",
+      "width": 1440,
+      "height": 7716,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 4,
+          "items": [
+            {
+              "text": "首页",
+              "n": 2
+            },
+            {
+              "text": "关于荒启",
+              "n": 2
+            },
+            {
+              "text": "业务板块",
+              "n": 2
+            },
+            {
+              "text": "进入银河图书馆",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "contact",
+      "width": 1440,
+      "height": 7211,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 4,
+          "items": [
+            {
+              "text": "首页",
+              "n": 2
+            },
+            {
+              "text": "关于荒启",
+              "n": 2
+            },
+            {
+              "text": "在线阅读",
+              "n": 2
+            },
+            {
+              "text": "复制群号",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "index",
+      "width": 390,
+      "height": 5721,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "获取邀请码",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "about",
+      "width": 390,
+      "height": 9101,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "community",
+      "width": 390,
+      "height": 13787,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 3,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            },
+            {
+              "el": "div.table-wrap.mt-7>table.data-table>caption.sr-only",
+              "kind": "Y",
+              "over": 22,
+              "text": ""
+            },
+            {
+              "el": "div.table-wrap.mt-7>table.data-table>caption.sr-only",
+              "kind": "Y",
+              "over": 22,
+              "text": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tools",
+      "width": 390,
+      "height": 12470,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "library",
+      "width": 390,
+      "height": 8626,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "进入银河图书馆",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "contact",
+      "width": 390,
+      "height": 7775,
+      "overflow": 0,
+      "issues": [
+        {
+          "type": "clip",
+          "sev": "P0",
+          "n": 1,
+          "items": [
+            {
+              "el": "body#top>div.bg-overlay",
+              "kind": "Y",
+              "over": 90,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "dupCta",
+          "sev": "P2",
+          "n": 1,
+          "items": [
+            {
+              "text": "复制群号",
+              "n": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

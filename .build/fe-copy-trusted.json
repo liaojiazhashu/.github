@@ -1,0 +1,224 @@
+[
+ {
+  "label": "A. http 127.0.0.1 · 390 · 无授权",
+  "url": "http://127.0.0.1:8125/index.html",
+  "width": 390,
+  "sentinelSet": true,
+  "sentinel": "SENTINEL-A-1793663627971",
+  "env": {
+   "origin": "http://127.0.0.1:8125",
+   "protocol": "http:",
+   "isSecureContext": true,
+   "hasFocus": true,
+   "hasClipboard": true,
+   "userActivationSupported": true,
+   "activeBefore": false
+  },
+  "btnBefore": {
+   "x": 248.5625,
+   "y": 277.59375,
+   "w": 68,
+   "h": 28,
+   "text": "复制群号",
+   "top": 263.59,
+   "vh": 912,
+   "inViewport": true
+  },
+  "activationAfterClick": {
+   "active": true,
+   "ever": true
+  },
+  "afterClick": {
+   "text": "已复制",
+   "aria": "已复制，群号 280660235",
+   "isDone": true
+  },
+  "grantAfter": true,
+  "clipboard": {
+   "text": "280660235",
+   "match": true
+  },
+  "osClipboard": "SENTINEL-A-1793663627971",
+  "osClipboardIsNumber": false,
+  "osClipboardStillSentinel": true
+ },
+ {
+  "label": "B. http 127.0.0.1 · 1440 · 无授权",
+  "url": "http://127.0.0.1:8125/index.html",
+  "width": 1440,
+  "sentinelSet": true,
+  "sentinel": "SENTINEL-B-1793663632619",
+  "env": {
+   "origin": "http://127.0.0.1:8125",
+   "protocol": "http:",
+   "isSecureContext": true,
+   "hasFocus": true,
+   "hasClipboard": true,
+   "userActivationSupported": true,
+   "activeBefore": false
+  },
+  "btnBefore": {
+   "x": 770.75,
+   "y": 275.828125,
+   "w": 70,
+   "h": 28,
+   "text": "复制群号",
+   "top": 261.83,
+   "vh": 900,
+   "inViewport": true
+  },
+  "activationAfterClick": {
+   "active": true,
+   "ever": true
+  },
+  "afterClick": {
+   "text": "已复制",
+   "aria": "已复制，群号 280660235",
+   "isDone": true
+  },
+  "grantAfter": true,
+  "clipboard": {
+   "text": "280660235",
+   "match": true
+  },
+  "osClipboard": "SENTINEL-B-1793663632619",
+  "osClipboardIsNumber": false,
+  "osClipboardStillSentinel": true
+ },
+ {
+  "label": "C. file:// · 390 · 无授权",
+  "url": "file:///D:/AITEST/huangqi-scifi/index.html",
+  "width": 390,
+  "sentinelSet": true,
+  "sentinel": "SENTINEL-C-1793663637758",
+  "env": {
+   "origin": "file://",
+   "protocol": "file:",
+   "isSecureContext": true,
+   "hasFocus": true,
+   "hasClipboard": true,
+   "userActivationSupported": true,
+   "activeBefore": false
+  },
+  "btnBefore": {
+   "x": 248.5625,
+   "y": 277.59375,
+   "w": 68,
+   "h": 28,
+   "text": "复制群号",
+   "top": 263.59,
+   "vh": 912,
+   "inViewport": true
+  },
+  "activationAfterClick": {
+   "active": true,
+   "ever": true
+  },
+  "afterClick": {
+   "text": "已复制",
+   "aria": "已复制，群号 280660235",
+   "isDone": true
+  },
+  "grantAfter": true,
+  "clipboard": {
+   "text": "280660235",
+   "match": true
+  },
+  "osClipboard": "SENTINEL-C-1793663637758",
+  "osClipboardIsNumber": false,
+  "osClipboardStillSentinel": true
+ },
+ {
+  "label": "D. http · 390 · navigator.clipboard 抹掉（纯兜底）",
+  "url": "http://127.0.0.1:8125/index.html",
+  "width": 390,
+  "sentinelSet": true,
+  "sentinel": "SENTINEL-D-1793663642573",
+  "env": {
+   "origin": "http://127.0.0.1:8125",
+   "protocol": "http:",
+   "isSecureContext": true,
+   "hasFocus": true,
+   "hasClipboard": true,
+   "userActivationSupported": true,
+   "activeBefore": false
+  },
+  "dropClipboard": {
+   "hasClipboard": false
+  },
+  "btnBefore": {
+   "x": 248.5625,
+   "y": 277.59375,
+   "w": 68,
+   "h": 28,
+   "text": "复制群号",
+   "top": 263.59,
+   "vh": 912,
+   "inViewport": true
+  },
+  "activationAfterClick": {
+   "active": true,
+   "ever": true
+  },
+  "afterClick": {
+   "text": "已复制",
+   "aria": "已复制，群号 280660235",
+   "isDone": true
+  },
+  "grantAfter": true,
+  "clipboard": {
+   "text": "280660235",
+   "match": true
+  },
+  "osClipboard": "SENTINEL-D-1793663642573",
+  "osClipboardIsNumber": false,
+  "osClipboardStillSentinel": true
+ },
+ {
+  "label": "E. http · 390 · 先授权再走兜底（对照 D）",
+  "url": "http://127.0.0.1:8125/index.html",
+  "width": 390,
+  "sentinelSet": true,
+  "sentinel": "SENTINEL-E-1793663647532",
+  "env": {
+   "origin": "http://127.0.0.1:8125",
+   "protocol": "http:",
+   "isSecureContext": true,
+   "hasFocus": true,
+   "hasClipboard": true,
+   "userActivationSupported": true,
+   "activeBefore": false
+  },
+  "grantBefore": true,
+  "dropClipboard": {
+   "hasClipboard": false
+  },
+  "btnBefore": {
+   "x": 248.5625,
+   "y": 277.59375,
+   "w": 68,
+   "h": 28,
+   "text": "复制群号",
+   "top": 263.59,
+   "vh": 912,
+   "inViewport": true
+  },
+  "activationAfterClick": {
+   "active": true,
+   "ever": true
+  },
+  "afterClick": {
+   "text": "已复制",
+   "aria": "已复制，群号 280660235",
+   "isDone": true
+  },
+  "grantAfter": true,
+  "clipboard": {
+   "text": "280660235",
+   "match": true
+  },
+  "osClipboard": "SENTINEL-E-1793663647532",
+  "osClipboardIsNumber": false,
+  "osClipboardStillSentinel": true
+ }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "width": 390,
+    "mobileFlag": true,
+    "qr": "160×160",
+    "cardH": 714.55,
+    "dlgClientH_at1000": 715,
+    "overflowY": "auto",
+    "minH_A": 752,
+    "noteA": "边界 751 不成立 / 752 成立",
+    "minH_B": 723,
+    "noteB": "边界 722 不成立 / 723 成立",
+    "edgeB": 0.42,
+    "edgeB_minus1": 1.42
+  },
+  {
+    "width": 479,
+    "mobileFlag": true,
+    "qr": "160×160",
+    "cardH": 692.45,
+    "dlgClientH_at1000": 692,
+    "overflowY": "auto",
+    "minH_A": 729,
+    "noteA": "边界 728 不成立 / 729 成立",
+    "minH_B": 701,
+    "noteB": "边界 700 不成立 / 701 成立",
+    "edgeB": 0.33,
+    "edgeB_minus1": 1.33
+  },
+  {
+    "width": 480,
+    "mobileFlag": true,
+    "qr": "216×216",
+    "cardH": 726.17,
+    "dlgClientH_at1000": 726,
+    "overflowY": "auto",
+    "minH_A": 763,
+    "noteA": "边界 762 不成立 / 763 成立",
+    "minH_B": 735,
+    "noteB": "边界 734 不成立 / 735 成立",
+    "edgeB": 0.17,
+    "edgeB_minus1": 1.17
+  }
+]

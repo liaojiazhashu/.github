@@ -1,0 +1,267 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}拆解调度{% endblock %}
+{% block heading %}拆解调度{% endblock %}
+
+{#
+  调度台 = 1300 篇批跑的控制面。
+  --------------------------------------------------------------------------
+  页面从上到下按「决策顺序」排，而不是按数据表排：
+     现在到哪了 → 机器在动吗 → 要不要停 → 下一步做什么 → 哪些出了问题
+  运营每次进来只需要往下扫一遍，就知道该按哪个键。
+#}
+
+{% block content %}
+{% set total = stats.total %}
+{% set donePct = total > 0 ? ((stats.published / total) * 100)|round : 0 %}
+{% set readyPct = total > 0 ? (((stats.published + stats.analyzed) / total) * 100)|round : 0 %}
+{% set paused = paused|default(false) %}
+
+{# ---------------- 1. 闸门与机器 ---------------- #}
+<div class="card">
+  <div class="row-between">
+    <div>
+      <div class="card__title">拆解闸门{% if paused %} · <span class="badge badge--analyzing">已暂停</span>{% else %} · <span class="badge badge--published">通畅</span>{% endif %}</div>
+      <div class="card__hint">
+        {% if paused %}
+          已暂停：worker 不再领取新任务。正在跑的那一篇会跑完（已经付过的钱不浪费），停完再恢复即可。
+          {% if pauseNote %}备注：{{ pauseNote }}{% endif %}
+        {% else %}
+          正常：worker 会持续领取排队中的任务。暂停不会丢任务，恢复后照旧。
+        {% endif %}
+      </div>
+    </div>
+    <form method="post" action="/admin/queue/pause" class="inline-form">
+      <input type="hidden" name="_token" value="{{ csrf }}">
+      <input type="hidden" name="state" value="{{ paused ? 'resume' : 'pause' }}">
+      {% if not paused %}
+        <input type="text" name="note" placeholder="暂停原因（可留空）" maxlength="200">
+      {% endif %}
+      <button class="btn {{ paused ? 'btn--primary' : '' }}" type="submit">{{ paused ? '恢复领取' : '暂停领取' }}</button>
+    </form>
+  </div>
+
+  <div class="workerline">
+    {% if workers is empty %}
+      <span class="dot dot--off"></span>
+      <span>没有正在运行的 worker。任务会一直排队 —— 在服务器上执行
+        <code class="mono">php -c php.ini bin\worker.php --name=w1</code>
+      </span>
+    {% else %}
+      {% for w in workers %}
+        <span class="dot"></span>
+        <span class="mono">{{ w.name }}</span>
+        <span class="dim">在跑 {{ w.jobs }} 条 · 心跳 {{ w.last_at|slice(11, 8) }}</span>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+{# ---------------- 2. 进度 ---------------- #}
+<div class="grid grid--4 card--gap">
+  <div class="kpi">
+    <div class="kpi__label">作品总数</div>
+    <div class="kpi__value">{{ num(total) }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi__label">待拆解</div>
+    <div class="kpi__value">{{ num(stats.imported) }}<span>篇</span></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi__label">待发布</div>
+    <div class="kpi__value">{{ num(stats.analyzed) }}<span>篇</span></div>
+  </div>
+  <div class="kpi kpi--accent">
+    <div class="kpi__label">已发布</div>
+    <div class="kpi__value">{{ num(stats.published) }}<span>篇</span></div>
+  </div>
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">拆解完成度</div>
+    <div class="card__hint">已拆 {{ num(stats.analyzed + stats.published) }} / {{ num(total) }}（{{ readyPct }}%）· 已发布 {{ donePct }}%</div>
+  </div>
+  <div class="progress">
+    <div class="progress__fill progress__fill--done" data-pct="{{ donePct }}"></div>
+    <div class="progress__fill progress__fill--ready" data-pct="{{ readyPct }}"></div>
+  </div>
+  <div class="legend">
+    <span><i class="swatch swatch--done"></i>已发布 {{ stats.published }}</span>
+    <span><i class="swatch swatch--ready"></i>已拆未发 {{ stats.analyzed }}</span>
+    <span><i class="swatch swatch--rest"></i>未拆 / 进行中 {{ stats.imported + stats.analyzing }}</span>
+  </div>
+</div>
+
+{# ---------------- 3. 队列与成本 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">队列</div>
+    <div class="card__hint">今日已花 <b>{{ todayYuan|number_format(2) }}</b> 元 / 预算 {{ budgetYuan|number_format(0) }} 元</div>
+  </div>
+
+  <div class="qstats">
+    <div class="qstat"><b>{{ queue.queued|default(0) }}</b><span>排队中</span></div>
+    <div class="qstat"><b>{{ queue.running|default(0) }}</b><span>运行中</span></div>
+    <div class="qstat"><b class="{{ queue.failed|default(0) > 0 ? 'is-danger' }}">{{ queue.failed|default(0) }}</b><span>失败</span></div>
+    <div class="qstat"><b>{{ queue.succeeded|default(0) }}</b><span>已完成</span></div>
+    <div class="qstat"><b>{{ queue.canceled|default(0) }}</b><span>已停止</span></div>
+  </div>
+
+  <div class="estline">
+    <span>实测均价 <b>{{ estimate.per_work_yuan }}</b> 元/篇 · <b>{{ estimate.per_work_minutes }}</b> 分钟/篇</span>
+    <span>剩余 {{ estimate.remaining }} 篇 ≈ <b>{{ estimate.cost_yuan }}</b> 元 ≈ <b>{{ estimate.hours }}</b> 小时（单 worker 串行）</span>
+    {% if budgetYuan > 0 and todayYuan >= budgetYuan * 0.8 %}
+      <span class="is-danger">今日花费已超预算 80%，继续跑会在预算闸门处停下。</span>
+    {% endif %}
+  </div>
+
+  {% if queue.queued|default(0) > 0 %}
+    <form method="post" action="/admin/queue/cancel-queued" class="card--gap" data-confirm="把队列里所有排队中的任务一次性停掉？正在运行的不受影响。">
+      <input type="hidden" name="_token" value="{{ csrf }}">
+      <button class="btn btn--sm btn--danger" type="submit">清空排队（{{ queue.queued }} 条）</button>
+    </form>
+  {% endif %}
+</div>
+
+{# ---------------- 4. 开始拆解 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">开始拆解</div>
+    <div class="card__hint">按筛选条件批量入队，不会重复入队，也不会动已发布的作品（除非点重跑）</div>
+  </div>
+
+  <form method="post" action="/admin/queue/enqueue" class="form-stack">
+    <input type="hidden" name="_token" value="{{ csrf }}">
+
+    <div class="filter-row filter-row--wide">
+      <div class="field">
+        <label for="stage">范围</label>
+        <select id="stage" name="stage">
+          <option value="pending">待拆解（还没跑过）</option>
+          <option value="failed">拆解失败</option>
+          <option value="ready">待发布（重跑生成新版本）</option>
+          <option value="all">全部作品</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="issue">期次</label>
+        <select id="issue" name="issue">
+          <option value="0">全部</option>
+          {% for it in issues %}
+            <option value="{{ it.id }}">{{ it.label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="q">关键词</label>
+        <input id="q" name="q" type="text" placeholder="标题或作者（可留空）">
+      </div>
+      <div class="field">
+        <label for="limit">本次最多</label>
+        <input id="limit" name="limit" type="number" min="1" max="{{ maxEnqueue }}" value="50">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn--primary" type="submit" name="force" value="0">开始拆解</button>
+      <button class="btn" type="submit" name="force" value="1" data-confirm>连已发布的一起重跑</button>
+      <span class="card__hint">一次最多 {{ maxEnqueue }} 篇。1300 篇分几轮推进，比一次点下去更容易看清问题。</span>
+    </div>
+  </form>
+</div>
+
+{# ---------------- 5. 失败 ---------------- #}
+{% if failures is not empty %}
+<div class="card card--gap" id="failures">
+  <div class="card__head">
+    <div class="card__title">失败的任务（{{ failures|length }} 条）</div>
+    <div class="card__hint">拆解失败每篇都能点进作品；入馆失败没有作品可点，来源写在「作品」列。逐条看原因再重试 —— 同一篇连跑三次还是同样的错，多半是原文或提示词的问题</div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th scope="col">任务</th><th scope="col">类型</th><th scope="col">作品</th><th scope="col">原因</th><th scope="col">尝试</th><th scope="col">时间</th><th></th></tr>
+      </thead>
+      <tbody>
+        {# 入馆失败的锚点只挂在第一条上：重复 id 不合法，而一组同 id 的跳转目标没有意义 #}
+        {% set ingest_anchor = false %}
+        {% for f in failures %}
+          {% set row_anchor = '' %}
+          {% if f.type == 'source.ingest' and not ingest_anchor %}
+            {% set row_anchor = 'ingest-failed' %}
+            {% set ingest_anchor = true %}
+          {% endif %}
+          <tr{% if row_anchor %} id="{{ row_anchor }}"{% endif %}>
+            <td class="mono dim">#{{ f.id }}</td>
+            <td class="small">{{ f.type == 'source.ingest' ? '入馆' : '拆解' }}</td>
+            <td>{% if f.code %}<a href="/admin/works/{{ f.code }}">{{ f.title }}</a>{% elseif f.source_label %}<span class="mono dim">{{ f.source_label }}</span>{% else %}—{% endif %}</td>
+            <td class="small">{{ f.last_error|default('—') }}</td>
+            <td class="dim mono">{{ f.attempts }}/{{ f.max_attempts }}</td>
+            <td class="dim mono">{{ f.updated_at|slice(5, 11) }}</td>
+            <td>
+              <div class="card__actions">
+                <form method="post" action="/admin/queue/jobs/{{ f.id }}/retry">
+                  <input type="hidden" name="_token" value="{{ csrf }}">
+                  <input type="hidden" name="back" value="/admin/queue">
+                  <button class="btn btn--sm" type="submit">重试</button>
+                </form>
+                {% if f.type == 'source.ingest' %}
+                  <form method="post" action="/admin/queue/jobs/{{ f.id }}/dismiss">
+                    <input type="hidden" name="_token" value="{{ csrf }}">
+                    <input type="hidden" name="back" value="/admin/queue#failures">
+                    <button class="btn btn--sm btn--ghost" type="submit" data-confirm="确认忽略这条入馆失败？忽略后不再计入待处理，下次一键拆解也不会再派。">忽略</button>
+                  </form>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{# ---------------- 6. 最近任务 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">最近任务</div>
+    <div class="card__hint">最近 20 条，含正在运行的</div>
+  </div>
+  {% if recent is empty %}
+    <div class="empty">还没有任何拆解任务。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">任务</th><th scope="col">作品</th><th scope="col">状态</th><th scope="col">尝试</th><th scope="col">更新时间</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for j in recent %}
+            <tr>
+              <td class="mono dim">#{{ j.id }}</td>
+              <td>{% if j.code %}<a href="/admin/works/{{ j.code }}">{{ j.title }}</a>{% else %}—{% endif %}</td>
+              <td>
+                <span class="badge badge--{{ j.status }}">{{ j.status|status_label }}</span>
+                {% if j.cancel_requested %}<span class="badge badge--analyzing">待停止</span>{% endif %}
+              </td>
+              <td class="dim mono">{{ j.attempts }}/{{ j.max_attempts }}</td>
+              <td class="dim mono">{{ j.updated_at|slice(5, 11) }}</td>
+              <td>
+                {% if j.status in ['queued', 'running'] %}
+                  <form method="post" action="/admin/queue/jobs/{{ j.id }}/cancel">
+                    <input type="hidden" name="_token" value="{{ csrf }}">
+                    <input type="hidden" name="back" value="/admin/queue">
+                    <button class="btn btn--sm btn--danger" type="submit">停止</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

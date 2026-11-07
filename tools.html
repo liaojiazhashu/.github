@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>数字化产品开发 · 社区、教育与 AI 系统定制 | 荒启科幻</title>
+<meta name="description" content="成都荒启文化传播有限公司的数字化产品开发：社区与内容系统、教育考试系统、AI 应用与定制开发四条业务线，一套代码覆盖 Web、H5、安卓、iOS 与小程序，支持托管、私有化部署与源码交付。">
+<meta name="theme-color" content="#0B0E14">
+<meta property="og:title" content="数字化产品开发 · 社区、教育与 AI 系统定制 | 荒启科幻">
+<meta property="og:description" content="成都荒启文化传播有限公司的数字化产品开发：社区与内容系统、教育考试系统、AI 应用与定制开发四条业务线，一套代码覆盖 Web、H5、安卓、iOS 与小程序，支持托管、私有化部署与源码交付。">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/logo/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/noto-sans-sc-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/noto-sans-sc-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+<script>/* 首帧前应用主题，避免闪色；图书馆链接带上当前主题，馆里首帧就同色 */(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('hq-theme')||'night')}catch(e){}})();
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*="/library"]');if(!a)return;try{var t=localStorage.getItem('hq-theme');if(t==='day'||t==='night'){var u=new URL(a.href,location.href);u.searchParams.set('theme',t);a.href=u.toString()}}catch(err){}},true);</script>
+</head>
+<body id="top" data-scene="tools">
+<a class="skip-link" href="#main">跳到主要内容</a>
+
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<div class="bg-overlay" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-stars"></div>
+  <svg class="bg-constellation" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <!-- 银河带：边界虚线 + 半透明带 + 带内碎星 -->
+      <g fill="currentColor" opacity="0.055">
+        <path d="M470 -40 C 620 120 740 260 790 400 C 840 540 850 720 830 940 L 660 940 C 700 740 690 600 620 470 C 550 340 460 160 400 -40 Z"/>
+      </g>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.16" stroke-dasharray="2 10">
+        <path d="M470 -40 C 620 120 740 260 790 400 C 840 540 850 720 830 940"/>
+        <path d="M400 -40 C 460 160 550 340 620 470 C 690 600 700 740 660 940"/>
+      </g>
+      <g fill="currentColor" opacity="0.5">
+        <circle cx="560" cy="60" r="1.1"/><circle cx="640" cy="150" r="1.3"/><circle cx="700" cy="240" r="1.1"/>
+        <circle cx="740" cy="330" r="1.4"/><circle cx="790" cy="430" r="1.2"/><circle cx="810" cy="520" r="1.5"/>
+        <circle cx="800" cy="610" r="1.2"/><circle cx="780" cy="700" r="1.4"/><circle cx="760" cy="790" r="1.2"/>
+        <circle cx="700" cy="850" r="1.3"/><circle cx="850" cy="120" r="1"/><circle cx="760" cy="90" r="1"/>
+      </g>
+      <!-- 远景散星（无连线） -->
+      <g fill="#EDF2F8">
+        <circle cx="60" cy="420" r="1.3" opacity="0.4"/><circle cx="180" cy="640" r="1" opacity="0.3"/>
+        <circle cx="460" cy="380" r="1.2" opacity="0.35"/><circle cx="1010" cy="180" r="1.2" opacity="0.4"/>
+        <circle cx="1130" cy="330" r="1" opacity="0.3"/><circle cx="1310" cy="430" r="1.3" opacity="0.4"/>
+        <circle cx="1430" cy="620" r="1" opacity="0.3"/><circle cx="1530" cy="240" r="1.2" opacity="0.35"/>
+        <circle cx="980" cy="740" r="1" opacity="0.3"/><circle cx="240" cy="300" r="1" opacity="0.3"/>
+      </g>
+      <!-- 北斗七星（西北天，右上）：天枢→天璇→天玑→天权→玉衡→开阳→摇光 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.4" fill="none">
+        <polyline points="1240,140 1300,120 1350,135 1390,110 1440,120 1490,95 1545,105"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="1240" cy="140" r="2.2"/><circle cx="1300" cy="120" r="2.2"/><circle cx="1350" cy="135" r="2"/>
+        <circle cx="1390" cy="110" r="2"/><circle cx="1440" cy="120" r="2.2"/><circle cx="1490" cy="95" r="2.2"/>
+        <circle cx="1545" cy="105" r="2.2"/>
+      </g>
+      <!-- 仙后座 W（东北天，左上） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.35" fill="none">
+        <polyline points="140,130 200,105 265,135 330,100 395,125"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.65">
+        <circle cx="140" cy="130" r="1.8"/><circle cx="200" cy="105" r="1.8"/><circle cx="265" cy="135" r="1.8"/>
+        <circle cx="330" cy="100" r="1.8"/><circle cx="395" cy="125" r="1.8"/>
+      </g>
+      <!-- 天琴座：织女星 + 平行四边形 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="648,215 682,232 668,276 634,258 648,215"/>
+      </g>
+      <circle cx="620" cy="170" r="3.4" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="620" cy="170" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.7">
+        <circle cx="648" cy="215" r="1.8"/><circle cx="682" cy="232" r="1.6"/><circle cx="668" cy="276" r="1.6"/><circle cx="634" cy="258" r="1.6"/>
+      </g>
+      <!-- 天鹅座（北十字）：天津四 → 天津一 → 辇道增七，两翼 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="880,120 852,212 822,322"/>
+        <polyline points="772,190 852,212 932,252"/>
+      </g>
+      <circle cx="880" cy="120" r="3.2" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="880" cy="120" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="852" cy="212" r="2.4"/><circle cx="822" cy="322" r="2.2"/>
+        <circle cx="772" cy="190" r="1.8"/><circle cx="932" cy="252" r="1.8"/>
+      </g>
+      <!-- 天鹰座：牛郎星 + 扁担双星（河鼓一 / 河鼓三） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="665,445 700,482 736,518"/>
+      </g>
+      <circle cx="700" cy="482" r="3.2" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="700" cy="482" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="665" cy="445" r="2"/><circle cx="736" cy="518" r="2"/>
+        <circle cx="780" cy="570" r="1.6"/><circle cx="816" cy="608" r="1.5"/>
+      </g>
+      <!-- 天蝎座：三星头弧 → 心宿二（红色超巨星） → 尾钩 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="1080,575 1120,560 1160,575"/>
+        <polyline points="1120,630 1160,690 1195,735 1178,795 1122,822 1066,806 1042,762"/>
+      </g>
+      <circle cx="1120" cy="630" r="3" fill="#E88B8B" opacity="0.9"/>
+      <circle cx="1120" cy="630" r="9" fill="none" stroke="#E88B8B" stroke-width="1" opacity="0.55"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="1080" cy="575" r="1.9"/><circle cx="1120" cy="560" r="2"/><circle cx="1160" cy="575" r="1.9"/>
+        <circle cx="1160" cy="690" r="1.9"/><circle cx="1195" cy="735" r="1.9"/><circle cx="1178" cy="795" r="1.9"/>
+        <circle cx="1122" cy="822" r="1.7"/><circle cx="1066" cy="806" r="1.7"/><circle cx="1042" cy="762" r="1.7"/>
+      </g>
+      <!-- 人马座茶壶（银河中心方向） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="790,692 850,672 898,702 893,756 834,776 786,746 790,692"/>
+        <polyline points="786,746 752,722"/>
+        <polyline points="850,672 872,640"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="790" cy="692" r="1.9"/><circle cx="850" cy="672" r="2"/><circle cx="898" cy="702" r="1.9"/>
+        <circle cx="893" cy="756" r="1.9"/><circle cx="834" cy="776" r="1.9"/><circle cx="786" cy="746" r="1.9"/>
+        <circle cx="752" cy="722" r="1.6"/><circle cx="872" cy="640" r="1.6"/>
+      </g>
+      <!-- 织女星坐标十字（织女一是夏季夜空最易辨认的恒星之一） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.5">
+        <path d="M620 152 V165 M620 175 V188 M602 170 H615 M625 170 H638"/>
+      </g>
+    </svg>
+  <svg class="bg-shard bg-shard--a" viewBox="0 0 320 320" aria-hidden="true">
+      <path d="M60 40 L200 120 L110 230 Z" fill="currentColor" opacity="0.07"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+        <polyline points="40,240 110,150 190,190 250,90"/>
+        <path d="M210 60 A 80 80 0 0 1 268 140" stroke-dasharray="1 6"/>
+      </g>
+      <g fill="currentColor">
+        <circle cx="40" cy="240" r="2.6"/><circle cx="110" cy="150" r="3"/>
+        <circle cx="190" cy="190" r="3.4"/><circle cx="250" cy="90" r="2.6"/>
+      </g>
+      <circle cx="190" cy="190" r="8" fill="none" stroke="currentColor" stroke-width="1" opacity="0.65"/>
+      <g stroke="currentColor" stroke-width="1" opacity="0.55">
+        <path d="M250 78 V88 M250 92 V102 M240 90 H250 M254 90 H264"/>
+      </g>
+      <rect x="30" y="264" width="20" height="20" fill="currentColor" opacity="0.8"/>
+    </svg>
+  <svg class="bg-shard bg-shard--b" viewBox="0 0 320 320" aria-hidden="true">
+      <path d="M160 160 L268 122 A 118 118 0 0 1 262 202 Z" fill="currentColor" opacity="0.09"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+        <circle cx="160" cy="160" r="110"/>
+        <circle cx="160" cy="160" r="72" stroke-dasharray="2 8" opacity="0.6"/>
+        <ellipse cx="160" cy="160" rx="132" ry="44" transform="rotate(-18 160 160)" opacity="0.8"/>
+      </g>
+      <g stroke="currentColor" stroke-width="1" opacity="0.5">
+        <path d="M160 132 V156 M160 164 V188 M132 160 H156 M164 160 H188"/>
+      </g>
+      <circle cx="160" cy="160" r="4" fill="currentColor" opacity="0.9"/>
+      <circle cx="52" cy="196" r="5" fill="currentColor"/>
+      <circle cx="41" cy="188" r="2" fill="currentColor" opacity="0.7"/>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.35">
+        <path d="M52 196 L160 160"/>
+      </g>
+    </svg>
+  <svg class="bg-daysky" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <mask id="daysky-moon-mask">
+          <rect x="100" y="700" width="150" height="130" fill="#fff"/>
+          <circle cx="145" cy="767" r="30" fill="#000"/>
+        </mask>
+      </defs>
+      <!-- 锐利斜切色块：深空平面，全部直线边界 -->
+      <polygon points="0,900 0,560 640,900" fill="var(--c-data, #4A5FA8)" opacity="0.10"/>
+      <polygon points="1600,900 1600,470 960,900" fill="var(--c-data, #4A5FA8)" opacity="0.08"/>
+      <polygon points="1600,0 1600,280 1270,0" fill="#FFFFFF" opacity="0.55"/>
+      <polygon points="0,0 320,0 0,200" fill="#FFFFFF" opacity="0.40"/>
+      <line x1="0" y1="742" x2="1600" y2="548" stroke="var(--c-data, #4A5FA8)" stroke-width="1" opacity="0.14"/>
+      <!-- 光照阶梯带（v2.3.7）：以太阳为圆心的三层平涂同心圆，
+           亮度逐层衰减 —— 用「色阶」而非渐变表达「这一片天光来自太阳」 -->
+      <g fill="var(--sun, #F5C445)">
+        <circle cx="1400" cy="540" r="1000" opacity="0.025"/>
+        <circle cx="1400" cy="540" r="860" opacity="0.045"/>
+        <circle cx="1400" cy="540" r="700" opacity="0.07"/>
+      </g>
+      <!-- 放射光线：自日面外侧射出的直线光束（几何、锐利，非卡通短刺） -->
+      <g class="daysky__rays" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.14">
+        <path d="M1682.5 1029.3 L1900 1406 M1400 1105 L1400 1540 M910.7 822.5 L534 1040
+                 M835 540 L400 540 M910.7 257.5 L534 40 M1117.5 50.7 L900 -326
+                 M1400 -25 L1400 -460 M1682.5 50.7 L1900 -326"/>
+      </g>
+      <!-- 巨物太阳：r=520、圆心 (1400,540) —— 左侧与上方 limb 完整落在
+           画幅内、右下两向出画。直径 1040 已超过画幅高 900，比 v2.3.7 的
+           r=400 再放大 1.3 倍：太阳从此不是「画面里的一个圆」，
+           而是「画面装不下的一个天体」 -->
+      <g class="daysky__rings">
+        <circle cx="1400" cy="540" r="575" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.12"/>
+        <circle cx="1400" cy="540" r="554" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.20"/>
+        <circle cx="1400" cy="540" r="536" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1.2" opacity="0.34"/>
+      </g>
+      <g class="daysky__sun">
+        <!-- 平涂内盘（v2.3.16）：五层同心、半径逐级收 74、透明度逐级 +0.05。
+             日面跨度 1040，只用一层均匀填色时读作「一片浅黄雾」而不是球体；
+             五级台阶叠出「中心亮、边缘暗」的亮度梯度，全站禁渐变，
+             这是唯一能表达「发光球体」的语言 —— 与「光照阶梯带」同一套做法。 -->
+        <circle cx="1400" cy="540" r="520" fill="var(--sun, #F5C445)" opacity="0.26"/>
+        <circle cx="1400" cy="540" r="446" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="372" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="298" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="224" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <!-- 赤道与子午两条对角基准线（几何线稿语言） -->
+        <path d="M800 -60 L2000 1140 M2000 -60 L800 1140" stroke="var(--sun-line, #D9A32B)" stroke-width="1" fill="none" opacity="0.22"/>
+        <!-- 日面边缘：加粗一档并提亮 —— 直径超过画幅后，这条弧是唯一
+             能让人读出「这是个球、不是色块」的证据，必须给足 -->
+        <circle cx="1400" cy="540" r="520" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="3" opacity="0.72"/>
+        <circle cx="1400" cy="540" r="492" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1.2" opacity="0.34"/>
+      </g>
+      <!-- 黯淡的月亮：画面左下，亮面朝向太阳（光源方向一致），
+           mask 硬裁出锐利明暗界线 -->
+      <g class="daysky__moon" opacity="0.5">
+        <circle cx="170" cy="760" r="30" fill="#DDE7EF" mask="url(#daysky-moon-mask)"/>
+        <circle cx="170" cy="760" r="30" fill="none" stroke="var(--c-data, #4A5FA8)" stroke-width="1" opacity="0.35"/>
+      </g>
+      <!-- 几点黯淡星光：低存在感圆点与十字亮星（极慢漂移） -->
+      <g class="daysky__stars" fill="var(--c-data, #4A5FA8)">
+        <circle cx="520" cy="212" r="2" opacity="0.35"/>
+        <circle cx="760" cy="332" r="1.5" opacity="0.28"/>
+        <circle cx="984" cy="140" r="2" opacity="0.30"/>
+        <circle cx="700" cy="560" r="1.8" opacity="0.25"/>
+        <circle cx="1084" cy="692" r="2.2" opacity="0.28"/>
+        <circle cx="222" cy="322" r="1.6" opacity="0.30"/>
+        <circle cx="1448" cy="424" r="1.8" opacity="0.30"/>
+        <path d="M880 458 V482 M868 470 H892" stroke="var(--c-data, #4A5FA8)" stroke-width="1" fill="none" opacity="0.30"/>
+        <path d="M1494 640 V660 M1484 650 H1504" stroke="var(--c-data, #4A5FA8)" stroke-width="1" fill="none" opacity="0.26"/>
+      </g>
+    </svg>
+  <div class="bg-vignette"></div>
+</div>
+
+  <header class="site-header">
+    <div class="container container--wide site-header__inner">
+      <a class="brand" href="index.html" aria-label="荒启科幻 首页">
+        <img class="brand__img brand__img--night" src="assets/logo/logo-full-white.png" alt="荒启科幻 HUANGQI SCI-FI" width="880" height="334">
+        <img class="brand__img brand__img--day" loading="lazy" src="assets/logo/logo-full-dark.png" alt="荒启科幻 HUANGQI SCI-FI" width="880" height="334">
+      </a>
+
+      <nav class="nav" aria-label="主导航">
+        <ul class="nav" style="display:contents">
+        <li class="nav__item">
+          <a class="nav__link" href="index.html">首页</a>
+        </li>
+        <li class="nav__item">
+          <a class="nav__link" href="about.html">关于荒启</a>
+        </li>
+        <li class="nav__item has-drop is-current">
+          <span class="nav__group">
+            <a class="nav__link nav__link--parent" href="index.html#business">三大板块</a>
+            <button class="nav__caret-btn" type="button" aria-expanded="false" aria-haspopup="true" aria-label="展开「三大板块」子菜单">
+              <svg class="ico nav__caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </span>
+          <div class="nav__drop">
+            <a class="drop-item" href="community.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.4a3.4 3.4 0 0 1 0 6.6"/><path d="M18 14.4A6.2 6.2 0 0 1 21.2 20"/></svg></span>
+              <span>
+                <span class="drop-item__title">科幻社群</span>
+                <span class="drop-item__desc">成员自主运营的公益写作社群，每年九期练笔</span>
+              </span>
+            </a>
+            <a class="drop-item" href="tools.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="5.4"/><path d="M20.6 12h-3.2M12 20.6v-3.2M3.4 12h3.2M12 3.4v3.2M18.08 18.08l-2.26-2.26M5.92 18.08l2.26-2.26M5.92 5.92l2.26 2.26M18.08 5.92l-2.26 2.26"/></svg></span>
+              <span>
+                <span class="drop-item__title">数字化产品开发</span>
+                <span class="drop-item__desc">社区、教育、AI 与定制开发，源码可交付</span>
+              </span>
+            </a>
+            <a class="drop-item" href="library.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="17" r="2.2"/><circle cx="19" cy="17" r="2.2"/><path d="M10.4 6.6 6.6 15M13.6 6.6 17.4 15M7.2 17h9.6"/></svg></span>
+              <span>
+                <span class="drop-item__title">银河图书馆</span>
+                <span class="drop-item__desc">免费开放的在线索引馆，一篇两页：读者一页、作者一页</span>
+              </span>
+            </a>
+          </div>
+        </li>
+        <li class="nav__item">
+          <a class="nav__link" href="contact.html">联系我们</a>
+        </li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到白天模式" aria-pressed="false">
+          <svg class="ico ico-20 theme-toggle__ico theme-toggle__ico--to-day" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/></svg>
+          <svg class="ico ico-20 theme-toggle__ico theme-toggle__ico--to-night" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 14.4A8.5 8.5 0 0 1 9.6 3.4a8.5 8.5 0 1 0 11 11Z"/></svg>
+        </button>
+        
+        
+        <a class="btn btn--outline btn--sm btn--read" href="/library" target="_blank" rel="noopener"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h6a3 3 0 0 1 3 3V20a2.4 2.4 0 0 0-2.4-2.4H4z"/><path d="M20 4.5h-6a3 3 0 0 0-3 3V20a2.4 2.4 0 0 1 2.4-2.4H20z"/></svg>银河图书馆</a>
+        <a class="btn btn--outline btn--sm btn--read" href="/h5/" target="_blank" rel="noopener" data-invite-open>在线阅读</a>
+        <a class="btn btn--outline btn--sm btn--download" href="/dt/荒启科幻.exe" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3.5v3.5M14 3.5v3.5M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></svg>下载客户端</a>
+        
+        <a class="btn btn--primary btn--sm" href="contact.html#invite"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12 11.3 14.1 15 10.4"/></svg>获取邀请码</a>
+        <button class="nav-toggle" type="button" aria-label="打开导航菜单" aria-controls="mobile-drawer">
+          <span class="nav-toggle__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+<main id="main" class="page">
+
+  <!-- ========================================================= 页面头 -->
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="面包屑">
+        <a href="index.html">首页</a>
+        <svg class="ico ico-18 breadcrumb__sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        <a href="index.html#business">三大板块</a>
+        <svg class="ico ico-18 breadcrumb__sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        <span class="breadcrumb__current">数字化产品开发</span>
+      </nav>
+
+      <p class="eyebrow mt-5" data-reveal="fade">公司业务 · 数字化产品开发</p>
+      <h1 class="page-hero__title" data-reveal="up">数字化产品开发</h1>
+      <p class="page-hero__desc" data-reveal="up" style="--reveal-delay:90ms">
+        我们不是先有技术再找场景的人。社群的收稿、分配、评分与汇总每期转一轮，
+        靠聊天窗口和在线表格撑不了几期 —— 于是成都荒启文化传播有限公司为自己写了一套系统，一路用到今天。
+        现在这套能力向外开放：社区与内容系统、教育考试系统、AI 应用、定制开发，
+        从一个模块到整套产品，都可以交付。
+      </p>
+
+      <div class="notice mt-6" data-reveal="fade" style="--reveal-delay:140ms">
+        <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12.2 11.4 14.4 15 10.6"/></svg>
+        <span>
+          本页所述系统开发与技术服务由<b>成都荒启文化传播有限公司</b>提供，以公司全称签约。
+          荒启科幻社群为纯公益社群，自主开展练笔活动，与上述商业服务无关；参加社群活动全程免费。
+        </span>
+      </div>
+
+      <div class="page-hero__stats" data-reveal="fade" style="--reveal-delay:200ms">
+        <div>
+          <p class="hero__meta-num"><span data-count="4">0</span><small>条业务线</small></p>
+          <p class="hero__meta-label">社区 / 教育 / AI / 定制</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="6">0</span><small>类终端</small></p>
+          <p class="hero__meta-label">Web / H5 / 安卓 / iOS / 微信 / 抖音</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="3">0</span><small>种合作</small></p>
+          <p class="hero__meta-label">托管 / 私有化 / 源码买断</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="1">0</span><small>套底座</small></p>
+          <p class="hero__meta-label">账号、内容与权限同源</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= 破题 -->
+  <section class="section">
+    <div class="container">
+      <div class="split split--top">
+        <div>
+          <p class="eyebrow" data-reveal="fade">起点</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">
+            一套系统真正的成本，不在开发，在「说不清楚」
+          </h2>
+          <p class="body mt-6" data-reveal="up">
+            把一件事搬到线上，要过三关：把流程说清楚、把系统建起来、把系统养下去。
+            多数团队卡在第一关 —— 不是不懂业务，而是业务平时存在于人的习惯里，
+            一旦要写成规则，才发现同一个环节三个人有三种做法。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            所以开发从真实使用开始。练笔活动每年九期，每期都有收稿、分配、评分、
+            汇总、公布、结算，跑满一期就能暴露一批没想清楚的地方。这套系统就是这样长出来的：
+            需求不是写在文档里的假设，而是「这一期又卡在哪」的具体记录。
+          </p>
+
+          <div class="grid grid--auto mt-7" data-reveal="up">
+            <div class="panel">
+              <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4.5" width="14" height="16" rx="2"/><path d="M9 4.5V3.4A1.4 1.4 0 0 1 10.4 2h3.2A1.4 1.4 0 0 1 15 3.4v1.1z"/><path d="M9 10.5h6M9 14.5h4"/></svg> 一般做法的三个坑</p>
+              <ul class="list-dot panel__body">
+                <li>先做功能清单，再回头补流程，最后发现流程本身要改</li>
+                <li>系统上线即交付，运营改一个字段都要排期</li>
+                <li>数据只能进不能出，换一家供应商等于从零开始</li>
+              </ul>
+            </div>
+            <div class="panel panel--cyan">
+              <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="5.4"/><path d="M20.6 12h-3.2M12 20.6v-3.2M3.4 12h3.2M12 3.4v3.2M18.08 18.08l-2.26-2.26M5.92 18.08l2.26-2.26M5.92 5.92l2.26 2.26M18.08 5.92l-2.26 2.26"/></svg> 我们的做法</p>
+              <ul class="list-dot list-dot--cyan panel__body">
+                <li>先画流程再定功能，流程确认后功能清单才有意义</li>
+                <li>配置项全部开放给运营，改维度、改文案不用等版本</li>
+                <li>数据与源码可交付，任何时候都能整体搬走</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal="up" style="--reveal-delay:120ms">
+          <div class="demo-frame">
+            <div class="demo-frame__bar">
+              <span class="demo-frame__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+              <span class="demo-frame__title">console / 投稿管理 · 第 25 期</span>
+            </div>
+            <div class="demo-frame__body">
+              <div class="ui-row">
+                <span class="ui-row__idx">#025</span>
+                <span class="ui-row__main">存在即合理号星际间武装货运飞船观察录</span>
+                <span class="ui-score">11 164 字</span>
+                <span class="chip chip--accent">已收</span>
+              </div>
+              <div class="ui-row">
+                <span class="ui-row__idx">#025</span>
+                <span class="ui-row__main">冬至（V2.0）</span>
+                <span class="ui-score">30 229 字</span>
+                <span class="chip chip--accent">已收</span>
+              </div>
+              <div class="ui-row">
+                <span class="ui-row__idx">#025</span>
+                <span class="ui-row__main">关于维修申请表 P1—025C 的故事</span>
+                <span class="ui-score">7 577 字</span>
+                <span class="chip">待补齐</span>
+              </div>
+              <div class="ui-row">
+                <span class="ui-row__idx">#025</span>
+                <span class="ui-row__main">（匿名稿件 · 作者信息已在评审期隐藏）</span>
+                <span class="ui-score">—</span>
+                <span class="chip chip--cyan">评审中</span>
+              </div>
+              <div class="ui-row">
+                <span class="ui-row__idx">#025</span>
+                <span class="ui-row__main">（匿名稿件 · 双盲模式，评审人同样不可见）</span>
+                <span class="ui-score">—</span>
+                <span class="chip chip--cyan">双盲</span>
+              </div>
+
+              <hr class="rule mt-6">
+
+              <div class="score-grid mt-5">
+                <div class="score-line">
+                  <span>收稿进度</span>
+                  <span class="score-line__track"><span class="score-line__fill" data-value="86"></span></span>
+                  <span class="score-line__val">86%</span>
+                </div>
+                <div class="score-line">
+                  <span>评稿完成</span>
+                  <span class="score-line__track"><span class="score-line__fill" data-value="64"></span></span>
+                  <span class="score-line__val">64%</span>
+                </div>
+                <div class="score-line">
+                  <span>签到率</span>
+                  <span class="score-line__track"><span class="score-line__fill" data-value="78"></span></span>
+                  <span class="score-line__val">78%</span>
+                </div>
+              </div>
+
+              <p class="micro mt-5">界面示意，数据为示例</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 业务线 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">业务线</p>
+        <h2 class="section-head__title" data-reveal="up">四条业务线，共用一个底座</h2>
+        <p class="section-head__desc" data-reveal="up">
+          账号、内容、权限、流程、通知这五层在四条业务线里是同一套实现 ——
+          所以先上哪一条都不会变成孤岛，后面补哪一条也不用重做一遍数据。
+        </p>
+        <hr class="rule-grad section-head__rule">
+      </div>
+
+      <div class="index-list mt-8" data-reveal="up">
+        <article class="index-item">
+          <span class="index-item__num">B.01</span>
+          <div>
+            <h3 class="index-item__title">社区与内容系统</h3>
+            <p class="index-item__desc">
+              论坛、圈子、内容创作者平台：话题与动态、图文与短视频、私信、会员等级与积分、
+              内容审核与举报、会员与支付模块集成。把散在群聊里的讨论沉淀成可检索的内容。
+            </p>
+          </div>
+          <div class="index-item__tags">
+            <span class="chip">圈子话题</span>
+            <span class="chip">会员等级</span>
+            <span class="chip">内容审核</span>
+          </div>
+        </article>
+
+        <article class="index-item">
+          <span class="index-item__num">B.02</span>
+          <div>
+            <h3 class="index-item__title">教育考试系统</h3>
+            <p class="index-item__desc">
+              覆盖教、学、练、考：录播课程与直播授课、章节练习、题库管理、随机组卷、
+              自动阅卷、错题本与学习报告。适用于职业培训、课外辅导与企业内部考核。
+            </p>
+          </div>
+          <div class="index-item__tags">
+            <span class="chip">课程章节</span>
+            <span class="chip">题库组卷</span>
+            <span class="chip">自动阅卷</span>
+          </div>
+        </article>
+
+        <article class="index-item">
+          <span class="index-item__num">B.03</span>
+          <div>
+            <h3 class="index-item__title">AI 应用</h3>
+            <p class="index-item__desc">
+              知识库问答、智能客服、AIGC 内容生成、文档解析与流程自动化。
+              银河图书馆里每一张拆解卡，都是这套能力在真实语料上跑出来的结果。
+            </p>
+          </div>
+          <div class="index-item__tags">
+            <span class="chip">知识库问答</span>
+            <span class="chip">AIGC</span>
+            <span class="chip">流程自动化</span>
+          </div>
+        </article>
+
+        <article class="index-item">
+          <span class="index-item__num">B.04</span>
+          <div>
+            <h3 class="index-item__title">定制开发</h3>
+            <p class="index-item__desc">
+              网站、APP、小程序与后台系统一体化定制：按你的流程来，不按我们的模板来。
+              可以从零做一个新产品，也可以只补上现有系统缺的那一块。
+            </p>
+          </div>
+          <div class="index-item__tags">
+            <span class="chip">多端定制</span>
+            <span class="chip">后台系统</span>
+            <span class="chip">二次开发</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 分层详解 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">拆开看</p>
+        <h2 class="section-head__title" data-reveal="up">四条业务线，其实都由这五层组成</h2>
+        <p class="section-head__desc" data-reveal="up">
+          下面按「层」而不是按「产品」来讲。每一层先说明通用能力，
+          再指出换到社区、教育或 AI 场景时它变成什么 —— 这样可以按层选，
+          也可以整套上。可按功能点勾选，不必为一行用不上的代码付费。
+        </p>
+      </div>
+
+      <div class="mt-8" data-tabs data-reveal="up">
+        <div class="tabs__nav" role="tablist" aria-label="系统分层">
+          <button class="tab-btn" type="button" aria-selected="true">账号与权限</button>
+          <button class="tab-btn" type="button" aria-selected="false">内容与数据</button>
+          <button class="tab-btn" type="button" aria-selected="false">流程引擎</button>
+          <button class="tab-btn" type="button" aria-selected="false">多端界面</button>
+          <button class="tab-btn" type="button" aria-selected="false">后台与集成</button>
+        </div>
+
+        <!-- 账号与权限 -->
+        <div class="tab-panel">
+          <div class="split">
+            <div>
+              <h3 class="h3">先定谁是谁，再谈功能</h3>
+              <p class="body mt-5">
+                任何一套系统，第一个要落地的都不是功能，而是身份：谁能看、谁能写、谁能批。
+                不同业务线的角色模型差别很大 —— 社区是会员与版主，教育是教师与班级，
+                AI 应用是调用方与知识库范围 —— 但都能归到「角色 × 资源 × 动作」这一张表上。
+              </p>
+              <ul class="list-check body mt-6">
+                <li>多角色与自定义权限组：内置管理员 / 编辑 / 审核 / 普通用户，可自由组合</li>
+                <li>会员体系：等级、成长值、勋章、订阅，名称与层级可按行业习惯重命名</li>
+                <li>组织关系：班级、院系、门店、项目组等树形归属，支持一人多归属</li>
+                <li>登录方式：手机号验证码、微信、企业微信、学校统一身份认证</li>
+                <li>数据可见范围：按角色、按归属、按字段三级控制，默认最小可见</li>
+                <li>操作审计：谁在什么时候改了什么，全量留痕且可导出</li>
+              </ul>
+            </div>
+            <div>
+              <div class="kv">
+                <div class="kv__row"><span class="kv__key">登录</span><span class="kv__val">手机号 / 微信 / 企业微信 / OIDC、CAS 统一认证</span></div>
+                <div class="kv__row"><span class="kv__key">角色</span><span class="kv__val">内置 4 类 + 自定义权限组，按「资源 × 动作」勾选</span></div>
+                <div class="kv__row"><span class="kv__key">会员</span><span class="kv__val">等级 + 成长值 + 勋章 + 订阅，整套可关闭</span></div>
+                <div class="kv__row"><span class="kv__key">组织</span><span class="kv__val">树形可多级，支持一人多归属与跨组织协作</span></div>
+                <div class="kv__row"><span class="kv__key">隐私</span><span class="kv__val">默认仅显示昵称，真实信息按角色逐级开放</span></div>
+                <div class="kv__row"><span class="kv__key">审计</span><span class="kv__val">关键操作全留痕，保留期可配置</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 内容与数据 -->
+        <div class="tab-panel" hidden>
+          <div class="split">
+            <div>
+              <h3 class="h3">内容不是文件，是带状态的数据</h3>
+              <p class="body mt-5">
+                把稿子存下来只解决一半问题，另一半是「这篇现在处于什么状态、谁能看到哪一版」。
+                版本、编号、可见性与状态机绑定之后，投稿的多轮稿、课程的章节改版、
+                知识库的文档迭代，可以共用同一套模型。
+              </p>
+              <ul class="list-check body mt-6">
+                <li>版本留痕：任何内容可回溯、可对比，历史版本不被覆盖</li>
+                <li>唯一编号与匿名：进入评审或盲评阶段后以编号代替署名</li>
+                <li>状态机：草稿 → 待审 → 发布 → 归档，状态与流转权限均可自定义</li>
+                <li>多形态内容：图文、视频、附件、结构化题目、文档切片，统一检索</li>
+                <li>提交校验：字数、格式、必填项即时校验，避免后期返工</li>
+                <li>全量导出：结构化格式随时带走，不设离场障碍</li>
+              </ul>
+            </div>
+            <div>
+              <div class="kv">
+                <div class="kv__row"><span class="kv__key">内容类型</span><span class="kv__val">图文 / 视频 / 附件 / 题目 / 文档切片</span></div>
+                <div class="kv__row"><span class="kv__key">版本</span><span class="kv__val">单条不限，支持对比与回滚</span></div>
+                <div class="kv__row"><span class="kv__key">状态</span><span class="kv__val">默认 4 态，可扩到任意条数</span></div>
+                <div class="kv__row"><span class="kv__key">检索</span><span class="kv__val">关键词 + 标签 + 语义检索（可选）</span></div>
+                <div class="kv__row"><span class="kv__key">导入</span><span class="kv__val">网页提交 / 批量表格 / 接口 / 存量库迁移</span></div>
+                <div class="kv__row"><span class="kv__key">导出</span><span class="kv__val">CSV / XLSX / JSON / Markdown</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 流程引擎 -->
+        <div class="tab-panel" hidden>
+          <div class="split">
+            <div>
+              <h3 class="h3">把「谁该做什么」从人脑搬进系统</h3>
+              <p class="body mt-5">
+                流程最容易出错的环节是分配：分给谁、凭什么分、分错了怎么改。
+                评稿分配、组卷阅卷、工单派发，本质是同一件事 ——
+                按规则把任务派给合适的人，再把结果收回来算。
+              </p>
+              <ul class="list-check body mt-6">
+                <li>任务分配：算法 / 随机 / 人工指定 / 交叉分配，规则可配、过程可追溯</li>
+                <li>评分与评价：多维打分 + 文字评价，维度权重可设，超过阈值自动去极值</li>
+                <li>自动化：随机组卷、客观题自动判分、工单派发与超时升级</li>
+                <li>催办提醒：站内、邮件、短信、公众号、群机器人多通道，按时段限流</li>
+                <li>复核申诉：对单条结果可提复议，完整沟通记录留档</li>
+                <li>结果产出：个人反馈单、期次汇总、可对外出具的正式报告</li>
+              </ul>
+            </div>
+            <div>
+              <div class="kv">
+                <div class="kv__row"><span class="kv__key">分配策略</span><span class="kv__val">算法 / 随机 / 人工 / 交叉，支持硬约束</span></div>
+                <div class="kv__row"><span class="kv__key">负载</span><span class="kv__val">可设上下限，防止个别人负担过重</span></div>
+                <div class="kv__row"><span class="kv__key">计分</span><span class="kv__val">算术平均 / 去极值平均 / 加权 / 标准分</span></div>
+                <div class="kv__row"><span class="kv__key">自动化</span><span class="kv__val">组卷、判分、派单、超时升级</span></div>
+                <div class="kv__row"><span class="kv__key">通知</span><span class="kv__val">站内 / 邮件 / 短信 / 微信 / 群机器人</span></div>
+                <div class="kv__row"><span class="kv__key">留痕</span><span class="kv__val">每次分配与改派都记录操作人与理由</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 多端界面 -->
+        <div class="tab-panel" hidden>
+          <div class="split">
+            <div>
+              <h3 class="h3">一套代码，每个终端各有各的脾气</h3>
+              <p class="body mt-5">
+                六端不是把同一个页面复制六遍。Web 要能被搜索引擎收录，小程序要过审核且有体积限制，
+                APP 要能推送与离线，H5 要能在别人的浏览器里跑。共用业务代码与设计系统、
+                差异部分按端单独封装，是我们认定的唯一合理做法。
+              </p>
+              <ul class="list-check body mt-6">
+                <li>Web 网站：服务端渲染或静态生成，首屏快、可被收录，适合官网与内容站</li>
+                <li>微信 / 抖音小程序：一套代码分别编译，按平台规范适配登录、分享与支付</li>
+                <li>安卓 / iOS：同一套业务代码编译原生应用，支持推送、扫码与离线缓存</li>
+                <li>H5：可嵌在公众号、群聊或第三方 App 内，打开即用，不必安装</li>
+                <li>设计系统：颜色、间距、字阶一套令牌贯通六端，改一处全端生效</li>
+                <li>管理后台：与前台共用权限体系，桌面优先，移动端可应急处理</li>
+              </ul>
+            </div>
+            <div>
+              <div class="kv">
+                <div class="kv__row"><span class="kv__key">代码复用</span><span class="kv__val">业务逻辑与组件共享，端差异单独封装</span></div>
+                <div class="kv__row"><span class="kv__key">Web</span><span class="kv__val">Vue 3（Composition API）· NuxtJS 3（SSR / 静态生成）</span></div>
+                <div class="kv__row"><span class="kv__key">移动端</span><span class="kv__val">UniApp 编译到安卓 / iOS / 微信 / 抖音 / H5</span></div>
+                <div class="kv__row"><span class="kv__key">服务端</span><span class="kv__val">Spring Boot 3.5+ / JDK 17+，按业务域拆服务</span></div>
+                <div class="kv__row"><span class="kv__key">数据层</span><span class="kv__val">MySQL + Redis，读写分离，按需横向扩容</span></div>
+                <div class="kv__row"><span class="kv__key">部署</span><span class="kv__val">容器化，公有云 / 私有云 / 校内服务器均可</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 后台与集成 -->
+        <div class="tab-panel" hidden>
+          <div class="split">
+            <div>
+              <h3 class="h3">后台不是给程序员看的，是给运营看的</h3>
+              <p class="body mt-5">
+                一套系统能不能长期活下去，取决于运营能不能自己改配置：改评分维度、发通知、
+                导报表、查日志。后台的第一用户是运营，不是开发者。集成层则负责把系统接回
+                已有的生态 —— 公众号、群、表格、内部系统。
+              </p>
+              <ul class="list-check body mt-6">
+                <li>运营后台：内容审核、用户管理、配置项、活动开关，全部可视化</li>
+                <li>数据看板：活跃、转化、完成率、留存，可按时间与分组筛选</li>
+                <li>报表：导出 XLSX / CSV / PDF，按期自动推送到群或邮箱</li>
+                <li>开放接口：REST + Token 签名，按应用授权范围，附调用示例</li>
+                <li>Webhook 与群机器人：事件触发外部系统，失败重试且可查投递日志</li>
+                <li>第三方对接：微信生态、在线支付、短信、对象存储、组织现有系统</li>
+              </ul>
+            </div>
+            <div>
+              <div class="kv">
+                <div class="kv__row"><span class="kv__key">接口</span><span class="kv__val">REST / JSON，Token + 签名，按应用授权</span></div>
+                <div class="kv__row"><span class="kv__key">限流</span><span class="kv__val">默认 600 次 / 分钟，可申请提升</span></div>
+                <div class="kv__row"><span class="kv__key">Webhook</span><span class="kv__val">失败自动重试 3 次，投递日志可查</span></div>
+                <div class="kv__row"><span class="kv__key">报表</span><span class="kv__val">实时 + 每日快照，历史可回看</span></div>
+                <div class="kv__row"><span class="kv__key">权限</span><span class="kv__val">看板与配置项的可见、可改范围按角色控制</span></div>
+                <div class="kv__row"><span class="kv__key">文档</span><span class="kv__val">随交付提供接口说明与调用示例</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 三线骨架 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">结构对照</p>
+        <h2 class="section-head__title" data-reveal="up">每条业务线，骨架其实是同一个</h2>
+        <p class="section-head__desc" data-reveal="up">
+          把每条业务线剥到只剩骨架，都是三段：对象 → 处理 → 结果。
+          中间那一步决定这套系统好不好用，也决定了要花多少钱 ——
+          先确认对象是什么，后面几层自然成立，选型就不会被功能清单牵着走。
+        </p>
+      </div>
+
+      <div class="flow-compare mt-8">
+        <article class="panel" data-reveal="up">
+          <p class="panel__title">社区与内容</p>
+          <p class="micro mt-3">论坛、圈子、创作者平台、垂直兴趣社区</p>
+
+          <div class="flow-chain">
+            <span class="flow-node">内容</span>
+            <svg class="ico ico-18 flow-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <span class="flow-node flow-node--blind">审核</span>
+            <svg class="ico ico-18 flow-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <span class="flow-node">留存</span>
+          </div>
+
+          <ul class="list-dot panel__body">
+            <li>难的不是发布，是「发完之后有没有人看」：需要推荐、榜单与提醒把内容推到人眼前</li>
+            <li>审核必须前置，靠事后删帖的社区最后都会失去创作者</li>
+          </ul>
+        </article>
+
+        <article class="panel panel--accent" data-reveal="up" style="--reveal-delay:100ms">
+          <p class="panel__title">教育考试</p>
+          <p class="micro mt-3">职业培训、课外辅导、企业内部考核</p>
+
+          <div class="flow-chain">
+            <span class="flow-node">课程</span>
+            <svg class="ico ico-18 flow-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <span class="flow-node flow-node--blind">判分</span>
+            <svg class="ico ico-18 flow-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <span class="flow-node">报告</span>
+          </div>
+
+          <ul class="list-dot panel__body">
+            <li>判分口径必须一次定义清楚：主观题、客观题、多次作答如何取值，规则先于界面</li>
+            <li>学习报告的价值大于分数本身 —— 没有报告，学员下次不会再来</li>
+          </ul>
+        </article>
+
+        <article class="panel" data-reveal="up" style="--reveal-delay:200ms">
+          <p class="panel__title">AI 应用</p>
+          <p class="micro mt-3">知识库问答、智能客服、内容生成、文档处理</p>
+
+          <div class="flow-chain">
+            <span class="flow-node">语料</span>
+            <svg class="ico ico-18 flow-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <span class="flow-node flow-node--blind">判定</span>
+            <svg class="ico ico-18 flow-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <span class="flow-node">回答</span>
+          </div>
+
+          <ul class="list-dot panel__body">
+            <li>模型不是难点，语料才是：知识库的质量决定回答上限，先整理再训练比换模型有用</li>
+            <li>必须留一条「答不出来就转人工」的退路，否则第一个错误答案就会毁掉信任</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 后台示意 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">后台示意</p>
+        <h2 class="section-head__title" data-reveal="up">运营后台长什么样：以练笔活动为例</h2>
+        <p class="section-head__desc" data-reveal="up">
+          下面两张图取自公司为练笔活动开发维护的那套后台。实际交付版支持交互筛选、
+          悬浮查看明细与一键导出；社区、教育场景的看板换成对应的指标即可，交互逻辑一致。
+        </p>
+      </div>
+
+      <div class="grid grid--2 grid--gap-lg mt-8">
+        <div class="chart-card" data-reveal="up">
+          <div class="chart-card__head">
+            <p class="chart-card__title">社群活跃度趋势</p>
+            <p class="chart-card__note">近 12 周 · 示意数据</p>
+          </div>
+
+          <svg viewBox="0 0 640 260" role="img" aria-label="近 12 周社群活跃度折线示意图">
+            <defs>
+              <linearGradient id="areaA" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--accent-1)" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="var(--accent-1)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+
+            <g stroke="var(--line-1)" stroke-width="1">
+              <line x1="40" y1="60" x2="620" y2="60"/>
+              <line x1="40" y1="110" x2="620" y2="110"/>
+              <line x1="40" y1="160" x2="620" y2="160"/>
+              <line x1="40" y1="210" x2="620" y2="210"/>
+            </g>
+
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="var(--text-4)">
+              <text x="8" y="64">100</text>
+              <text x="14" y="114">75</text>
+              <text x="14" y="164">50</text>
+              <text x="14" y="214">25</text>
+            </g>
+
+            <path d="M40 176 L92 158 L144 164 L196 132 L248 118 L300 126 L352 96 L404 86 L456 102 L508 74 L560 68 L612 58 L612 210 L40 210 Z"
+                  fill="url(#areaA)"/>
+            <path d="M40 176 L92 158 L144 164 L196 132 L248 118 L300 126 L352 96 L404 86 L456 102 L508 74 L560 68 L612 58"
+                  fill="none" stroke="var(--accent-1)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+
+            <g fill="var(--surface-1)" stroke="var(--accent-2)" stroke-width="2">
+              <circle cx="40" cy="176" r="3.4"/>
+              <circle cx="144" cy="164" r="3.4"/>
+              <circle cx="248" cy="118" r="3.4"/>
+              <circle cx="352" cy="96" r="3.4"/>
+              <circle cx="456" cy="102" r="3.4"/>
+              <circle cx="560" cy="68" r="3.4"/>
+              <circle cx="612" cy="58" r="4.4" fill="var(--accent-2)"/>
+            </g>
+
+            <g font-family="Inter, 'Noto Sans SC', sans-serif" font-size="10" fill="var(--text-4)" text-anchor="middle">
+              <text x="40" y="236">W1</text>
+              <text x="144" y="236">W3</text>
+              <text x="248" y="236">W5</text>
+              <text x="352" y="236">W7</text>
+              <text x="456" y="236">W9</text>
+              <text x="560" y="236">W11</text>
+            </g>
+          </svg>
+
+          <div class="kv mt-6">
+            <div class="kv__row"><span class="kv__key">峰值周</span><span class="kv__val">W12 · 活跃 92 人（开期当周）</span></div>
+            <div class="kv__row"><span class="kv__key">谷值周</span><span class="kv__val">W1 · 活跃 48 人（休整期）</span></div>
+            <div class="kv__row"><span class="kv__key">结论</span><span class="kv__val">活跃度与期次节奏强相关，休整期需要轻量维系动作</span></div>
+          </div>
+        </div>
+
+        <div class="chart-card" data-reveal="up" style="--reveal-delay:120ms">
+          <div class="chart-card__head">
+            <p class="chart-card__title">投稿与评稿完成量</p>
+            <p class="chart-card__note">第 21–25 期 · 示意数据</p>
+          </div>
+
+          <svg viewBox="0 0 640 260" role="img" aria-label="第 21 至 25 期投稿与评稿完成量柱状示意图">
+            <g stroke="var(--line-1)" stroke-width="1">
+              <line x1="40" y1="60" x2="620" y2="60"/>
+              <line x1="40" y1="110" x2="620" y2="110"/>
+              <line x1="40" y1="160" x2="620" y2="160"/>
+              <line x1="40" y1="210" x2="620" y2="210"/>
+            </g>
+
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="var(--text-4)">
+              <text x="14" y="64">40</text>
+              <text x="14" y="114">30</text>
+              <text x="14" y="164">20</text>
+              <text x="14" y="214">10</text>
+            </g>
+
+            <!-- 投稿 -->
+            <g fill="var(--accent-1)">
+              <rect x="70"  y="118" width="26" height="92" rx="2"/>
+              <rect x="176" y="102" width="26" height="108" rx="2"/>
+              <rect x="282" y="86"  width="26" height="124" rx="2"/>
+              <rect x="388" y="70"  width="26" height="140" rx="2"/>
+              <rect x="494" y="54"  width="26" height="156" rx="2"/>
+            </g>
+
+            <!-- 评稿完成 -->
+            <g fill="var(--accent-2)" opacity="0.88">
+              <rect x="102" y="152" width="26" height="58" rx="2"/>
+              <rect x="208" y="128" width="26" height="82" rx="2"/>
+              <rect x="314" y="112" width="26" height="98" rx="2"/>
+              <rect x="420" y="98"  width="26" height="112" rx="2"/>
+              <rect x="526" y="80"  width="26" height="130" rx="2"/>
+            </g>
+
+            <g font-family="Inter, 'Noto Sans SC', sans-serif" font-size="11" fill="var(--text-4)" text-anchor="middle">
+              <text x="99"  y="236">第 21 期</text>
+              <text x="205" y="236">第 22 期</text>
+              <text x="311" y="236">第 23 期</text>
+              <text x="417" y="236">第 24 期</text>
+              <text x="523" y="236">第 25 期</text>
+            </g>
+          </svg>
+
+          <div class="graph-legend">
+            <span class="graph-legend__item"><span class="graph-legend__dot" style="background:var(--accent-1)"></span>投稿量</span>
+            <span class="graph-legend__item"><span class="graph-legend__dot" style="background:var(--accent-2)"></span>评稿完成量</span>
+          </div>
+
+          <div class="kv mt-6">
+            <div class="kv__row"><span class="kv__key">投稿增长</span><span class="kv__val">第 21 期至第 25 期累计增长约 64%</span></div>
+            <div class="kv__row"><span class="kv__key">评稿完成率</span><span class="kv__val">从 63% 提升至 83%，与算法分配上线时间吻合</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 技术底座 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">技术底座</p>
+        <h2 class="section-head__title" data-reveal="up">一套代码，六个终端</h2>
+        <p class="section-head__desc" data-reveal="up">
+          移动端跨端开发，一套代码编译到安卓、iOS 与两个小程序平台；服务端按业务域拆服务，
+          活动期集中访问不会互相拖慢 —— 换终端不动后端，改后端不动界面。
+        </p>
+        <hr class="rule-grad section-head__rule">
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <div class="card card--beacon" data-reveal="up">
+          <p class="card__kicker">架构</p>
+          <h3 class="card__title">前后端分离</h3>
+          <p class="card__desc">
+            界面与业务逻辑各自独立发布：加一个终端不影响服务端，改一处规则不用重新打包 APP。
+          </p>
+        </div>
+        <div class="card card--beacon" data-reveal="up" style="--reveal-delay:100ms">
+          <p class="card__kicker">终端</p>
+          <h3 class="card__title">一套代码多端</h3>
+          <p class="card__desc">
+            同一套业务代码编译到 Web、H5、安卓、iOS、微信小程序与抖音小程序，六端功能与数据始终一致。
+          </p>
+        </div>
+        <div class="card card--beacon" data-reveal="up" style="--reveal-delay:200ms">
+          <p class="card__kicker">服务端</p>
+          <h3 class="card__title">可拆可扩</h3>
+          <p class="card__desc">
+            按业务域拆服务，报名、考试、活动开场等高峰可单独扩容；缓存扛读、数据库留底，
+            高峰当天不加机器也不卡。
+          </p>
+        </div>
+      </div>
+
+      <div class="split split--top mt-8" data-reveal="up">
+        <div class="panel">
+          <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3.5v3.5M14 3.5v3.5M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></svg> 技术栈</p>
+          <div class="kv mt-5">
+            <div class="kv__row"><span class="kv__key">Web</span><span class="kv__val">Vue 3（Composition API）· NuxtJS 3（SSR / 静态生成）</span></div>
+            <div class="kv__row"><span class="kv__key">移动端</span><span class="kv__val">UniApp 一套代码编译到安卓 / iOS / 微信小程序 / 抖音小程序 / H5</span></div>
+            <div class="kv__row"><span class="kv__key">服务端</span><span class="kv__val">Spring Boot 3.5+ / JDK 17+，按业务域拆微服务</span></div>
+            <div class="kv__row"><span class="kv__key">数据层</span><span class="kv__val">MySQL + Redis，读写分离，按需横向扩容</span></div>
+            <div class="kv__row"><span class="kv__key">交付形态</span><span class="kv__val">容器化部署，公有云 / 私有云 / 校内服务器均可运行</span></div>
+          </div>
+        </div>
+        <div class="panel panel--accent">
+          <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12 11.3 14.1 15 10.4"/></svg> 稳定性怎么保证</p>
+          <ul class="list-dot panel__body">
+            <li>业务都有「集中那一刻」：截稿前 24 小时、考试开考、活动开场。这些时间窗单独压测</li>
+            <li>内容与结果自动落库并每小时快照，误删可回滚到上一个快照</li>
+            <li>接口带幂等键，网络抖动导致的重复提交不会变成两条记录</li>
+            <li>升级先上灰度环境，跑满一个完整业务周期才推到正式环境</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 合作方式 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">合作方式</p>
+        <h2 class="section-head__title" data-reveal="up">三种合作方式，功能完全一致</h2>
+        <p class="section-head__desc" data-reveal="up">
+          三类客户的技术人力差别很大，所以三种方式都按「交付之后没有专职技术人员也能长期运行」设计。
+          区别只在数据放在哪、能改多深、以后谁维护 —— 多数组织从托管版起步，
+          规模稳定后再迁移或买断。
+        </p>
+      </div>
+
+      <div class="compare mt-8">
+        <article class="compare__col compare__col--hi" data-reveal="up" style="display:flex;flex-direction:column">
+          <p class="compare__name">托管版</p>
+          <p class="compare__sub">开通即用 · 由成都荒启文化传播有限公司负责运行与维护</p>
+
+          <ul class="compare__list">
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>四条业务线全部开放，功能与私有化版一致</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>无需自备服务器，无需技术人力</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>配置完成当天即可上线</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>版本自动更新，新能力无需另行升级</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>数据每日备份，可随时导出全量数据</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>含标准品牌定制：Logo、主题色、站点名称</span></li>
+            <li class="is-off"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span>数据存放于公司托管的服务器环境，处理安排以双方协议约定为准</span></li>
+            <li class="is-off"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span>不支持深度功能定制与自有域名下的完全独立部署</span></li>
+          </ul>
+
+          <div class="entry-card__foot" style="margin-top:auto">
+            <a class="btn btn--primary" href="contact.html">咨询托管版 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </article>
+
+        <article class="compare__col" data-reveal="up" style="--reveal-delay:120ms;display:flex;flex-direction:column">
+          <p class="compare__name">私有化部署版</p>
+          <p class="compare__sub">部署到你的环境 · 数据完全自主</p>
+
+          <ul class="compare__list">
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>四条业务线全部开放，功能与托管版一致</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>部署到自有服务器或指定云环境，数据不出边界</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>字段、流程、报表口径均可调整</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>可对接组织现有的统一身份认证与内部系统</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>自有域名与品牌视觉，不出现荒启标识</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>含部署文档、运维手册与操作培训</span></li>
+            <li class="is-off"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span>需要具备基础的服务器资源与技术对接人</span></li>
+          </ul>
+
+          <div class="entry-card__foot" style="margin-top:auto">
+            <a class="btn btn--outline" href="contact.html">咨询私有化部署 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </article>
+
+        <article class="compare__col" data-reveal="up" style="--reveal-delay:240ms;display:flex;flex-direction:column">
+          <p class="compare__name">源码买断</p>
+          <p class="compare__sub">一次性交付 · 之后完全由你处置</p>
+
+          <ul class="compare__list">
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>完整源码、数据库结构与文档一次交付，权利范围以合同约定为准</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>可自行二次开发，也可以接入自有系统</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>交付前做一次代码走查，补全注释与目录说明</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>含一周交接：环境搭建、目录结构、二次开发规范</span></li>
+            <li><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg><span>上线首月由公司提供运维保障，服务范围以技术服务协议约定为准</span></li>
+            <li class="is-off"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span>后续版本升级需另行购买或按次委托</span></li>
+            <li class="is-off"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span>需要有能接手代码的开发人员</span></li>
+          </ul>
+
+          <div class="entry-card__foot" style="margin-top:auto">
+            <a class="btn btn--outline" href="contact.html">咨询源码买断 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </article>
+      </div>
+
+      <div class="deflist mt-8" data-reveal="up">
+        <div class="deflist__item">
+          <div class="deflist__term">源码与文档一并交付</div>
+          <div>
+            <p class="deflist__desc">
+              不管选哪种方式，交付物里都包含数据库结构与接口说明。托管版可按需导出，
+              私有化与买断版直接给源码 —— 不存在「系统是你的，但代码不是」。
+            </p>
+          </div>
+        </div>
+        <div class="deflist__item">
+          <div class="deflist__term">双周迭代</div>
+          <div>
+            <p class="deflist__desc">
+              需求进排期后按两周一个版本推进，每个版本结束可演示；验收不过的改动不进入下一版本，
+              避免问题越滚越大。
+            </p>
+          </div>
+        </div>
+        <div class="deflist__item">
+          <div class="deflist__term">上线之后仍有人管</div>
+          <div>
+            <p class="deflist__desc">
+              上线首月由公司提供运维保障，之后按年提供缺陷修复、性能优化与版本升级，
+              服务范围与响应时限以技术服务协议约定为准。不追求「验收即失联」的一次性项目。
+            </p>
+          </div>
+        </div>
+        <div class="deflist__item">
+          <div class="deflist__term">报价按模块算</div>
+          <div>
+            <p class="deflist__desc">
+              按功能模块、复杂度与交付周期报价，签约前给出明细；后续没有追加的隐藏项，
+              需求变更单独评估、单独确认。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 交付流程 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="split split--top">
+        <div>
+          <p class="eyebrow" data-reveal="fade">交付流程</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">五步走完，先跑通再扩展</h2>
+          <p class="body mt-6" data-reveal="up">
+            我们从不建议一次性把所有功能都打开。真实需求往往要在一次完整业务周期之后
+            才会显形 —— 先跑通最小闭环，再根据实际使用情况扩展，是成本最低的路径。
+            定制项目在此基础上多一道原型与方案确认，避免做到一半才发现方向不对。
+          </p>
+
+          <div class="steps mt-8" data-reveal="up">
+            <div class="step">
+              <p class="step__num" aria-hidden="true"></p>
+              <h3 class="step__title">流程梳理</h3>
+              <p class="step__desc">
+                把你的业务从头走一遍：一次活动怎么开、材料怎么收、任务怎么分、结果怎么公布。
+                我们把它画成流程图，逐环节确认哪些需要系统承接、哪些可以直接简化。
+              </p>
+            </div>
+            <div class="step">
+              <p class="step__num" aria-hidden="true"></p>
+              <h3 class="step__title">原型与方案</h3>
+              <p class="step__desc">
+                给出关键界面的可点击原型与功能清单：哪些是标准能力、哪些需要定制、
+                分别影响多少工期。这一步确认之后才进入开发，避免边做边改。
+              </p>
+            </div>
+            <div class="step">
+              <p class="step__num" aria-hidden="true"></p>
+              <h3 class="step__title">开发与试运行</h3>
+              <p class="step__desc">
+                双周一个版本，每个版本结束可演示。开发完成后用一批历史数据做完整试运行，
+                验证流程是否走得通、数据是否对得上、权限是否有漏洞。
+              </p>
+            </div>
+            <div class="step">
+              <p class="step__num" aria-hidden="true"></p>
+              <h3 class="step__title">正式上线</h3>
+              <p class="step__desc">
+                导入正式数据，开放入口。上线首月我们全程陪跑，处理突发问题并同步记录改进项，
+                一个完整周期结束后给出问题清单与优化建议。
+              </p>
+            </div>
+            <div class="step">
+              <p class="step__num" aria-hidden="true"></p>
+              <h3 class="step__title">迭代扩展</h3>
+              <p class="step__desc">
+                基于实际使用数据决定下一步：补模块、调规则、加对接。
+                每次迭代都以「能减少一项人工操作」为标准，不做没有使用场景的功能。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal="up" style="--reveal-delay:120ms">
+          <div class="panel panel--accent">
+            <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2"/></svg> 时间参考</p>
+            <div class="kv mt-5">
+              <div class="kv__row"><span class="kv__key">流程梳理</span><span class="kv__val">1–2 次会议 + 1 份流程图确认</span></div>
+              <div class="kv__row"><span class="kv__key">原型与方案</span><span class="kv__val">1–2 周，含功能清单与排期</span></div>
+              <div class="kv__row"><span class="kv__key">标准系统上线</span><span class="kv__val">1 个业务周期内完成配置与试运行</span></div>
+              <div class="kv__row"><span class="kv__key">定制开发</span><span class="kv__val">按模块数量评估，双周一个可演示版本</span></div>
+              <div class="kv__row"><span class="kv__key">首次迭代</span><span class="kv__val">上线后第一个完整周期结束的 2 周内</span></div>
+            </div>
+            <p class="micro mt-5">
+              具体周期取决于模块数量与定制深度，会在方案确认后给出明确排期。
+            </p>
+          </div>
+
+          <div class="panel mt-5">
+            <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg> 交付物</p>
+            <ul class="list-dot panel__body">
+              <li>可运行的完整系统（含全部已选模块）</li>
+              <li>业务流程图与配置说明文档</li>
+              <li>用户操作手册（按角色分别成篇）</li>
+              <li>管理员手册与常见问题清单</li>
+              <li>数据字典与接口说明</li>
+              <li>私有化与买断版额外提供部署、运维文档与源码</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 适用客户 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">适用客户</p>
+        <h2 class="section-head__title" data-reveal="up">这四类组织最适合我们</h2>
+        <p class="section-head__desc" data-reveal="up">
+          规模不是判断标准。有固定节奏的收稿与评审，看 B.01；
+          有课程、题库与考试，看 B.02；想让语料变成可问答的知识，看 B.03；
+          现有系统缺一块或想从零做一个，看 B.04。
+        </p>
+      </div>
+
+      <div class="grid grid--4 grid--gap-lg mt-8">
+        <article class="persona" data-reveal="up">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.4a3.4 3.4 0 0 1 0 6.6"/><path d="M18 14.4A6.2 6.2 0 0 1 21.2 20"/></svg></div>
+          <h3 class="persona__title">文学与文化组织</h3>
+          <p class="persona__need">
+            每学期若干次征稿，成员几十人到数百人。常见困境是换届后流程断层、
+            历史稿件散落在多个聊天记录里，历期数据无法横向比较。
+          </p>
+          <p class="persona__serve"><b>推荐业务线</b>　B.01 社区与内容系统</p>
+        </article>
+        <article class="persona" data-reveal="up" style="--reveal-delay:90ms">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M15.6 8.4 13.9 13.9 8.4 15.6l1.7-5.5z"/></svg></div>
+          <h3 class="persona__title">教育与培训机构</h3>
+          <p class="persona__need">
+            有课程、有题库、有考核，但学习过程散在多个工具里。
+            最需要的是「学、练、考、报告」在同一条链路上，而不是再增加一个 App。
+          </p>
+          <p class="persona__serve"><b>推荐业务线</b>　B.02 教育考试系统</p>
+        </article>
+        <article class="persona" data-reveal="up" style="--reveal-delay:180ms">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2"/><path d="M12 3.4c2.4 2.4 3.6 5.4 3.6 8.6s-1.2 6.2-3.6 8.6c-2.4-2.4-3.6-5.4-3.6-8.6S9.6 5.8 12 3.4Z"/></svg></div>
+          <h3 class="persona__title">内容社区与创作者平台</h3>
+          <p class="persona__need">
+            已经有稳定的创作者与讨论，但内容都留在群聊与第三方平台里：
+            搜不到、留不住、也无法沉淀成可运营的资产。
+          </p>
+          <p class="persona__serve"><b>推荐业务线</b>　B.01 + B.03 智能检索</p>
+        </article>
+        <article class="persona" data-reveal="up" style="--reveal-delay:270ms">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.8 2.8M14.9 14.9l2.8 2.8M17.7 6.3l-2.8 2.8M9.1 14.9l-2.8 2.8"/></svg></div>
+          <h3 class="persona__title">想把 AI 用起来的企业</h3>
+          <p class="persona__need">
+            试过通用模型，但回答不准、不敢对外用。
+            真正缺的不是模型，而是把内部文档整理成可检索、可追溯、可转人工的知识库。
+          </p>
+          <p class="persona__serve"><b>推荐业务线</b>　B.03 AI 应用 + B.04 定制</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== FAQ -->
+  <section class="section section--tinted">
+    <div class="container container--narrow">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">常见问题</p>
+        <h2 class="section-head__title" data-reveal="up">关于开发合作</h2>
+      </div>
+
+      <div class="accordion mt-7" data-accordion="single" data-reveal="up">
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>你们只做文学相关的系统吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              不是。练笔系统是公司从真实使用中做出来的起点，但支撑它的那五层能力 ——
+              账号与权限、内容与数据、流程引擎、多端界面、后台与集成 ——
+              和业务领域无关。社区、教育考试、AI 应用与定制开发都在承接范围内，
+              区别只在业务对象不同，底座是同一套。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>我们规模很小，用得上这么一套系统吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              用得上，而且通常收益更明显。小组织的运营者往往就是兼职的负责人，
+              时间更稀缺；哪怕只上「内容与数据 + 流程引擎」两层，
+              也能省掉最耗时的内容整理、编号分发与结果汇总三件事。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>成员会不会因为要多用一个网站而抵触？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              这是我们在设计中最在意的问题。解决方案是尽量让成员不必主动打开网站：
+              入口可以是群内的一条链接，也可以在微信小程序里直接完成；
+              提醒通过公众号或群机器人推到手上，结果与反馈单以邮件送达。
+              真正需要主动打开的场景只有一两个，且都是一次性动作。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>私有化部署需要我们准备什么？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              三样：一台可访问的服务器（或云主机）、一个数据库实例、一名能执行部署命令
+              并保持联系的技术对接人。部署文档与操作手册我们给全，必要时远程协助首次部署。
+              没有技术对接人就先走托管版 —— 不用为了「自主」硬凑一个人。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>我们的数据会被拿去训练模型吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              不会，除非你明确书面授权。托管环境里的数据只用于为你提供服务；
+              私有化与买断版的数据从一开始就在你自己的环境里，我们不接触。
+              成员、内容、结果四类数据均支持完整导出（XLSX / CSV / JSON），
+              不设置任何数据离场障碍。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>买断源码之后，你们还管吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              管。买断改变的是代码的归属，不是交付责任 —— 交接完成后的头一个月仍由公司提供运维保障，
+              服务范围以协议约定为准。之后按年可选购运维支持；如果你们自己有人接手，
+              提前说明就行，我们不再介入。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== CTA -->
+  <section class="section section--sm">
+    <div class="container">
+      <div class="cta-block" data-reveal="up">
+        <div class="cta-block__inner">
+          <div class="cta-block__text">
+            <h2 class="cta-block__title">说说你想做的东西</h2>
+            <p class="cta-block__desc">
+              不需要准备需求文档。只要讲清楚两件事：现在这件事是怎么做的，
+              卡在哪一步。我们就能判断哪些环节值得被系统承接，以及从哪一层开始最划算。
+            </p>
+          </div>
+          <div class="cta-block__actions">
+            <a class="btn btn--primary btn--lg" href="contact.html">联系我们 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn btn--outline btn--lg" href="community.html">看看我们自己在用</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <footer class="site-footer">
+    <div class="container container--full">
+      <div class="site-footer__main">
+        <div class="site-footer__brand">
+          <img class="brand__img--night" src="assets/logo/logo-full-white.png" alt="荒启科幻" width="880" height="334">
+          <img class="brand__img--day" loading="lazy" src="assets/logo/logo-full-dark.png" alt="荒启科幻" width="880" height="334">
+          <p class="site-footer__tagline">从荒芜中开启新世界。连接科幻创作者与读者，用技术把重复劳动交给系统，用关键词索引解构科幻世界。</p>
+          <p class="footer-brand-line">HUANGQI SCI-FI</p>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">三大板块</h2>
+          <ul class="site-footer__links">
+            <li><a href="community.html">科幻社群</a></li>
+            <li><a href="tools.html">数字化产品开发</a></li>
+            <li><a href="library.html">银河图书馆</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">快速链接</h2>
+          <ul class="site-footer__links">
+            <li><a href="contact.html#start">客户端下载</a></li>
+            <li><a href="/h5/" target="_blank" rel="noopener">在线阅读</a></li>
+            <li><a href="/library" target="_blank" rel="noopener">进入银河图书馆</a></li>
+            <li><a href="about.html">关于荒启</a></li>
+            <li><a href="contact.html">联系与加入</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">联系我们</h2>
+          <ul class="site-footer__links">
+            <li><a href="contact.html#invite">加入社群（QQ 群 280660235）</a></li>
+            <li><a href="contact.html">联系方式与入群须知</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="site-footer__bottom">
+        <p>© <span data-year>2026</span> 成都荒启文化传播有限公司 · 荒启科幻。<a class="site-footer__icp" href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank"> 蜀ICP备2025169184号-1 </a></p>
+        <p class="site-footer__compliance">「荒启科幻」练笔社群由科幻爱好者组成、成员自主运营，为纯公益社群；成都荒启文化传播有限公司提供网络平台工具，不参与社群运营，不从中获取经营收益。</p>
+        <div class="site-footer__bottom-links">
+          <a href="about.html">品牌规范</a>
+          <a href="contact.html#privacy">隐私说明</a>
+          <a href="#top">返回顶部</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="drawer" id="mobile-drawer">
+    <div class="drawer__panel">
+      <button class="drawer__close" type="button" aria-label="关闭导航菜单">
+        <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="drawer__group">
+        <p class="drawer__label">页面</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="index.html">首页<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="about.html">关于荒启<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="contact.html">联系我们<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__group">
+        <p class="drawer__label">三大板块</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="community.html">科幻社群<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="tools.html">数字化产品开发<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="library.html">银河图书馆<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__group">
+        <p class="drawer__label">开始使用</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="contact.html#start">客户端下载<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="/h5/" target="_blank" rel="noopener">在线阅读<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="/library" target="_blank" rel="noopener">进入银河图书馆<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__cta">
+        <a class="btn btn--primary btn--block" href="contact.html"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.5 13.5"/><path d="M21 3l-6.8 18-3.7-7.5L3 9.8z"/></svg>加入社群</a>
+      </div>
+    </div>
+  </div>
+
+
+  <dialog class="invite-modal" id="invite-modal" aria-labelledby="invite-modal-title">
+    <div class="invite-modal__card">
+      <button class="invite-modal__close" type="button" data-invite-close aria-label="关闭弹窗">
+        <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <p class="invite-modal__eyebrow">邀请码准入</p>
+      <h2 class="invite-modal__title" id="invite-modal-title">注册与阅读之前，先拿邀请码</h2>
+      <p class="invite-modal__desc">
+        客户端安装包可以直接下载安装；<b>注册账号</b>与<b>在线阅读</b>都需要邀请码 ——
+        加入交流 QQ 群、在加群申请里回答「科幻的定义是什么？」即可获取，不收费，也不需要填表。
+      </p>
+      <p class="invite-modal__group">群号 <span class="mono">280660235</span><button class="copy-btn" type="button" data-copy="280660235" aria-label="复制群号 280660235">复制群号</button></p>
+      <p class="invite-modal__hint">电脑上扫二维码；手机上复制群号去搜索。</p>
+      <img class="invite-modal__qr" loading="lazy" decoding="async" src="assets/qq/qq-group-qr.png"
+           alt="荒启科幻交流群二维码，群号 280660235" width="216" height="216">
+      <div class="invite-modal__actions invite-modal__actions--stack">
+        <a class="btn btn--primary btn--sm" href="contact.html#invite"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12 11.3 14.1 15 10.4"/></svg>获取邀请码</a>
+                  <a class="btn btn--outline btn--sm" href="/dt/荒启科幻.exe" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3.5v3.5M14 3.5v3.5M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></svg>电脑端 Windows<span class="app-dl__ext">.exe</span></a>
+          <a class="btn btn--outline btn--sm" href="/dt/Huangqisf.apk" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.5 13.5"/><path d="M21 3l-6.8 18-3.7-7.5L3 9.8z"/></svg>安卓端 Android<span class="app-dl__ext">.apk</span></a>
+          <a class="btn btn--outline btn--sm" href="/dt/huangqisf.mobileconfig" download><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2"/><path d="M12 3.4c2.4 2.4 3.6 5.4 3.6 8.6s-1.2 6.2-3.6 8.6c-2.4-2.4-3.6-5.4-3.6-8.6S9.6 5.8 12 3.4Z"/></svg>iOS 端 iPhone / iPad<span class="app-dl__ext">.ipa</span></a>
+      </div>
+      <p class="invite-modal__foot">已有邀请码？<a href="/h5/" target="_blank" rel="noopener">进入在线阅读</a></p>
+    </div>
+  </dialog>
+
+
+<button class="to-top" type="button" aria-label="回到顶部">
+  <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

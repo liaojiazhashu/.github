@@ -1,0 +1,208 @@
+{# 背景层：与官网同一套（tools/build-pages.cjs 的 CONSTELLATION / SHARD_A /
+   SHARD_B / DAYSKY 四个常量 + .bg-grid / .bg-stars / .bg-vignette）。
+   本文件是从那边复制来的副本 —— 改其中任何一条 SVG，两边必须一起改，
+   否则「同一个站」的两种背景会不一样。样式在 library.css 的「背景层」一节。 #}
+<div class="bg-overlay" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-stars"></div>
+  <svg class="bg-shard bg-shard--a" viewBox="0 0 320 320" aria-hidden="true">
+      <path d="M60 40 L200 120 L110 230 Z" fill="currentColor" opacity="0.07"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+        <polyline points="40,240 110,150 190,190 250,90"/>
+        <path d="M210 60 A 80 80 0 0 1 268 140" stroke-dasharray="1 6"/>
+      </g>
+      <g fill="currentColor">
+        <circle cx="40" cy="240" r="2.6"/><circle cx="110" cy="150" r="3"/>
+        <circle cx="190" cy="190" r="3.4"/><circle cx="250" cy="90" r="2.6"/>
+      </g>
+      <circle cx="190" cy="190" r="8" fill="none" stroke="currentColor" stroke-width="1" opacity="0.65"/>
+      <g stroke="currentColor" stroke-width="1" opacity="0.55">
+        <path d="M250 78 V88 M250 92 V102 M240 90 H250 M254 90 H264"/>
+      </g>
+      <rect x="30" y="264" width="20" height="20" fill="currentColor" opacity="0.8"/>
+    </svg><svg class="bg-shard bg-shard--b" viewBox="0 0 320 320" aria-hidden="true">
+      <path d="M160 160 L268 122 A 118 118 0 0 1 262 202 Z" fill="currentColor" opacity="0.09"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+        <circle cx="160" cy="160" r="110"/>
+        <circle cx="160" cy="160" r="72" stroke-dasharray="2 8" opacity="0.6"/>
+        <ellipse cx="160" cy="160" rx="132" ry="44" transform="rotate(-18 160 160)" opacity="0.8"/>
+      </g>
+      <g stroke="currentColor" stroke-width="1" opacity="0.5">
+        <path d="M160 132 V156 M160 164 V188 M132 160 H156 M164 160 H188"/>
+      </g>
+      <circle cx="160" cy="160" r="4" fill="currentColor" opacity="0.9"/>
+      <circle cx="52" cy="196" r="5" fill="currentColor"/>
+      <circle cx="41" cy="188" r="2" fill="currentColor" opacity="0.7"/>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.35">
+        <path d="M52 196 L160 160"/>
+      </g>
+    </svg><svg class="bg-constellation" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <!-- 银河带：边界虚线 + 半透明带 + 带内碎星 -->
+      <g fill="currentColor" opacity="0.055">
+        <path d="M470 -40 C 620 120 740 260 790 400 C 840 540 850 720 830 940 L 660 940 C 700 740 690 600 620 470 C 550 340 460 160 400 -40 Z"/>
+      </g>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.16" stroke-dasharray="2 10">
+        <path d="M470 -40 C 620 120 740 260 790 400 C 840 540 850 720 830 940"/>
+        <path d="M400 -40 C 460 160 550 340 620 470 C 690 600 700 740 660 940"/>
+      </g>
+      <g fill="currentColor" opacity="0.5">
+        <circle cx="560" cy="60" r="1.1"/><circle cx="640" cy="150" r="1.3"/><circle cx="700" cy="240" r="1.1"/>
+        <circle cx="740" cy="330" r="1.4"/><circle cx="790" cy="430" r="1.2"/><circle cx="810" cy="520" r="1.5"/>
+        <circle cx="800" cy="610" r="1.2"/><circle cx="780" cy="700" r="1.4"/><circle cx="760" cy="790" r="1.2"/>
+        <circle cx="700" cy="850" r="1.3"/><circle cx="850" cy="120" r="1"/><circle cx="760" cy="90" r="1"/>
+      </g>
+      <!-- 远景散星（无连线） -->
+      <g fill="#EDF2F8">
+        <circle cx="60" cy="420" r="1.3" opacity="0.4"/><circle cx="180" cy="640" r="1" opacity="0.3"/>
+        <circle cx="460" cy="380" r="1.2" opacity="0.35"/><circle cx="1010" cy="180" r="1.2" opacity="0.4"/>
+        <circle cx="1130" cy="330" r="1" opacity="0.3"/><circle cx="1310" cy="430" r="1.3" opacity="0.4"/>
+        <circle cx="1430" cy="620" r="1" opacity="0.3"/><circle cx="1530" cy="240" r="1.2" opacity="0.35"/>
+        <circle cx="980" cy="740" r="1" opacity="0.3"/><circle cx="240" cy="300" r="1" opacity="0.3"/>
+      </g>
+      <!-- 北斗七星（西北天，右上）：天枢→天璇→天玑→天权→玉衡→开阳→摇光 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.4" fill="none">
+        <polyline points="1240,140 1300,120 1350,135 1390,110 1440,120 1490,95 1545,105"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="1240" cy="140" r="2.2"/><circle cx="1300" cy="120" r="2.2"/><circle cx="1350" cy="135" r="2"/>
+        <circle cx="1390" cy="110" r="2"/><circle cx="1440" cy="120" r="2.2"/><circle cx="1490" cy="95" r="2.2"/>
+        <circle cx="1545" cy="105" r="2.2"/>
+      </g>
+      <!-- 仙后座 W（东北天，左上） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.35" fill="none">
+        <polyline points="140,130 200,105 265,135 330,100 395,125"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.65">
+        <circle cx="140" cy="130" r="1.8"/><circle cx="200" cy="105" r="1.8"/><circle cx="265" cy="135" r="1.8"/>
+        <circle cx="330" cy="100" r="1.8"/><circle cx="395" cy="125" r="1.8"/>
+      </g>
+      <!-- 天琴座：织女星 + 平行四边形 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="648,215 682,232 668,276 634,258 648,215"/>
+      </g>
+      <circle cx="620" cy="170" r="3.4" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="620" cy="170" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.7">
+        <circle cx="648" cy="215" r="1.8"/><circle cx="682" cy="232" r="1.6"/><circle cx="668" cy="276" r="1.6"/><circle cx="634" cy="258" r="1.6"/>
+      </g>
+      <!-- 天鹅座（北十字）：天津四 → 天津一 → 辇道增七，两翼 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="880,120 852,212 822,322"/>
+        <polyline points="772,190 852,212 932,252"/>
+      </g>
+      <circle cx="880" cy="120" r="3.2" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="880" cy="120" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="852" cy="212" r="2.4"/><circle cx="822" cy="322" r="2.2"/>
+        <circle cx="772" cy="190" r="1.8"/><circle cx="932" cy="252" r="1.8"/>
+      </g>
+      <!-- 天鹰座：牛郎星 + 扁担双星（河鼓一 / 河鼓三） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="665,445 700,482 736,518"/>
+      </g>
+      <circle cx="700" cy="482" r="3.2" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="700" cy="482" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="665" cy="445" r="2"/><circle cx="736" cy="518" r="2"/>
+        <circle cx="780" cy="570" r="1.6"/><circle cx="816" cy="608" r="1.5"/>
+      </g>
+      <!-- 天蝎座：三星头弧 → 心宿二（红色超巨星） → 尾钩 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="1080,575 1120,560 1160,575"/>
+        <polyline points="1120,630 1160,690 1195,735 1178,795 1122,822 1066,806 1042,762"/>
+      </g>
+      <circle cx="1120" cy="630" r="3" fill="#E88B8B" opacity="0.9"/>
+      <circle cx="1120" cy="630" r="9" fill="none" stroke="#E88B8B" stroke-width="1" opacity="0.55"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="1080" cy="575" r="1.9"/><circle cx="1120" cy="560" r="2"/><circle cx="1160" cy="575" r="1.9"/>
+        <circle cx="1160" cy="690" r="1.9"/><circle cx="1195" cy="735" r="1.9"/><circle cx="1178" cy="795" r="1.9"/>
+        <circle cx="1122" cy="822" r="1.7"/><circle cx="1066" cy="806" r="1.7"/><circle cx="1042" cy="762" r="1.7"/>
+      </g>
+      <!-- 人马座茶壶（银河中心方向） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="790,692 850,672 898,702 893,756 834,776 786,746 790,692"/>
+        <polyline points="786,746 752,722"/>
+        <polyline points="850,672 872,640"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="790" cy="692" r="1.9"/><circle cx="850" cy="672" r="2"/><circle cx="898" cy="702" r="1.9"/>
+        <circle cx="893" cy="756" r="1.9"/><circle cx="834" cy="776" r="1.9"/><circle cx="786" cy="746" r="1.9"/>
+        <circle cx="752" cy="722" r="1.6"/><circle cx="872" cy="640" r="1.6"/>
+      </g>
+      <!-- 织女星坐标十字（织女一是夏季夜空最易辨认的恒星之一） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.5">
+        <path d="M620 152 V165 M620 175 V188 M602 170 H615 M625 170 H638"/>
+      </g>
+    </svg><svg class="bg-daysky" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <mask id="daysky-moon-mask">
+          <rect x="100" y="700" width="150" height="130" fill="#fff"/>
+          <circle cx="145" cy="767" r="30" fill="#000"/>
+        </mask>
+      </defs>
+      <!-- 锐利斜切色块：深空平面，全部直线边界 -->
+      <polygon points="0,900 0,560 640,900" fill="var(--c-data, #4A5FA8)" opacity="0.10"/>
+      <polygon points="1600,900 1600,470 960,900" fill="var(--c-data, #4A5FA8)" opacity="0.08"/>
+      <polygon points="1600,0 1600,280 1270,0" fill="#FFFFFF" opacity="0.55"/>
+      <polygon points="0,0 320,0 0,200" fill="#FFFFFF" opacity="0.40"/>
+      <line x1="0" y1="742" x2="1600" y2="548" stroke="var(--c-data, #4A5FA8)" stroke-width="1" opacity="0.14"/>
+      <!-- 光照阶梯带（v2.3.7）：以太阳为圆心的三层平涂同心圆，
+           亮度逐层衰减 —— 用「色阶」而非渐变表达「这一片天光来自太阳」 -->
+      <g fill="var(--sun, #F5C445)">
+        <circle cx="1400" cy="540" r="1000" opacity="0.025"/>
+        <circle cx="1400" cy="540" r="860" opacity="0.045"/>
+        <circle cx="1400" cy="540" r="700" opacity="0.07"/>
+      </g>
+      <!-- 放射光线：自日面外侧射出的直线光束（几何、锐利，非卡通短刺） -->
+      <g class="daysky__rays" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.14">
+        <path d="M1682.5 1029.3 L1900 1406 M1400 1105 L1400 1540 M910.7 822.5 L534 1040
+                 M835 540 L400 540 M910.7 257.5 L534 40 M1117.5 50.7 L900 -326
+                 M1400 -25 L1400 -460 M1682.5 50.7 L1900 -326"/>
+      </g>
+      <!-- 巨物太阳：r=520、圆心 (1400,540) —— 左侧与上方 limb 完整落在
+           画幅内、右下两向出画。直径 1040 已超过画幅高 900，比 v2.3.7 的
+           r=400 再放大 1.3 倍：太阳从此不是「画面里的一个圆」，
+           而是「画面装不下的一个天体」 -->
+      <g class="daysky__rings">
+        <circle cx="1400" cy="540" r="575" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.12"/>
+        <circle cx="1400" cy="540" r="554" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.20"/>
+        <circle cx="1400" cy="540" r="536" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1.2" opacity="0.34"/>
+      </g>
+      <g class="daysky__sun">
+        <!-- 平涂内盘（v2.3.16）：五层同心、半径逐级收 74、透明度逐级 +0.05。
+             日面跨度 1040，只用一层均匀填色时读作「一片浅黄雾」而不是球体；
+             五级台阶叠出「中心亮、边缘暗」的亮度梯度，全站禁渐变，
+             这是唯一能表达「发光球体」的语言 —— 与「光照阶梯带」同一套做法。 -->
+        <circle cx="1400" cy="540" r="520" fill="var(--sun, #F5C445)" opacity="0.26"/>
+        <circle cx="1400" cy="540" r="446" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="372" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="298" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="224" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <!-- 赤道与子午两条对角基准线（几何线稿语言） -->
+        <path d="M800 -60 L2000 1140 M2000 -60 L800 1140" stroke="var(--sun-line, #D9A32B)" stroke-width="1" fill="none" opacity="0.22"/>
+        <!-- 日面边缘：加粗一档并提亮 —— 直径超过画幅后，这条弧是唯一
+             能让人读出「这是个球、不是色块」的证据，必须给足 -->
+        <circle cx="1400" cy="540" r="520" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="3" opacity="0.72"/>
+        <circle cx="1400" cy="540" r="492" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1.2" opacity="0.34"/>
+      </g>
+      <!-- 黯淡的月亮：画面左下，亮面朝向太阳（光源方向一致），
+           mask 硬裁出锐利明暗界线 -->
+      <g class="daysky__moon" opacity="0.5">
+        <circle cx="170" cy="760" r="30" fill="#DDE7EF" mask="url(#daysky-moon-mask)"/>
+        <circle cx="170" cy="760" r="30" fill="none" stroke="var(--c-data, #4A5FA8)" stroke-width="1" opacity="0.35"/>
+      </g>
+      <!-- 几点黯淡星光：低存在感圆点与十字亮星（极慢漂移） -->
+      <g class="daysky__stars" fill="var(--c-data, #4A5FA8)">
+        <circle cx="520" cy="212" r="2" opacity="0.35"/>
+        <circle cx="760" cy="332" r="1.5" opacity="0.28"/>
+        <circle cx="984" cy="140" r="2" opacity="0.30"/>
+        <circle cx="700" cy="560" r="1.8" opacity="0.25"/>
+        <circle cx="1084" cy="692" r="2.2" opacity="0.28"/>
+        <circle cx="222" cy="322" r="1.6" opacity="0.30"/>
+        <circle cx="1448" cy="424" r="1.8" opacity="0.30"/>
+        <path d="M880 458 V482 M868 470 H892" stroke="var(--c-data, #4A5FA8)" stroke-width="1" fill="none" opacity="0.30"/>
+        <path d="M1494 640 V660 M1484 650 H1504" stroke="var(--c-data, #4A5FA8)" stroke-width="1" fill="none" opacity="0.26"/>
+      </g>
+    </svg>
+  <div class="bg-vignette"></div>
+</div>

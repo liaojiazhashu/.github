@@ -1,0 +1,87 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}原文版本 · {{ work.title }}{% endblock %}
+{% block heading %}原文版本{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">
+      <a href="/admin/works/{{ work.code }}">{{ work.title }}</a>
+      <span class="dim">· {{ work.word_count }} 字</span>
+    </div>
+    <span class="badge badge--{{ work.status }}">{{ work.status|status_label }}</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="num" scope="col">版本</th>
+          <th scope="col">文件</th>
+          <th class="num" scope="col">字数</th>
+          <th scope="col">编码</th>
+          <th scope="col">说明</th>
+          <th scope="col">上传时间</th>
+          <th scope="col">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in versions %}
+          <tr>
+            <td class="num mono">v{{ v.version_no }}</td>
+            <td class="mono dim">{{ v.orig_name }}</td>
+            <td class="num">{{ v.char_count }}</td>
+            <td class="dim">{{ v.encoding }}</td>
+            <td class="dim">{{ v.note|default('—') }}</td>
+            <td class="mono dim">{{ v.created_at }}</td>
+            <td>
+              {% if not loop.first %}
+                <a class="btn btn--sm btn--ghost" href="/admin/works/{{ work.code }}/diff?from={{ v.version_no }}&to={{ versions[0].version_no }}">与最新版对比</a>
+              {% else %}
+                <span class="dim small">最新</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if can(user.permissions, 'work.write') %}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">上传新版本</div>
+    <span class="card__hint">作者改稿后重新投稿、或编辑回填修订稿时用</span>
+  </div>
+
+  <form method="post" action="/admin/works/{{ work.code }}/versions" enctype="multipart/form-data">
+    <input type="hidden" name="_token" value="{{ csrf }}">
+
+    <div class="field">
+      <label for="ver-file">版本文件（txt / md / docx，≤ 32 MiB）</label>
+      <input id="ver-file" type="file" name="file" accept=".txt,.md,.markdown,.docx" required>
+    </div>
+
+    <div class="field">
+      <label for="ver-note">这一版改了什么（可选，会显示在版本表里）</label>
+      <input id="ver-note" type="text" name="note" maxlength="200" placeholder="例：按第 3 条建议改了结尾">
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn--primary" type="submit">上传为新版本</button>
+    </div>
+  </form>
+
+  <p class="dim small">
+    新版本不会覆盖旧文件：旧版本留在库里，diff 才有两侧可比，历史分析也能查到当初依据的是哪一版。
+    上传后要让它成为分析依据，需要在作品页再跑一次分析。
+  </p>
+</div>
+{% endif %}
+
+<div class="form-actions">
+  <a class="btn btn--ghost" href="/admin/works/{{ work.code }}">返回作品</a>
+</div>
+{% endblock %}

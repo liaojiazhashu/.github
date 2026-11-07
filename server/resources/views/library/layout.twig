@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="night">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ page_title }}</title>
+  <meta name="description" content="{{ page_desc }}">
+  {% if canonical %}<link rel="canonical" href="{{ canonical }}">{% endif %}
+  {% if noindex %}<meta name="robots" content="noindex, follow">{% endif %}
+  <meta name="theme-color" content="#0B0E14">
+  <meta property="og:site_name" content="荒启科幻 · 银河图书馆">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ page_title }}">
+  <meta property="og:description" content="{{ page_desc }}">
+  {% if canonical %}<meta property="og:url" content="{{ canonical }}">{% endif %}
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preload" href="/assets/fonts/noto-sans-sc-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/noto-sans-sc-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/library.css?v={{ asset_v }}">
+  {# 主题必须在首帧前应用，否则会先白后黑闪一下。CSP 的 script-src 是 'self'，
+     所以这段不能内联，只能外链一个极小的同源脚本。 #}
+  <script src="/assets/theme.js?v={{ asset_v }}"></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+
+{# 背景层：与官网同一套（星野 + 星座 + 网格 + 日间太阳），见 _bg.twig #}
+{% include 'library/_bg.twig' %}
+
+<header class="top">
+  <div class="top__in">
+    <a class="brand" href="/library">
+      <svg class="brand__mark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true">
+        <circle cx="12" cy="12" r="9.4"></circle>
+        <ellipse cx="12" cy="12" rx="9.4" ry="3.6"></ellipse>
+        <path d="M12 2.6v18.8"></path>
+      </svg>
+      <span class="brand__text">
+        <span class="brand__name">银河图书馆</span>
+        <span class="brand__sub">Huangqi Library</span>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="馆藏导航">
+      <a class="nav__a{% if nav == 'works' %} is-on{% endif %}"{% if nav == 'works' %} aria-current="page"{% endif %} href="/library/works">作品</a>
+      <a class="nav__a{% if nav == 'authors' %} is-on{% endif %}"{% if nav == 'authors' %} aria-current="page"{% endif %} href="/library/authors">作者</a>
+      <a class="nav__a{% if nav == 'terms' %} is-on{% endif %}"{% if nav == 'terms' %} aria-current="page"{% endif %} href="/library/terms">科幻词库</a>
+      {# 方法说明已移进馆内（/library/method），不再是出站链接，按当前页高亮 #}
+      {% if method_url %}<a class="nav__a{% if nav == 'method' %} is-on{% endif %}"{% if nav == 'method' %} aria-current="page"{% endif %} href="{{ method_url }}">方法说明</a>{% endif %}
+      {# 练笔统计：每月重算一次的一组事实，读者与作者都会看 #}
+      <a class="nav__a{% if nav == 'practice' %} is-on{% endif %}"{% if nav == 'practice' %} aria-current="page"{% endif %} href="/library/practice">练笔统计</a>
+    </nav>
+
+    <form class="find" method="get" action="/library/search" role="search">
+      <svg class="find__ico" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+        <circle cx="7" cy="7" r="4.6"></circle>
+        <path d="M10.4 10.4 14 14"></path>
+      </svg>
+      <input class="find__in" type="search" name="q" value="" maxlength="40" placeholder="标题 / 作者 / 词条" aria-label="检索馆藏">
+    </form>
+
+    {# 与官网 .theme-toggle 同语义：图标显示「要切到的模式」——
+       夜间亮着太阳（点了去白天），白天亮着月亮（点了去黑夜）。
+       以前馆内显示的是当前模式，与官网正好相反，并排两站会误以为一边是坏的。 #}
+    <button class="themebtn" type="button" data-theme-toggle aria-label="切换到白天模式" aria-pressed="false">
+      <svg class="themebtn__ico themebtn__sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"></circle>
+        <path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"></path>
+      </svg>
+      <svg class="themebtn__ico themebtn__moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+        <path d="M20.6 14.4A8.5 8.5 0 0 1 9.6 3.4a8.5 8.5 0 1 0 11 11Z"></path>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main class="main" id="main">
+{% block content %}{% endblock %}
+</main>
+
+<footer class="foot">
+  <div class="foot__in">
+    <div class="foot__col">
+      <div class="foot__brand">荒启科幻 · 银河图书馆</div>
+      <p class="foot__note">每篇入馆作品都有两页：读者视角讲核心设定、魅力、影视化描述与适合谁；作者视角讲节点、伏笔、建议与修改方向。两边都不给分，只给可检索的结论。</p>
+    </div>
+    <div class="foot__col foot__col--stats">
+      <div class="foot__num"><b>{{ num(stats.works) }}</b> 篇</div>
+      <div class="foot__cap">已发布拆解</div>
+      <div class="foot__num"><b>{{ num(stats.terms) }}</b> 个</div>
+      <div class="foot__cap">词库词条</div>
+      <div class="foot__num"><b>{{ num(stats.words) }}</b> 字</div>
+      <div class="foot__cap">已拆解正文</div>
+    </div>
+    <div class="foot__col">
+      <div class="foot__links">
+        <a href="/library/works">全部作品</a>
+        <a href="/library/authors">作者</a>
+        <a href="/library/terms">科幻词库</a>
+        {% if method_url %}<a href="{{ method_url }}">这套结果怎么来的</a>{% endif %}
+        {% if site_home %}<a href="{{ site_home }}">荒启科幻</a>{% endif %}
+      </div>
+      <p class="foot__note foot__note--dim">拆解由 DeepSeek 生成，编辑过的批次会在页面上标注。</p>
+    </div>
+
+    {# 合规行：运营主体 + 统一社会信用代码 + ICP 备案号 + 公益定性。
+       备案号原先只出现在官网静态页上，/library 全站一条都没有 ——
+       同一个域名、同一份备案，读者在馆内却看不到运营主体是谁。
+       公司性质见官网 about.html 的「主体信息」，这里留核验所需要素与社群边界一句话。 #}
+    <p class="foot__legal">
+      <span>运营主体（平台工具提供方）：成都荒启文化传播有限公司 · 本馆免费开放，无任何付费项目</span>
+      <span>统一社会信用代码 <span class="mono">91510100MAEY15D64X</span></span>
+      <a href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank">蜀ICP备2025169184号-1</a>
+    </p>
+  </div>
+</footer>
+
+<script src="/assets/library.js?v={{ asset_v }}"></script>
+{% if json_ld %}<script type="application/ld+json">{{ json_ld|raw }}</script>{% endif %}
+</body>
+</html>

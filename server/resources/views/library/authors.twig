@@ -1,0 +1,65 @@
+{% extends 'library/layout.twig' %}
+
+{#
+  作者索引：谁在馆里写东西，写得多少。
+  --------------------------------------------------------------------------
+  这一页存在的理由很具体：在这之前，作者页只有一个入口 —— 某篇作品页顶端
+  那一行作者名。也就是说「你得先碰到一篇」才可能走到某个人的名下，而
+  「我想看某个人的全部」本来就是读者更常有的问题。
+
+  版式上不做头像墙：馆内没有授权过作者肖像，拿一张占位图冒充人物是最容易被
+  一眼看穿的假。用名字本身做大字，靠篇数与字数建立层级 —— 这也是这一页
+  唯一真实的排序依据。
+#}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap">
+    <div class="whead__crumbs">
+      <a href="/library">银河图书馆</a><span>/</span>
+      作者
+    </div>
+    <h1 class="h1">作者</h1>
+    <div class="whead__meta">
+      <span>馆内 <b class="mono">{{ num(total) }}</b> 位</span>
+      <span>按作品数排列</span>
+    </div>
+    <p class="lede">
+      点一个名字，看这个人在馆里的全部作品、他反复写到的概念，以及每一篇的读者视角与作者视角。
+      索引只列有公开作品的人；被隐藏的作品不在这里出现，也不计入数字。
+    </p>
+  </div>
+</section>
+
+<div class="wrap">
+  {% if rows is empty %}
+    <p class="dim">馆内还没有公开作品，作者索引暂时是空的。</p>
+  {% else %}
+    <ul class="authlist">
+      {% for a in rows %}
+        <li class="authcard">
+          <a class="authcard__name" href="/library/authors/{{ a.code }}">{{ a.name }}</a>
+          <div class="authcard__meta">
+            <span><b class="mono">{{ num(a.works) }}</b> 篇</span>
+            <span class="mono">{{ num(a.words) }} 字</span>
+            {% if a.first_issue %}
+              <span>
+                {% if a.last_issue and a.last_issue != a.first_issue %}
+                  第 {{ a.first_issue }}–{{ a.last_issue }} 期
+                {% else %}
+                  第 {{ a.first_issue }} 期
+                {% endif %}
+              </span>
+            {% endif %}
+          </div>
+          {% if a.bio %}<p class="authcard__bio">{{ a.bio }}</p>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if total > shown %}
+      <p class="dim">这里列出作品数最多的 {{ num(shown) }} 位，共 {{ num(total) }} 位。</p>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

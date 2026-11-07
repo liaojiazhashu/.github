@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>银河图书馆 · 科幻作品索引与两页拆解 | 荒启科幻</title>
+<meta name="description" content="银河图书馆：公司开发维护的免费在线科幻索引馆，每篇入馆作品做成可检索的科幻词库与两页拆解 —— 读者一页看核心设定与魅力，作者一页看剧情节点与修改方向。全部免登录可读，无需注册。">
+<meta name="theme-color" content="#0B0E14">
+<meta property="og:title" content="银河图书馆 · 科幻作品索引与两页拆解 | 荒启科幻">
+<meta property="og:description" content="银河图书馆：公司开发维护的免费在线科幻索引馆，每篇入馆作品做成可检索的科幻词库与两页拆解 —— 读者一页看核心设定与魅力，作者一页看剧情节点与修改方向。全部免登录可读，无需注册。">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/logo/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/noto-sans-sc-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/noto-sans-sc-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+<script>/* 首帧前应用主题，避免闪色；图书馆链接带上当前主题，馆里首帧就同色 */(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('hq-theme')||'night')}catch(e){}})();
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*="/library"]');if(!a)return;try{var t=localStorage.getItem('hq-theme');if(t==='day'||t==='night'){var u=new URL(a.href,location.href);u.searchParams.set('theme',t);a.href=u.toString()}}catch(err){}},true);</script>
+</head>
+<body id="top" data-scene="library">
+<a class="skip-link" href="#main">跳到主要内容</a>
+
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<div class="bg-overlay" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-stars"></div>
+  <svg class="bg-constellation" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <!-- 银河带：边界虚线 + 半透明带 + 带内碎星 -->
+      <g fill="currentColor" opacity="0.055">
+        <path d="M470 -40 C 620 120 740 260 790 400 C 840 540 850 720 830 940 L 660 940 C 700 740 690 600 620 470 C 550 340 460 160 400 -40 Z"/>
+      </g>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.16" stroke-dasharray="2 10">
+        <path d="M470 -40 C 620 120 740 260 790 400 C 840 540 850 720 830 940"/>
+        <path d="M400 -40 C 460 160 550 340 620 470 C 690 600 700 740 660 940"/>
+      </g>
+      <g fill="currentColor" opacity="0.5">
+        <circle cx="560" cy="60" r="1.1"/><circle cx="640" cy="150" r="1.3"/><circle cx="700" cy="240" r="1.1"/>
+        <circle cx="740" cy="330" r="1.4"/><circle cx="790" cy="430" r="1.2"/><circle cx="810" cy="520" r="1.5"/>
+        <circle cx="800" cy="610" r="1.2"/><circle cx="780" cy="700" r="1.4"/><circle cx="760" cy="790" r="1.2"/>
+        <circle cx="700" cy="850" r="1.3"/><circle cx="850" cy="120" r="1"/><circle cx="760" cy="90" r="1"/>
+      </g>
+      <!-- 远景散星（无连线） -->
+      <g fill="#EDF2F8">
+        <circle cx="60" cy="420" r="1.3" opacity="0.4"/><circle cx="180" cy="640" r="1" opacity="0.3"/>
+        <circle cx="460" cy="380" r="1.2" opacity="0.35"/><circle cx="1010" cy="180" r="1.2" opacity="0.4"/>
+        <circle cx="1130" cy="330" r="1" opacity="0.3"/><circle cx="1310" cy="430" r="1.3" opacity="0.4"/>
+        <circle cx="1430" cy="620" r="1" opacity="0.3"/><circle cx="1530" cy="240" r="1.2" opacity="0.35"/>
+        <circle cx="980" cy="740" r="1" opacity="0.3"/><circle cx="240" cy="300" r="1" opacity="0.3"/>
+      </g>
+      <!-- 北斗七星（西北天，右上）：天枢→天璇→天玑→天权→玉衡→开阳→摇光 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.4" fill="none">
+        <polyline points="1240,140 1300,120 1350,135 1390,110 1440,120 1490,95 1545,105"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="1240" cy="140" r="2.2"/><circle cx="1300" cy="120" r="2.2"/><circle cx="1350" cy="135" r="2"/>
+        <circle cx="1390" cy="110" r="2"/><circle cx="1440" cy="120" r="2.2"/><circle cx="1490" cy="95" r="2.2"/>
+        <circle cx="1545" cy="105" r="2.2"/>
+      </g>
+      <!-- 仙后座 W（东北天，左上） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.35" fill="none">
+        <polyline points="140,130 200,105 265,135 330,100 395,125"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.65">
+        <circle cx="140" cy="130" r="1.8"/><circle cx="200" cy="105" r="1.8"/><circle cx="265" cy="135" r="1.8"/>
+        <circle cx="330" cy="100" r="1.8"/><circle cx="395" cy="125" r="1.8"/>
+      </g>
+      <!-- 天琴座：织女星 + 平行四边形 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="648,215 682,232 668,276 634,258 648,215"/>
+      </g>
+      <circle cx="620" cy="170" r="3.4" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="620" cy="170" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.7">
+        <circle cx="648" cy="215" r="1.8"/><circle cx="682" cy="232" r="1.6"/><circle cx="668" cy="276" r="1.6"/><circle cx="634" cy="258" r="1.6"/>
+      </g>
+      <!-- 天鹅座（北十字）：天津四 → 天津一 → 辇道增七，两翼 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="880,120 852,212 822,322"/>
+        <polyline points="772,190 852,212 932,252"/>
+      </g>
+      <circle cx="880" cy="120" r="3.2" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="880" cy="120" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="852" cy="212" r="2.4"/><circle cx="822" cy="322" r="2.2"/>
+        <circle cx="772" cy="190" r="1.8"/><circle cx="932" cy="252" r="1.8"/>
+      </g>
+      <!-- 天鹰座：牛郎星 + 扁担双星（河鼓一 / 河鼓三） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="665,445 700,482 736,518"/>
+      </g>
+      <circle cx="700" cy="482" r="3.2" fill="#EDF2F8" opacity="0.95"/>
+      <circle cx="700" cy="482" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="665" cy="445" r="2"/><circle cx="736" cy="518" r="2"/>
+        <circle cx="780" cy="570" r="1.6"/><circle cx="816" cy="608" r="1.5"/>
+      </g>
+      <!-- 天蝎座：三星头弧 → 心宿二（红色超巨星） → 尾钩 -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="1080,575 1120,560 1160,575"/>
+        <polyline points="1120,630 1160,690 1195,735 1178,795 1122,822 1066,806 1042,762"/>
+      </g>
+      <circle cx="1120" cy="630" r="3" fill="#E88B8B" opacity="0.9"/>
+      <circle cx="1120" cy="630" r="9" fill="none" stroke="#E88B8B" stroke-width="1" opacity="0.55"/>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="1080" cy="575" r="1.9"/><circle cx="1120" cy="560" r="2"/><circle cx="1160" cy="575" r="1.9"/>
+        <circle cx="1160" cy="690" r="1.9"/><circle cx="1195" cy="735" r="1.9"/><circle cx="1178" cy="795" r="1.9"/>
+        <circle cx="1122" cy="822" r="1.7"/><circle cx="1066" cy="806" r="1.7"/><circle cx="1042" cy="762" r="1.7"/>
+      </g>
+      <!-- 人马座茶壶（银河中心方向） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.42" fill="none">
+        <polyline points="790,692 850,672 898,702 893,756 834,776 786,746 790,692"/>
+        <polyline points="786,746 752,722"/>
+        <polyline points="850,672 872,640"/>
+      </g>
+      <g fill="#EDF2F8" opacity="0.75">
+        <circle cx="790" cy="692" r="1.9"/><circle cx="850" cy="672" r="2"/><circle cx="898" cy="702" r="1.9"/>
+        <circle cx="893" cy="756" r="1.9"/><circle cx="834" cy="776" r="1.9"/><circle cx="786" cy="746" r="1.9"/>
+        <circle cx="752" cy="722" r="1.6"/><circle cx="872" cy="640" r="1.6"/>
+      </g>
+      <!-- 织女星坐标十字（织女一是夏季夜空最易辨认的恒星之一） -->
+      <g stroke="currentColor" stroke-width="1" opacity="0.5">
+        <path d="M620 152 V165 M620 175 V188 M602 170 H615 M625 170 H638"/>
+      </g>
+    </svg>
+  <svg class="bg-shard bg-shard--a" viewBox="0 0 320 320" aria-hidden="true">
+      <path d="M60 40 L200 120 L110 230 Z" fill="currentColor" opacity="0.07"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+        <polyline points="40,240 110,150 190,190 250,90"/>
+        <path d="M210 60 A 80 80 0 0 1 268 140" stroke-dasharray="1 6"/>
+      </g>
+      <g fill="currentColor">
+        <circle cx="40" cy="240" r="2.6"/><circle cx="110" cy="150" r="3"/>
+        <circle cx="190" cy="190" r="3.4"/><circle cx="250" cy="90" r="2.6"/>
+      </g>
+      <circle cx="190" cy="190" r="8" fill="none" stroke="currentColor" stroke-width="1" opacity="0.65"/>
+      <g stroke="currentColor" stroke-width="1" opacity="0.55">
+        <path d="M250 78 V88 M250 92 V102 M240 90 H250 M254 90 H264"/>
+      </g>
+      <rect x="30" y="264" width="20" height="20" fill="currentColor" opacity="0.8"/>
+    </svg>
+  <svg class="bg-shard bg-shard--b" viewBox="0 0 320 320" aria-hidden="true">
+      <path d="M160 160 L268 122 A 118 118 0 0 1 262 202 Z" fill="currentColor" opacity="0.09"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+        <circle cx="160" cy="160" r="110"/>
+        <circle cx="160" cy="160" r="72" stroke-dasharray="2 8" opacity="0.6"/>
+        <ellipse cx="160" cy="160" rx="132" ry="44" transform="rotate(-18 160 160)" opacity="0.8"/>
+      </g>
+      <g stroke="currentColor" stroke-width="1" opacity="0.5">
+        <path d="M160 132 V156 M160 164 V188 M132 160 H156 M164 160 H188"/>
+      </g>
+      <circle cx="160" cy="160" r="4" fill="currentColor" opacity="0.9"/>
+      <circle cx="52" cy="196" r="5" fill="currentColor"/>
+      <circle cx="41" cy="188" r="2" fill="currentColor" opacity="0.7"/>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.35">
+        <path d="M52 196 L160 160"/>
+      </g>
+    </svg>
+  <svg class="bg-daysky" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <mask id="daysky-moon-mask">
+          <rect x="100" y="700" width="150" height="130" fill="#fff"/>
+          <circle cx="145" cy="767" r="30" fill="#000"/>
+        </mask>
+      </defs>
+      <!-- 锐利斜切色块：深空平面，全部直线边界 -->
+      <polygon points="0,900 0,560 640,900" fill="var(--c-data, #4A5FA8)" opacity="0.10"/>
+      <polygon points="1600,900 1600,470 960,900" fill="var(--c-data, #4A5FA8)" opacity="0.08"/>
+      <polygon points="1600,0 1600,280 1270,0" fill="#FFFFFF" opacity="0.55"/>
+      <polygon points="0,0 320,0 0,200" fill="#FFFFFF" opacity="0.40"/>
+      <line x1="0" y1="742" x2="1600" y2="548" stroke="var(--c-data, #4A5FA8)" stroke-width="1" opacity="0.14"/>
+      <!-- 光照阶梯带（v2.3.7）：以太阳为圆心的三层平涂同心圆，
+           亮度逐层衰减 —— 用「色阶」而非渐变表达「这一片天光来自太阳」 -->
+      <g fill="var(--sun, #F5C445)">
+        <circle cx="1400" cy="540" r="1000" opacity="0.025"/>
+        <circle cx="1400" cy="540" r="860" opacity="0.045"/>
+        <circle cx="1400" cy="540" r="700" opacity="0.07"/>
+      </g>
+      <!-- 放射光线：自日面外侧射出的直线光束（几何、锐利，非卡通短刺） -->
+      <g class="daysky__rays" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.14">
+        <path d="M1682.5 1029.3 L1900 1406 M1400 1105 L1400 1540 M910.7 822.5 L534 1040
+                 M835 540 L400 540 M910.7 257.5 L534 40 M1117.5 50.7 L900 -326
+                 M1400 -25 L1400 -460 M1682.5 50.7 L1900 -326"/>
+      </g>
+      <!-- 巨物太阳：r=520、圆心 (1400,540) —— 左侧与上方 limb 完整落在
+           画幅内、右下两向出画。直径 1040 已超过画幅高 900，比 v2.3.7 的
+           r=400 再放大 1.3 倍：太阳从此不是「画面里的一个圆」，
+           而是「画面装不下的一个天体」 -->
+      <g class="daysky__rings">
+        <circle cx="1400" cy="540" r="575" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.12"/>
+        <circle cx="1400" cy="540" r="554" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1" opacity="0.20"/>
+        <circle cx="1400" cy="540" r="536" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1.2" opacity="0.34"/>
+      </g>
+      <g class="daysky__sun">
+        <!-- 平涂内盘（v2.3.16）：五层同心、半径逐级收 74、透明度逐级 +0.05。
+             日面跨度 1040，只用一层均匀填色时读作「一片浅黄雾」而不是球体；
+             五级台阶叠出「中心亮、边缘暗」的亮度梯度，全站禁渐变，
+             这是唯一能表达「发光球体」的语言 —— 与「光照阶梯带」同一套做法。 -->
+        <circle cx="1400" cy="540" r="520" fill="var(--sun, #F5C445)" opacity="0.26"/>
+        <circle cx="1400" cy="540" r="446" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="372" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="298" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <circle cx="1400" cy="540" r="224" fill="var(--sun, #F5C445)" opacity="0.05"/>
+        <!-- 赤道与子午两条对角基准线（几何线稿语言） -->
+        <path d="M800 -60 L2000 1140 M2000 -60 L800 1140" stroke="var(--sun-line, #D9A32B)" stroke-width="1" fill="none" opacity="0.22"/>
+        <!-- 日面边缘：加粗一档并提亮 —— 直径超过画幅后，这条弧是唯一
+             能让人读出「这是个球、不是色块」的证据，必须给足 -->
+        <circle cx="1400" cy="540" r="520" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="3" opacity="0.72"/>
+        <circle cx="1400" cy="540" r="492" fill="none" stroke="var(--sun-line, #D9A32B)" stroke-width="1.2" opacity="0.34"/>
+      </g>
+      <!-- 黯淡的月亮：画面左下，亮面朝向太阳（光源方向一致），
+           mask 硬裁出锐利明暗界线 -->
+      <g class="daysky__moon" opacity="0.5">
+        <circle cx="170" cy="760" r="30" fill="#DDE7EF" mask="url(#daysky-moon-mask)"/>
+        <circle cx="170" cy="760" r="30" fill="none" stroke="var(--c-data, #4A5FA8)" stroke-width="1" opacity="0.35"/>
+      </g>
+      <!-- 几点黯淡星光：低存在感圆点与十字亮星（极慢漂移） -->
+      <g class="daysky__stars" fill="var(--c-data, #4A5FA8)">
+        <circle cx="520" cy="212" r="2" opacity="0.35"/>
+        <circle cx="760" cy="332" r="1.5" opacity="0.28"/>
+        <circle cx="984" cy="140" r="2" opacity="0.30"/>
+        <circle cx="700" cy="560" r="1.8" opacity="0.25"/>
+        <circle cx="1084" cy="692" r="2.2" opacity="0.28"/>
+        <circle cx="222" cy="322" r="1.6" opacity="0.30"/>
+        <circle cx="1448" cy="424" r="1.8" opacity="0.30"/>
+        <path d="M880 458 V482 M868 470 H892" stroke="var(--c-data, #4A5FA8)" stroke-width="1" fill="none" opacity="0.30"/>
+        <path d="M1494 640 V660 M1484 650 H1504" stroke="var(--c-data, #4A5FA8)" stroke-width="1" fill="none" opacity="0.26"/>
+      </g>
+    </svg>
+  <div class="bg-vignette"></div>
+</div>
+
+  <header class="site-header">
+    <div class="container container--wide site-header__inner">
+      <a class="brand" href="index.html" aria-label="荒启科幻 首页">
+        <img class="brand__img brand__img--night" src="assets/logo/logo-full-white.png" alt="荒启科幻 HUANGQI SCI-FI" width="880" height="334">
+        <img class="brand__img brand__img--day" loading="lazy" src="assets/logo/logo-full-dark.png" alt="荒启科幻 HUANGQI SCI-FI" width="880" height="334">
+      </a>
+
+      <nav class="nav" aria-label="主导航">
+        <ul class="nav" style="display:contents">
+        <li class="nav__item">
+          <a class="nav__link" href="index.html">首页</a>
+        </li>
+        <li class="nav__item">
+          <a class="nav__link" href="about.html">关于荒启</a>
+        </li>
+        <li class="nav__item has-drop is-current">
+          <span class="nav__group">
+            <a class="nav__link nav__link--parent" href="index.html#business">三大板块</a>
+            <button class="nav__caret-btn" type="button" aria-expanded="false" aria-haspopup="true" aria-label="展开「三大板块」子菜单">
+              <svg class="ico nav__caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </span>
+          <div class="nav__drop">
+            <a class="drop-item" href="community.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.4a3.4 3.4 0 0 1 0 6.6"/><path d="M18 14.4A6.2 6.2 0 0 1 21.2 20"/></svg></span>
+              <span>
+                <span class="drop-item__title">科幻社群</span>
+                <span class="drop-item__desc">成员自主运营的公益写作社群，每年九期练笔</span>
+              </span>
+            </a>
+            <a class="drop-item" href="tools.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="5.4"/><path d="M20.6 12h-3.2M12 20.6v-3.2M3.4 12h3.2M12 3.4v3.2M18.08 18.08l-2.26-2.26M5.92 18.08l2.26-2.26M5.92 5.92l2.26 2.26M18.08 5.92l-2.26 2.26"/></svg></span>
+              <span>
+                <span class="drop-item__title">数字化产品开发</span>
+                <span class="drop-item__desc">社区、教育、AI 与定制开发，源码可交付</span>
+              </span>
+            </a>
+            <a class="drop-item" href="library.html">
+              <span class="drop-item__ico"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="17" r="2.2"/><circle cx="19" cy="17" r="2.2"/><path d="M10.4 6.6 6.6 15M13.6 6.6 17.4 15M7.2 17h9.6"/></svg></span>
+              <span>
+                <span class="drop-item__title">银河图书馆</span>
+                <span class="drop-item__desc">免费开放的在线索引馆，一篇两页：读者一页、作者一页</span>
+              </span>
+            </a>
+          </div>
+        </li>
+        <li class="nav__item">
+          <a class="nav__link" href="contact.html">联系我们</a>
+        </li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到白天模式" aria-pressed="false">
+          <svg class="ico ico-20 theme-toggle__ico theme-toggle__ico--to-day" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/></svg>
+          <svg class="ico ico-20 theme-toggle__ico theme-toggle__ico--to-night" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 14.4A8.5 8.5 0 0 1 9.6 3.4a8.5 8.5 0 1 0 11 11Z"/></svg>
+        </button>
+        
+        
+        <a class="btn btn--primary btn--sm" href="/library" target="_blank" rel="noopener"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h6a3 3 0 0 1 3 3V20a2.4 2.4 0 0 0-2.4-2.4H4z"/><path d="M20 4.5h-6a3 3 0 0 0-3 3V20a2.4 2.4 0 0 1 2.4-2.4H20z"/></svg>进入图书馆</a>
+        <button class="nav-toggle" type="button" aria-label="打开导航菜单" aria-controls="mobile-drawer">
+          <span class="nav-toggle__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+<main id="main" class="page">
+
+  <!-- ========================================================= 页面头 -->
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="面包屑">
+        <a href="index.html">首页</a>
+        <svg class="ico ico-18 breadcrumb__sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        <a href="index.html#business">三大板块</a>
+        <svg class="ico ico-18 breadcrumb__sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        <span class="breadcrumb__current">银河图书馆</span>
+      </nav>
+
+      <p class="eyebrow mt-5" data-reveal="fade">免费开放的在线索引馆 · 馆藏与检索</p>
+      <h1 class="page-hero__title" data-reveal="up">银河图书馆</h1>
+      <p class="page-hero__desc" data-reveal="up" style="--reveal-delay:90ms">
+        一座给科幻作品建的索引馆，由成都荒启文化传播有限公司开发维护，免费开放、不设任何付费项目。
+        它要解决的不是「哪一篇更好」——
+        那是评稿的事；它要解决的是三件更基础的事：读过的东西找不回来、
+        一个好判断说不清依据、十几条意见落不成一条路径。
+        所以每一篇入馆作品都会被拆开、编上词条、留成两页，全部免登录可读。
+      </p>
+
+      <div class="hero__actions" data-reveal="up" style="--reveal-delay:160ms">
+        <a class="btn btn--primary btn--lg" href="/library" target="_blank" rel="noopener">进入银河图书馆 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+
+      <div class="page-hero__stats" data-reveal="fade" style="--reveal-delay:240ms">
+        <div>
+          <p class="hero__meta-num"><span data-count="5">0</span><small>词上限</small></p>
+          <p class="hero__meta-label">每篇最多五个，宁缺毋滥</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="2">0</span><small>页视角</small></p>
+          <p class="hero__meta-label">读者一页 · 作者一页</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="9">0</span><small>期每年</small></p>
+          <p class="hero__meta-label">按期次持续入馆</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="0">0</span><small>分</small></p>
+          <p class="hero__meta-label">只写依据，不打分</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= 设计目标 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">为什么建这座馆</p>
+        <h2 class="section-head__title" data-reveal="up">它为了把三件事做成而设计</h2>
+        <p class="section-head__desc" data-reveal="up">
+          这三件事，单靠「多写多读」解决不了。它们各自缺一样东西：
+          一个能反查的索引、一份能核对的依据、一条排好顺序的路径。
+        </p>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="card card--numbered" data-reveal="up" style="display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">01</span>
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></div>
+          <h3 class="card__title mt-5">让写过的东西找得回来</h3>
+          <p class="card__desc">
+            每年九期，一期九篇。两年之后，光靠记忆没人说得清「哪些篇写过记忆可改写」。
+            所以每篇作品都被编进同一套科幻词条 —— 词条是入口，作品才是内容。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <span class="micro">结果是：从一个概念能反查到所有用过它的作品</span>
+          </div>
+        </article>
+
+        <article class="card card--numbered" data-reveal="up" style="--reveal-delay:100ms;display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">02</span>
+          <div class="ico-box ico-box--sm ico-box--cyan"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="4.4"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg></div>
+          <h3 class="card__title mt-5">让判断有依据可核对</h3>
+          <p class="card__desc">
+            评稿给的是结论：好或不好。拆解给的是依据：好在第几节、靠哪一句、
+            换成别的处理会失去什么。每条判断都指回原文，读者可以自己复核。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <span class="micro">结果是：不同意的时候，知道该反驳哪一句</span>
+          </div>
+        </article>
+
+        <article class="card card--numbered" data-reveal="up" style="--reveal-delay:200ms;display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">03</span>
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="6.5" height="5" rx="1.4"/><rect x="14.5" y="3.5" width="6.5" height="5" rx="1.4"/><rect x="8.75" y="15.5" width="6.5" height="5" rx="1.4"/><path d="M6.25 8.5v3.5h11.5V8.5M12 12v3.5"/></svg></div>
+          <h3 class="card__title mt-5">让意见落成一条路径</h3>
+          <p class="card__desc">
+            一轮评稿下来，十几条意见散在聊天记录里，内容互相牵连。
+            拆解把它们分成结构层、执行层、细节层，并指出先动哪一处最划算。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <span class="micro">结果是：改之前就知道会牵动哪里</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= 功能 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">它提供什么</p>
+        <h2 class="section-head__title" data-reveal="up">三种用法，对应三种人</h2>
+        <p class="section-head__desc" data-reveal="up">
+          同一批材料，用途不同看到的东西也不同。三件事各自有入口，不必从头读起。
+        </p>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="card" data-reveal="up" style="display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h6a3 3 0 0 1 3 3V20a2.4 2.4 0 0 0-2.4-2.4H4z"/><path d="M20 4.5h-6a3 3 0 0 0-3 3V20a2.4 2.4 0 0 1 2.4-2.4H20z"/></svg></div>
+          <p class="card__kicker mt-5">Index</p>
+          <h3 class="card__title">拿一个概念，找一批作品</h3>
+          <p class="card__desc">
+            给做研究、做选题、想找同类的人。词库里每个词都有释义、起源与发展、
+            世界科幻里的三部代表作，并列出用过它的所有作品。搜索框认的也是这套词。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="/library/terms" target="_blank" rel="noopener">按词找作品 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:90ms;display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm ico-box--cyan"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg></div>
+          <p class="card__kicker mt-5">Read</p>
+          <h3 class="card__title">四分钟，判断一篇值不值得读</h3>
+          <p class="card__desc">
+            给来找作品的人。读者页只回答四件事：这是谁的故事、科幻上立住了什么、
+            好在哪里、适合谁 —— 也包括「谁会觉得不值」。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="/library/works" target="_blank" rel="noopener">翻馆藏 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:180ms;display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4.5" width="14" height="16" rx="2"/><path d="M9 4.5V3.4A1.4 1.4 0 0 1 10.4 2h3.2A1.4 1.4 0 0 1 15 3.4v1.1z"/><path d="M9 10.5h6M9 14.5h4"/></svg></div>
+          <p class="card__kicker mt-5">Revise</p>
+          <h3 class="card__title">写完之后，先改哪一处</h3>
+          <p class="card__desc">
+            给写这篇的人。节点轴标出改变主角处境的那几件事，伏笔台账标出哪些还没收，
+            建议按三层排好 —— 最后给一条修改方向，而不是一张待办清单。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="/library/method" target="_blank" rel="noopener">这套结果怎么来的 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 两种人两页 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">两份结果</p>
+        <h2 class="section-head__title" data-reveal="up">同一篇作品，给两种人各备一页</h2>
+        <p class="section-head__desc" data-reveal="up">
+          来找作品的人要知道「这是什么、值不值得看」；作者要知道「哪里站不住、先改哪一处」。
+          这两件事压不进一份文档，所以每篇作品在馆里都有两页，页头随时切换。
+        </p>
+      </div>
+
+      <div class="grid grid--2 grid--gap-lg mt-8">
+        <article class="card card--numbered card--beacon" data-reveal="up"
+                 style="display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">01</span>
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M4.6 20a7.4 7.4 0 0 1 14.8 0"/></svg></div>
+          <p class="card__kicker mt-5">Reader</p>
+          <h3 class="card__title">读者视角</h3>
+          <p class="card__desc">
+            给搜索科幻作品的人：判断一篇值不值得读，找到同一路子的更多作品。
+            这一页只回答问题，不替你做决定。
+          </p>
+          <ul class="list-check card__desc">
+            <li>三句话说清这是谁的故事、他要什么、最后拿什么换的</li>
+            <li>核心设定：这篇在科幻上立住了什么</li>
+            <li>魅力所在：好在哪、为什么好，每条都落到具体位置</li>
+            <li>如果拍成片子：色调、镜头、可对标的坐标，以及用文字写出的那一幕</li>
+            <li>适合谁看 —— 也包括谁会觉得不值</li>
+          </ul>
+          <div class="card__foot" style="margin-top:auto">
+            <span class="micro">默认打开的就是这一页</span>
+          </div>
+        </article>
+
+        <article class="card card--numbered" data-reveal="up" style="--reveal-delay:110ms;display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">02</span>
+          <div class="ico-box ico-box--sm ico-box--cyan"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></div>
+          <p class="card__kicker mt-5">Author</p>
+          <h3 class="card__title">作者视角</h3>
+          <p class="card__desc">
+            给写这篇的人：评稿告诉你好不好，这一页告诉你问题出在哪一层、先动哪一处、
+            改了会牵动什么。
+          </p>
+          <ul class="list-check card__desc">
+            <li>剧情节点轴：改变主角处境的那几件事，按位置排开</li>
+            <li>伏笔台账：埋在哪、收在哪，哪些还没收</li>
+            <li>建议分结构层、执行层、细节层，每条给几种走法</li>
+            <li>修改方向：先改哪一处最划算</li>
+          </ul>
+          <div class="card__foot" style="margin-top:auto">
+            <span class="micro">页头切到「作者视角」</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 关键词口径 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="split split--top">
+        <div>
+          <p class="eyebrow" data-reveal="fade">关键词</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">
+            五个是上限，不是配额
+          </h2>
+          <p class="body mt-6" data-reveal="up">
+            一篇作品能挂几个词，取决于它真正写了几个<strong>能跨作品复用的科幻概念</strong>，
+            不取决于我们想不想把页面填满。两三个是常态，抽不出就不给。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            这条规则不是洁癖。一个词如果只挂着一篇作品，它就不是索引，
+            只是那篇作品的目录 —— 读者点进去，看到的是同一篇，检索功能等于零。
+          </p>
+        </div>
+
+        <div class="grid" data-reveal="up" style="--reveal-delay:120ms">
+          <div class="panel">
+            <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.6 17 19 7"/></svg> 收进来的词</p>
+            <ul class="list-dot panel__body">
+              <li>拿掉科幻设定就站不住的：世代飞船、记忆编辑、公民分级</li>
+              <li>别的作者也在写、读者会拿它去搜的</li>
+              <li>一句脱离原文也读得懂的定义</li>
+            </ul>
+          </div>
+          <div class="panel panel--cyan">
+            <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg> 一律不收</p>
+            <ul class="list-dot list-dot--cyan panel__body">
+              <li>纯文学里同样成立的物象：茶、信件、影子、雨水</li>
+              <li>只在这一篇成立的自造名词与编号</li>
+              <li>剧情概括、人物关系、主题词</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== 入口 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">入口</p>
+        <h2 class="section-head__title" data-reveal="up">整座馆都在线上，现在就能进</h2>
+        <p class="section-head__desc" data-reveal="up">
+          词库、馆藏、每篇作品的两页拆解、以及拆解方法本身 ——
+          <strong>全部免登录可读</strong>。这里看到的就是馆里的实时内容，不是截图，也不是样本。
+        </p>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="card" data-reveal="up" style="display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h6a3 3 0 0 1 3 3V20a2.4 2.4 0 0 0-2.4-2.4H4z"/><path d="M20 4.5h-6a3 3 0 0 0-3 3V20a2.4 2.4 0 0 1 2.4-2.4H20z"/></svg></div>
+          <p class="card__kicker mt-5">Terms</p>
+          <h3 class="card__title">科幻词库</h3>
+          <p class="card__desc">
+            拿着一个概念来找作品。每条词都有释义、起源与发展、
+            世界科幻中的三部代表作，并列出馆藏里用过它的全部作品。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="/library/terms" target="_blank" rel="noopener">进词库 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:100ms;display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm ico-box--cyan"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 7.6l9 4.6 9-4.6z"/><path d="M3 12.4 12 17l9-4.6"/><path d="M3 16.8 12 21.4l9-4.6"/></svg></div>
+          <p class="card__kicker mt-5">Works</p>
+          <h3 class="card__title">馆藏</h3>
+          <p class="card__desc">
+            按期次、体裁、字数翻，也可以按词筛。
+            点进任何一篇，默认落在读者页。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="/library/works" target="_blank" rel="noopener">翻馆藏 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:200ms;display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm"><svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M15.6 8.4 13.9 13.9 8.4 15.6l1.7-5.5z"/></svg></div>
+          <p class="card__kicker mt-5">Method</p>
+          <h3 class="card__title">拆解方法</h3>
+          <p class="card__desc">
+            词怎么收、两页怎么分工、每条判断的依据是什么、这套方法的边界在哪。
+            全部写在一页里，不用猜。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="/library/method" target="_blank" rel="noopener">看方法 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </article>
+      </div>
+
+      <div class="hero__actions" data-reveal="up" style="margin-top:40px">
+        <a class="btn btn--primary btn--lg" href="/library" target="_blank" rel="noopener">进入银河图书馆 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== FAQ -->
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">常见问题</p>
+        <h2 class="section-head__title" data-reveal="up">关于这座馆</h2>
+      </div>
+
+      <div class="accordion mt-7" data-accordion="single" data-reveal="up">
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>拆解和评稿是什么关系？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              两件独立的事。评稿按练笔规则给五维打分、算出排名与奖金；
+              拆解不给分，只写依据与改法。同一篇作品会同时进评稿流程和拆解流程，
+              但两边的结论互不引用 —— 分数不进入拆解，拆解也不影响分数。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>进馆要注册吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              不用，也没有账号系统。词库、馆藏、每篇作品的两页拆解、拆解方法，
+              全部直接打开就能看。馆里放的拆解是公开内容，原文本身不在公开网络上发布。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>为什么分成读者和作者两页？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              因为两种人的问题不一样。找作品的人想知道「这是什么、值不值得看」，
+              作者想知道「哪里站不住、先改哪一处」。同一堆材料写两遍，
+              比写一份谁都能看、谁都不够用的文档要诚实。
+              每篇作品页头都有切换，两页看到的是同一篇的两个切面。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>为什么有的作品只有两三个关键词？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              因为五个是上限，不是配额。词只收与科幻强关联、且能跨作品复用的概念；
+              一篇作品真正写了几个，就挂几个。为了把页面填满而塞进去的词，
+              在词库里只会挂着一篇作品，那是目录，不是索引。
+              实在抽不出合格词的作品，就如实空着。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>馆里为什么现在只有荒启练笔的作品？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              这座馆以拆解<strong>全部中文科幻小说</strong>为目标，不隶属练笔活动。
+              但拆解要逐篇拿到作者授权 —— 现阶段唯一能拿到授权的通道是荒启练笔的投稿，
+              所以馆藏暂时只来自练笔。授权范围扩大之后，任何作者的作品都可以进馆。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>可以拆解我自己的作品吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              想。但现阶段入馆只有一条路：给荒启练笔投稿 —— 出于授权与法律上的考虑，
+              馆暂时不能直接收外部稿件。稿件仅用于本次拆解，不做其他用途；
+              词条会入库，正文不公开。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>软科幻适合进馆吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              适合。词条里「科幻设定」只收真正推动情节的那项技术或规则，
+              软科幻里承载社会隐喻的那件装置同样算数。
+              判断口径随作者取向切换，不拿硬科幻的标准去量软科幻。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>多久更新一次？</span>
+            <span class="acc-btn__icon" aria-hidden="true"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              现阶段馆藏跟着练笔活动的节奏走：每年九期，每期截稿后统一拆解、统一入馆。
+              所以馆藏是一条一条长出来的，不是一次上架的成品库 ——
+              想看现在到哪一期，进馆看首页即可。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== CTA -->
+  <section class="section section--sm">
+    <div class="container">
+      <div class="cta-block" data-reveal="up">
+        <div class="cta-block__inner">
+          <div class="cta-block__text">
+            <h2 class="cta-block__title">进去看一眼</h2>
+            <p class="cta-block__desc">
+              不需要账号。挑一个词，看它下面挂着哪几篇作品；
+              再点开任意一篇，页头切一次，就是另一页。
+            </p>
+          </div>
+          <div class="cta-block__actions">
+            <a class="btn btn--primary btn--lg" href="/library" target="_blank" rel="noopener">进入银河图书馆</a>
+            <a class="btn btn--outline btn--lg" href="contact.html">联系我们</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <footer class="site-footer">
+    <div class="container container--full">
+      <div class="site-footer__main">
+        <div class="site-footer__brand">
+          <img class="brand__img--night" src="assets/logo/logo-full-white.png" alt="荒启科幻" width="880" height="334">
+          <img class="brand__img--day" loading="lazy" src="assets/logo/logo-full-dark.png" alt="荒启科幻" width="880" height="334">
+          <p class="site-footer__tagline">从荒芜中开启新世界。连接科幻创作者与读者，用技术把重复劳动交给系统，用关键词索引解构科幻世界。</p>
+          <p class="footer-brand-line">HUANGQI SCI-FI</p>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">三大板块</h2>
+          <ul class="site-footer__links">
+            <li><a href="community.html">科幻社群</a></li>
+            <li><a href="tools.html">数字化产品开发</a></li>
+            <li><a href="library.html">银河图书馆</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">快速链接</h2>
+          <ul class="site-footer__links">
+            <li><a href="contact.html#start">客户端下载</a></li>
+            <li><a href="/h5/" target="_blank" rel="noopener">在线阅读</a></li>
+            <li><a href="/library" target="_blank" rel="noopener">进入银河图书馆</a></li>
+            <li><a href="about.html">关于荒启</a></li>
+            <li><a href="contact.html">联系与加入</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="site-footer__col-title">联系我们</h2>
+          <ul class="site-footer__links">
+            <li><a href="contact.html#invite">加入社群（QQ 群 280660235）</a></li>
+            <li><a href="contact.html">联系方式与入群须知</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="site-footer__bottom">
+        <p>© <span data-year>2026</span> 成都荒启文化传播有限公司 · 荒启科幻。<a class="site-footer__icp" href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank"> 蜀ICP备2025169184号-1 </a></p>
+        <p class="site-footer__compliance">「荒启科幻」练笔社群由科幻爱好者组成、成员自主运营，为纯公益社群；成都荒启文化传播有限公司提供网络平台工具，不参与社群运营，不从中获取经营收益。</p>
+        <div class="site-footer__bottom-links">
+          <a href="about.html">品牌规范</a>
+          <a href="contact.html#privacy">隐私说明</a>
+          <a href="#top">返回顶部</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="drawer" id="mobile-drawer">
+    <div class="drawer__panel">
+      <button class="drawer__close" type="button" aria-label="关闭导航菜单">
+        <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="drawer__group">
+        <p class="drawer__label">页面</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="index.html">首页<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="about.html">关于荒启<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="contact.html">联系我们<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__group">
+        <p class="drawer__label">三大板块</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="community.html">科幻社群<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="tools.html">数字化产品开发<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="library.html">银河图书馆<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__group">
+        <p class="drawer__label">开始使用</p>
+        <ul class="mt-3">
+          <li><a class="drawer__link" href="contact.html#start">客户端下载<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="/h5/" target="_blank" rel="noopener">在线阅读<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+          <li><a class="drawer__link" href="/library" target="_blank" rel="noopener">进入银河图书馆<svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="drawer__cta">
+        <a class="btn btn--primary btn--block" href="contact.html"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.5 13.5"/><path d="M21 3l-6.8 18-3.7-7.5L3 9.8z"/></svg>加入社群</a>
+      </div>
+    </div>
+  </div>
+
+
+
+
+<button class="to-top" type="button" aria-label="回到顶部">
+  <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

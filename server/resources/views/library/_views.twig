@@ -1,0 +1,12 @@
+{# 视角切换：同一篇作品的两种读法。
+   用两条路由（不是查询参数）——缓存按路径做键，参数会让两套内容互相覆盖。 #}
+<div class="wrap">
+  <nav class="views" aria-label="切换视角">
+    <a class="views__a{% if view == 'reader' %} is-on{% endif %}"{% if view == 'reader' %} aria-current="page"{% endif %} href="/library/works/{{ work.code }}">
+      <span class="views__t">读者视角</span>
+    </a>
+    <a class="views__a{% if view == 'author' %} is-on{% endif %}"{% if view == 'author' %} aria-current="page"{% endif %} href="/library/works/{{ work.code }}/author">
+      <span class="views__t">作者视角</span>
+    </a>
+  </nav>
+</div>

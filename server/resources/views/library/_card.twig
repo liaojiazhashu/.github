@@ -1,0 +1,21 @@
+{# 列表卡片（首页 / 作品列表 / 按期次 / 检索共用）。
+   卡片只讲三件事：这是什么（标题 + 期次作者）、它在讲什么（一句话索引）、它凭什么能被检索到（词条）。
+
+   这里没有「拆解暂不公开」这种中间态：拆解被隐藏的作品根本不会出现在任何列表里。
+   公开区唯一的内容就是拆解，结论收存之后，这篇作品等于从未被拆解过。 #}
+<article class="wcard">
+  <a class="wcard__hit" href="/library/works/{{ row.code }}" aria-label="打开《{{ row.title }}》的拆解"></a>
+  <div class="wcard__kicker">
+    {% if row.issue_label %}<span>{{ row.issue_label }}</span>{% endif %}
+    {# 作者页上每一张卡都是同一个人，再写一遍名字只是噪声；其它列表照常显示 #}
+    {% if row.author_name and not hide_author|default(false) %}<span class="dot">·</span><span>{{ row.author_name }}</span>{% endif %}
+    <span class="dot">·</span><span class="mono">{{ num(row.word_count) }} 字</span>
+  </div>
+  <h3 class="wcard__title">{{ row.title }}</h3>
+  {% if row.one_liner %}<p class="wcard__lead">{{ row.one_liner }}</p>{% endif %}
+  <div class="wcard__terms">
+    {% for t in row.terms|default([]) %}
+      <a class="chip{% if t.role == 'main' %} chip--main{% endif %}" href="/library/terms/{{ t.id }}">{{ t.canonical }}</a>
+    {% endfor %}
+  </div>
+</article>

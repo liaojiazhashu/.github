@@ -1,0 +1,326 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}一键拆解{% endblock %}
+{% block heading %}一键拆解{% endblock %}
+
+{#
+  一键拆解。
+  --------------------------------------------------------------------------
+  页面按「用一次」的顺序排，从上到下就是一次操作的四步：
+
+    选范围（GET 预览，可收藏成书签）
+      → 看清楚会动多少篇、花多少钱
+      → 按下去（POST，建批次、派活）
+      → 回来看这一批跑到哪了（抓取 / 拆解 / 待上架）
+
+  这里**不做**任何重活：抓正文、拆解、上架全部由 worker 执行。
+  页面只负责算清楚「会动哪些篇」，以及把活派下去。
+#}
+
+{% block content %}
+{% set plan = plan|default(null) %}
+{% set pick = plan.plan|default({'ingest': 0, 'analyze': 0, 'publish': 0}) %}
+{% set selected = pick.ingest + pick.analyze + pick.publish %}
+
+{# ---------------- 1. 范围 ---------------- #}
+<div class="card">
+  <div class="card__head">
+    <div class="card__title">① 选择范围</div>
+    <div class="card__hint">
+      范围单位是「官网的练笔作品」，不是「馆内已有的作品」——没入馆的会先去抓正文。
+    </div>
+  </div>
+
+  <form method="get" action="/admin/oneclick" class="form-stack">
+    <div class="field">
+      <label>期次 <span class="dim">（不选＝全部 26 期）</span></label>
+      <div class="pickgrid">
+        {% for i in issues %}
+          <label class="pickchip{% if i.no in scope.issues %} is-on{% endif %}">
+            <input type="checkbox" name="issues[]" value="{{ i.no }}"{% if i.no in scope.issues %} checked{% endif %}>
+            第 {{ i.no }} 期
+          </label>
+        {% endfor %}
+      </div>
+      <div class="field__hint">期次早的会排在前面，先把老作品拆完。</div>
+    </div>
+
+    <div class="filter-row filter-row--wide">
+      <div class="field">
+        <label for="author_state">作者类型</label>
+        <select id="author_state" name="author_state">
+          <option value="all"{% if scope.author_state == 'all' %} selected{% endif %}>不限</option>
+          <option value="active"{% if scope.author_state == 'active' %} selected{% endif %}>活跃作者（近一年有投稿或评稿）</option>
+          <option value="zombie"{% if scope.author_state == 'zombie' %} selected{% endif %}>僵尸作者（近一年都没有）</option>
+        </select>
+        {% if activity_at == 0 %}
+          <div class="field__hint is-danger">还没做过作者分类，选这两项会筛出空结果。先到「站内文章 → 作者分类」跑一次。</div>
+        {% endif %}
+      </div>
+
+      <div class="field">
+        <label for="min_words">字数下限</label>
+        <input id="min_words" type="number" name="min_words" min="0" step="1000" value="{{ scope.min_words ?: '' }}" placeholder="不限">
+      </div>
+
+      <div class="field">
+        <label for="max_words">字数上限</label>
+        <input id="max_words" type="number" name="max_words" min="0" step="1000" value="{{ scope.max_words ?: '' }}" placeholder="不限">
+      </div>
+
+      <div class="field">
+        <label for="keyword">标题包含</label>
+        <input id="keyword" type="text" name="keyword" maxlength="60" value="{{ scope.keyword }}" placeholder="可留空">
+      </div>
+    </div>
+
+    <div class="filter-row filter-row--wide">
+      <div class="field">
+        <label for="stage">要动哪些</label>
+        <select id="stage" name="stage">
+          <option value="todo"{% if scope.stage == 'todo' %} selected{% endif %}>还没拆的（含未入馆）</option>
+          <option value="failed"{% if scope.stage == 'failed' %} selected{% endif %}>上次拆解失败、要重试的</option>
+          <option value="pending_publish"{% if scope.stage == 'pending_publish' %} selected{% endif %}>已拆完、等着上架的</option>
+          <option value="all"{% if scope.stage == 'all' %} selected{% endif %}>全部（已上架的除外）</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="limit">这一批最多</label>
+        <select id="limit" name="limit">
+          {% for n in [50, 100, 200, 300, 500] %}
+            <option value="{{ n }}"{% if scope.limit == n %} selected{% endif %}>{{ n }} 篇</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label>重跑</label>
+        <label class="checkline">
+          <input type="checkbox" name="force" value="1"{% if scope.force %} checked{% endif %}>
+          连已上架的作品也重跑
+        </label>
+      </div>
+
+      <div class="field field--action">
+        <button class="btn btn--primary" type="submit">预览范围</button>
+      </div>
+    </div>
+
+    <div class="field__hint">
+      一次派活的上限是 500 篇：1300 篇分几批推进，点错一次不至于烧掉整月预算。
+      跑完再点一次会自动接着往后取，已拆过的不再重复排。
+    </div>
+  </form>
+</div>
+
+{# ---------------- 2. 预览 ---------------- #}
+{% if error %}
+  <div class="card card--gap">
+    <div class="card__title">算不出范围</div>
+    <div class="card__hint">{{ error }}</div>
+  </div>
+{% elseif plan %}
+<div class="grid grid--4 card--gap">
+  <div class="kpi">
+    <div class="kpi__label">范围内作品</div>
+    <div class="kpi__value">{{ num(plan.scope_total) }}<span>篇</span></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi__label">待入馆（先抓正文）</div>
+    <div class="kpi__value">{{ num(pick.ingest) }}<span>篇</span></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi__label">待拆解</div>
+    <div class="kpi__value">{{ num(pick.analyze) }}<span>篇</span></div>
+  </div>
+  <div class="kpi kpi--accent">
+    <div class="kpi__label">本次会派出</div>
+    <div class="kpi__value">{{ num(selected) }}<span>篇</span></div>
+  </div>
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">② 预览</div>
+    <div class="card__hint">
+      {% if plan.pace.samples > 0 %}
+        按本库实测均价 {{ plan.pace.per_work_yuan }} 元/篇、{{ plan.pace.per_work_minutes }} 分钟/篇（样本 {{ plan.pace.samples }} 篇）估算
+      {% else %}
+        本库还没有跑完过的分析，下面是按经验值（{{ plan.pace.per_work_yuan }} 元/篇）估的，不是实测
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="planline">
+    <span>预计花费 <b>{{ plan.pace.cost_yuan|number_format(2) }}</b> 元</span>
+    <span>单 worker 串行约 <b>{{ plan.pace.hours }}</b> 小时</span>
+    <span>已上架（不在本次）{{ num(plan.excluded.published) }} 篇</span>
+    <span>正在跑 {{ num(plan.excluded.in_queue) }} 篇</span>
+    <span>匿名暂不处理 {{ num(plan.excluded.anonymous) }} 篇</span>
+    <span>范围外 {{ num(plan.excluded.out_of_scope) }} 篇</span>
+    {# 已忽略：源站拉不到正文、已在调度台「失败的任务」里点过忽略的条目。
+       不显示这一行的话，目录总数与「本次派 N 篇」加起来对不上，运营会以为漏了。 #}
+    <span>已忽略 {{ num(plan.excluded.ignored) }} 篇</span>
+  </div>
+
+  {% if plan.truncated %}
+    <div class="notice notice--warn">
+      范围里符合条件的超过上限，这次只取前 {{ scope.limit }} 篇。跑完再点一次会接着往后取。
+    </div>
+  {% endif %}
+
+  {% if selected == 0 %}
+    <div class="empty">这个范围里没有要动的东西。换个「要动哪些」，或者换期次。</div>
+  {% endif %}
+</div>
+
+{# ---------------- 3. 开始 ---------------- #}
+{% if selected > 0 %}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">③ 开始拆解</div>
+    <div class="card__hint">按下之后立刻返回，不会卡在这里等——活由 worker 跑。</div>
+  </div>
+
+  <form method="post" action="/admin/oneclick/launch" class="form-stack">
+    <input type="hidden" name="_token" value="{{ csrf }}">
+    {% for no in scope.issues %}<input type="hidden" name="issues[]" value="{{ no }}">{% endfor %}
+    <input type="hidden" name="author_state" value="{{ scope.author_state }}">
+    <input type="hidden" name="min_words" value="{{ scope.min_words }}">
+    <input type="hidden" name="max_words" value="{{ scope.max_words }}">
+    <input type="hidden" name="keyword" value="{{ scope.keyword }}">
+    <input type="hidden" name="stage" value="{{ scope.stage }}">
+    <input type="hidden" name="limit" value="{{ scope.limit }}">
+    {% if scope.force %}<input type="hidden" name="force" value="1">{% endif %}
+
+    <div class="filter-row filter-row--wide">
+      <div class="field">
+        <label>拆完怎么处理？</label>
+        <label class="checkline">
+          <input type="checkbox" name="auto_publish" value="1">
+          拆完自动上架（对外可见）
+        </label>
+        <label class="checkline">
+          <input type="checkbox" name="keep_hidden" value="1">
+          拆完不公开（只在后台保留）
+        </label>
+        <div class="field__hint">都不勾＝停在「已拆未上架」。两个都勾时不公开优先。</div>
+      </div>
+      <div class="field">
+        <label for="note">备注</label>
+        <input id="note" type="text" name="note" maxlength="200" placeholder="这一批想干什么（可留空）">
+      </div>
+      <div class="field field--action">
+        <button class="btn btn--primary" type="submit" data-confirm="把 {{ selected }} 篇作品派进拆解队列？预计花费 {{ plan.pace.cost_yuan|number_format(2) }} 元。">
+          一键拆解这 {{ selected }} 篇
+        </button>
+      </div>
+    </div>
+  </form>
+
+  {% if paused %}
+    <div class="notice notice--warn">
+      闸门当前是「已暂停」：任务会排着但不领。恢复在 <a href="/admin/queue">拆解调度</a>。
+    </div>
+  {% endif %}
+</div>
+{% endif %}
+{% endif %}
+
+{# ---------------- 4. 批次进度 ---------------- #}
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">④ 最近几批</div>
+    <div class="card__hint">
+      抓取与拆解分开计：抓取失败的作品根本没进馆，不会出现在拆解计数里。
+      队列与失败明细在 <a href="/admin/queue">拆解调度</a>。
+    </div>
+  </div>
+
+  {% if batches is empty %}
+    <div class="empty">还没有跑过。选好范围按一次，这里会出现每一批的进度。</div>
+  {% else %}
+    <div class="table-wrap">
+      <table class="issue-table">
+        <thead>
+          <tr>
+            <th scope="col">批次</th>
+            <th scope="col">范围</th>
+            <th scope="col">计划</th>
+            <th scope="col">抓取 / 入馆</th>
+            <th scope="col">拆解</th>
+            <th scope="col">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for b in batches %}
+          {% set ing = b.ingest_stats|default({}) %}
+          {% set run = b.run_stats|default({}) %}
+          {% set ingDone = (ing.succeeded|default(0)) + (ing.failed|default(0)) + (ing.canceled|default(0)) %}
+          {% set runDone = (run.succeeded|default(0)) + (run.failed|default(0)) + (run.canceled|default(0)) %}
+          <tr{% if just_launched == b.code %} class="is-current"{% endif %}>
+            <td>
+              <span class="mono">{{ b.code|slice(-6) }}</span>
+              <div class="dim">{{ b.created_at|slice(5, 11) }}</div>
+              {% if b.note %}<div class="dim">{{ b.note }}</div>{% endif %}
+            </td>
+            <td>
+              {% set s = b.scope %}
+              <span>{{ s.issues is not empty ? ('第 ' ~ (s.issues|join('、')) ~ ' 期') : '全部期次' }}</span>
+              <div class="dim">
+                {{ s.author_state == 'active' ? '仅活跃作者' : (s.author_state == 'zombie' ? '仅僵尸作者' : '不限作者类型') }}
+                · {{ s.stage == 'todo' ? '还没拆的' : (s.stage == 'failed' ? '失败重试' : (s.stage == 'pending_publish' ? '待上架' : '全部')) }}
+                {% if s.force %} · 含重跑{% endif %}
+              </div>
+            </td>
+            <td class="mono">{{ b.planned }}</td>
+            <td>
+              {% if b.ingest > 0 %}
+                <span class="badge badge--{{ ing.running is defined and ing.running > 0 ? 'running' : 'queued' }}">{{ ingDone }}/{{ b.ingest }}</span>
+                {% if ing.queued|default(0) > 0 %}<span class="dim"> · 排队 {{ ing.queued }}</span>{% endif %}
+              {% else %}
+                <span class="dim">无需抓取</span>
+              {% endif %}
+            </td>
+            <td>
+              {% set runAll = (run.queued|default(0)) + (run.running|default(0)) + runDone %}
+              <span class="badge badge--{{ run.failed|default(0) > 0 ? 'failed' : (run.running|default(0) > 0 ? 'running' : (run.queued|default(0) > 0 ? 'queued' : 'succeeded')) }}">
+                {{ runDone }}/{{ runAll }}
+              </span>
+              {% if run.failed|default(0) > 0 %}<span class="is-danger"> · 失败 {{ run.failed }}</span>{% endif %}
+            </td>
+            <td>
+              <div class="card__actions">
+                {% if b.options.keep_hidden|default(false) %}
+                  <span class="dim">不公开批次</span>
+                {% else %}
+                  <form method="post" action="/admin/oneclick/publish">
+                    <input type="hidden" name="_token" value="{{ csrf }}">
+                    <input type="hidden" name="batch" value="{{ b.code }}">
+                    <button class="btn btn--sm" type="submit" data-confirm="把这一批里已拆完的作品全部上架？">上架本批</button>
+                  </form>
+                {% endif %}
+                {% if (run.queued|default(0)) + (ing.queued|default(0)) > 0 %}
+                  <form method="post" action="/admin/oneclick/cancel">
+                    <input type="hidden" name="_token" value="{{ csrf }}">
+                    <input type="hidden" name="batch" value="{{ b.code }}">
+                    <button class="btn btn--sm btn--danger" type="submit" data-confirm="取消这一批还排着队的任务？正在跑的不受影响。">取消排队</button>
+                  </form>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  <div class="field__hint">
+    官网目录同步于 {{ catalog_at > 0 ? catalog_at|date('Y-m-d H:i') : '尚未同步' }}；
+    作者分类建于 {{ activity_at > 0 ? activity_at|date('Y-m-d H:i') : '尚未分类' }}。
+    范围基于目录快照，官网新增的作品要先在「站内文章」同步一次才会出现。
+  </div>
+</div>
+{% endblock %}

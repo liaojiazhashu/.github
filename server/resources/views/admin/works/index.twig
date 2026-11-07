@@ -1,0 +1,225 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}作品{% endblock %}
+{% block heading %}作品{% endblock %}
+
+{#
+  作品列表 = 1300 篇的主工作台。
+  --------------------------------------------------------------------------
+  和普通 CRUD 列表的差别在于「批量」是一等公民：
+  运营真正要做的事是「筛出第 3 期跑失败的 47 篇，一次重跑」，而不是逐条点。
+  所以每一行都有复选框，每个批量动作都提供两种范围：
+    · 选中的 N 项      —— 精确处理
+    · 全部符合筛选     —— 处理一整批（服务端按同一套条件重算，不信前端传来的 id）
+
+  行内不做危险动作。隐藏、重跑、发布一律走批量条或详情页——
+  列表上离鼠标最近的按钮，是最容易被误点的那一个。
+#}
+
+{% block content %}
+{% set canRun = can(user.permissions|default([]), 'analysis.run') %}
+{% set canHide = can(user.permissions|default([]), 'visibility.toggle') %}
+
+{# 筛选回填字段：批量操作按「全部符合筛选」时要靠它重建条件 #}
+{% set carried = 'q=' ~ (filter.keyword|url_encode) ~ '&issue=' ~ filter.issue ~ '&stage=' ~ (filter.stage|url_encode) ~ '&visibility=' ~ (filter.visibility|url_encode) %}
+{% set backUrl = '/admin/works?' ~ carried ~ '&page=' ~ page %}
+
+<div class="card">
+  <form method="get" action="/admin/works" class="filter-row">
+    <div class="field">
+      <label for="q">关键词</label>
+      <input id="q" name="q" type="text" value="{{ filter.keyword }}" placeholder="标题或作者">
+    </div>
+    <div class="field">
+      <label for="issue">期次</label>
+      <select id="issue" name="issue">
+        <option value="0">全部</option>
+        {% for it in issues %}
+          <option value="{{ it.id }}"{% if filter.issue == it.id %} selected{% endif %}>{{ it.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="stage">阶段</label>
+      <select id="stage" name="stage">
+        <option value=""{% if filter.stage == '' %} selected{% endif %}>全部</option>
+        <option value="pending"{% if filter.stage == 'pending' %} selected{% endif %}>待拆解</option>
+        <option value="running"{% if filter.stage == 'running' %} selected{% endif %}>拆解中</option>
+        <option value="ready"{% if filter.stage == 'ready' %} selected{% endif %}>待发布</option>
+        <option value="published"{% if filter.stage == 'published' %} selected{% endif %}>已发布</option>
+        <option value="failed"{% if filter.stage == 'failed' %} selected{% endif %}>拆解失败</option>
+        <option value="hidden"{% if filter.stage == 'hidden' %} selected{% endif %}>已隐藏</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="visibility">可见性</label>
+      <select id="visibility" name="visibility">
+        <option value=""{% if filter.visibility == '' %} selected{% endif %}>不限</option>
+        <option value="visible"{% if filter.visibility == 'visible' %} selected{% endif %}>对外可见</option>
+        <option value="hidden"{% if filter.visibility == 'hidden' %} selected{% endif %}>含隐藏</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="sort">排序</label>
+      <select id="sort" name="sort">
+        <option value="created"{% if filter.sort == 'created' %} selected{% endif %}>最新导入</option>
+        <option value="title"{% if filter.sort == 'title' %} selected{% endif %}>标题</option>
+        <option value="words"{% if filter.sort == 'words' %} selected{% endif %}>字数</option>
+      </select>
+    </div>
+    <div class="field field--action">
+      <button class="btn" type="submit">筛选</button>
+      <a class="btn btn--ghost" href="/admin/works">重置</a>
+    </div>
+  </form>
+</div>
+
+<div class="card card--gap">
+  <div class="card__head">
+    <div class="card__title">共 {{ total }} 篇{% if pages > 1 %} · 第 {{ page }} / {{ pages }} 页{% endif %}</div>
+    <div class="card__actions">
+      <a class="btn btn--sm" href="/admin/works/import">批量导入</a>
+      <a class="btn btn--sm btn--primary" href="/admin/works/new">新建导入</a>
+    </div>
+  </div>
+
+  {% if rows is empty %}
+    <div class="empty">没有符合条件的作品。</div>
+  {% else %}
+
+  {# ---- 批量表单：勾选范围 ---- #}
+  <form id="bulkIds" method="post" action="/admin/works/bulk">
+    <input type="hidden" name="_token" value="{{ csrf }}">
+    <input type="hidden" name="scope" value="ids">
+    <input type="hidden" name="back" value="{{ backUrl }}">
+  </form>
+
+  {# ---- 批量表单：全部符合筛选 ---- #}
+  {# 确认文案挪到按钮上了：同一条表单挂了六个动作，「按筛选全部」这一句
+     说不出到底是开始还是停止、到底动了多少篇。 #}
+  <form id="bulkFilter" method="post" action="/admin/works/bulk">
+    <input type="hidden" name="_token" value="{{ csrf }}">
+    <input type="hidden" name="scope" value="filter">
+    <input type="hidden" name="back" value="{{ backUrl }}">
+    <input type="hidden" name="q" value="{{ filter.keyword }}">
+    <input type="hidden" name="issue" value="{{ filter.issue }}">
+    <input type="hidden" name="stage" value="{{ filter.stage }}">
+    <input type="hidden" name="visibility" value="{{ filter.visibility }}">
+  </form>
+
+  <div class="bulkbar" data-bulkbar>
+    <div class="bulkbar__count"><b data-count>0</b> 项已选</div>
+
+    {# 「重跑」单独做成一个按钮，而不是一个复选框：
+       复选框要跨两个表单同步值，得靠脚本；两个按钮则各自表达清楚，
+       而且「含已发布」这个决定不该藏在勾选框里被顺手点掉。 #}
+    {% if canRun %}
+    <div class="bulkbar__group">
+      <button class="btn btn--sm" type="submit" form="bulkIds" name="action" value="enqueue"
+              data-confirm="把这 {n} 篇加入拆解队列？会真实调用模型并产生费用。">开始拆解</button>
+      <button class="btn btn--sm" type="submit" form="bulkIds" name="action" value="reenqueue"
+              data-confirm="重跑 {n} 篇（含已上架的）：新结果会取代现在前台看到的版本。确定？">重跑（含已发布）</button>
+      <button class="btn btn--sm" type="submit" form="bulkFilter" name="action" value="enqueue"
+              data-confirm="把{scope}加入拆解队列？这一批可能有几百篇，会真实调用模型并产生费用。">按筛选全部开始</button>
+    </div>
+    <div class="bulkbar__group">
+      <button class="btn btn--sm" type="submit" form="bulkIds" name="action" value="cancel"
+              data-confirm="停止这 {n} 篇？排队中的立刻退队；正在跑的会在当前阶段结束后停下，已完成的部分保留。">停止</button>
+      <button class="btn btn--sm" type="submit" form="bulkFilter" name="action" value="cancel"
+              data-confirm="停止{scope}？排队中的立刻退队；正在跑的会在当前阶段结束后停下。">按筛选全部停止</button>
+    </div>
+    {% endif %}
+
+    {% if canHide %}
+    <div class="bulkbar__group">
+      <button class="btn btn--sm" type="submit" form="bulkIds" name="action" value="hide"
+              data-confirm="{n} 篇作品将从公开区消失：详情页 404，列表、期次、统计、sitemap 都不再出现。确定？">隐藏作品</button>
+      <button class="btn btn--sm" type="submit" form="bulkIds" name="action" value="restore">恢复作品</button>
+      <button class="btn btn--sm" type="submit" form="bulkIds" name="action" value="hide-deck"
+              data-confirm="{n} 篇的拆解结果不再公开（作品本身还在馆里）。确定？">隐藏拆解结果</button>
+      <button class="btn btn--sm" type="submit" form="bulkIds" name="action" value="restore-deck">恢复拆解结果</button>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="pick" scope="col"><input type="checkbox" data-check-all aria-label="全选本页"></th>
+          <th scope="col">标题</th>
+          <th scope="col">作者</th>
+          <th scope="col">期次</th>
+          <th class="num" scope="col">字数</th>
+          <th scope="col">阶段</th>
+          <th scope="col">队列</th>
+          <th scope="col">可见性</th>
+          <th scope="col">导入</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          {% set q = queues[row.id]|default(null) %}
+          <tr{% if row.visibility == 'hidden' %} class="is-hidden"{% endif %}>
+            <td class="pick">
+              <input type="checkbox" form="bulkIds" name="ids[]" value="{{ row.id }}" data-check aria-label="选择《{{ row.title }}》">
+            </td>
+            <td><a href="/admin/works/{{ row.code }}">{{ row.title }}</a></td>
+            <td>{{ row.author_name|default('—') }}</td>
+            <td class="dim">{{ row.issue_label|default('—') }}</td>
+            <td class="num">{{ num(row.word_count) }}</td>
+            <td>
+              {% if q and q.status in ['queued', 'running'] %}
+                <span class="badge badge--{{ q.status }}">{{ q.status|status_label }}</span>
+              {% elseif row.status == 'published' %}
+                <span class="badge badge--published">已发布</span>
+              {% elseif row.status == 'analyzed' %}
+                <span class="badge badge--analyzed">待发布</span>
+              {% elseif row.status == 'imported' %}
+                <span class="badge badge--imported">待拆解</span>
+              {% else %}
+                <span class="badge">{{ row.status|status_label }}</span>
+              {% endif %}
+            </td>
+            <td class="dim">
+              {# 队列列只报「异常」：正常完成的留空。整列都是「—」时，
+                 读者的眼睛会把它当成一列数据去读，反而盖住了真正的失败标记。 #}
+              {% if q %}
+                {% if q.status == 'failed' %}<span class="badge badge--failed">失败</span>
+                {% elseif q.status == 'canceled' %}<span class="badge">已停止</span>
+                {% elseif q.status == 'succeeded' %}<span class="dim">已完成</span>
+                {% endif %}
+              {% endif %}
+            </td>
+            <td>
+              {% if row.visibility == 'hidden' %}
+                <span class="badge badge--danger">作品已隐藏</span>
+              {% elseif row.analysis_visibility == 'hidden' %}
+                <span class="badge badge--analyzing">拆解已收存</span>
+              {% else %}
+                <span class="dim">正常</span>
+              {% endif %}
+            </td>
+            <td class="dim mono">{{ row.created_at|slice(0, 10) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if pages > 1 %}
+    <div class="pager">
+      {% if page > 1 %}
+        <a href="/admin/works?{{ carried }}&page={{ page - 1 }}">上一页</a>
+        <a href="/admin/works?{{ carried }}&page=1">第一页</a>
+      {% endif %}
+      <span class="is-current">{{ page }} / {{ pages }}</span>
+      {% if page < pages %}
+        <a href="/admin/works?{{ carried }}&page={{ page + 1 }}">下一页</a>
+        <a href="/admin/works?{{ carried }}&page={{ pages }}">最后一页</a>
+      {% endif %}
+    </div>
+  {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

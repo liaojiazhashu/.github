@@ -1,0 +1,446 @@
+{
+ "geom": {
+  "390": {
+   "num": {
+    "top": 291.59,
+    "bottom": 319.59,
+    "left": 138.67,
+    "right": 204.56,
+    "h": 28,
+    "w": 65.89
+   },
+   "btn": {
+    "top": 291.59,
+    "bottom": 319.59,
+    "left": 214.56,
+    "right": 282.56,
+    "h": 28,
+    "w": 68
+   },
+   "hint": {
+    "top": 327.59,
+    "bottom": 347.14,
+    "left": 53.5,
+    "right": 341.5,
+    "h": 19.55,
+    "w": 288
+   },
+   "qr": {
+    "top": 365.14,
+    "bottom": 525.14,
+    "left": 117.5,
+    "right": 277.5,
+    "h": 160,
+    "w": 160
+   },
+   "p": {
+    "top": 291.59,
+    "bottom": 319.59,
+    "left": 53.5,
+    "right": 341.5,
+    "h": 28,
+    "w": 288
+   },
+   "card": {
+    "top": 98.72,
+    "bottom": 813.27,
+    "left": 23.5,
+    "right": 371.5,
+    "h": 714.55,
+    "w": 348
+   },
+   "order": {
+    "numTop": 291.59,
+    "hintTop": 327.59,
+    "qrTop": 365.14
+   },
+   "btnStyle": {
+    "borderW": "1px",
+    "borderStyle": "solid",
+    "borderColor": "rgb(51, 65, 84)",
+    "color": "rgb(79, 193, 224)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "3px",
+    "fontSize": "11.5px",
+    "minH": "28px",
+    "padding": "0px 10px",
+    "marginLeft": "10px",
+    "cursor": "pointer",
+    "display": "inline-flex",
+    "valign": "middle",
+    "lineHeight": "11.5px"
+   },
+   "hintLines": {
+    "count": 1,
+    "widths": [
+     218.5
+    ],
+    "textLen": 19,
+    "scrollW": 288,
+    "clientW": 288
+   },
+   "hintStyle": {
+    "fontSize": "11.5px",
+    "color": "rgb(166, 178, 195)",
+    "margin": "8px 0px 10px",
+    "lineHeight": "19.55px",
+    "textAlign": "center"
+   },
+   "pStyle": {
+    "textAlign": "center",
+    "height": "28px",
+    "lineHeight": "20.125px",
+    "fontSize": "11.5px"
+   },
+   "cardBg": "rgba(0, 0, 0, 0)",
+   "dialogBg": "rgb(26, 32, 45)",
+   "btnFont": "11.5px",
+   "wrapped": false,
+   "docOverflow": 5,
+   "bodyOverflow": 5,
+   "vw": 395,
+   "dpr": 1,
+   "overflowBeforeModal": 5,
+   "hideDelta": {
+    "withBtn": 5,
+    "withoutBtn": 5
+   },
+   "pOneLine": false,
+   "day": {
+    "color": "rgb(10, 101, 128)",
+    "bg": "rgb(255, 255, 255)",
+    "border": "rgb(169, 192, 210)"
+   }
+  }
+ },
+ "copy": {
+  "env": {
+   "hasClipboard": true,
+   "isSecureContext": true,
+   "hasExecCommand": true,
+   "label": "复制群号"
+  },
+  "pathA": {
+   "text": "已复制",
+   "isDone": true,
+   "dataLabel": "复制群号",
+   "ariaLabel": "已复制，群号 280660235",
+   "borderColor": "rgb(79, 193, 224)",
+   "opacity": "0.72",
+   "clipboardText": "280660235",
+   "after2s": {
+    "text": "复制群号",
+    "isDone": false,
+    "opacity": "1",
+    "ariaLabel": "复制群号 280660235"
+   }
+  },
+  "pathB_inject": {
+   "hasClipboard": false
+  },
+  "pathB": {
+   "text": "已复制",
+   "isDone": true,
+   "textareaCountNow": 0,
+   "textareaBefore": 0,
+   "clipboardProof": {
+    "restored": true,
+    "clipText": "280660235",
+    "match": true
+   },
+   "after2s": "复制群号"
+  },
+  "pathC": {
+   "hasClipboard": false,
+   "execStubbed": true,
+   "afterClick": {
+    "text": "复制失败，请手动选择",
+    "isDone": false
+   },
+   "at2_2s": "复制失败，请手动选择",
+   "at3_4s": "复制群号"
+  }
+ },
+ "order": {
+  "children": [
+   {
+    "cls": "invite-modal__close",
+    "top": 110.72
+   },
+   {
+    "cls": "invite-modal__eyebrow",
+    "top": 128.72
+   },
+   {
+    "cls": "invite-modal__title",
+    "top": 157.97
+   },
+   {
+    "cls": "invite-modal__desc",
+    "top": 203.22
+   },
+   {
+    "cls": "invite-modal__group",
+    "top": 291.59
+   },
+   {
+    "cls": "invite-modal__hint",
+    "top": 327.59
+   },
+   {
+    "cls": "invite-modal__qr",
+    "top": 365.14
+   },
+   {
+    "cls": "invite-modal__actions invite-modal__actions--stack",
+    "top": 543.14
+   },
+   {
+    "cls": "invite-modal__foot",
+    "top": 769.14
+   }
+  ],
+  "iGroup": 4,
+  "iHint": 5,
+  "iQr": 6,
+  "ordered": true
+ },
+ "csp": {},
+ "misc": {
+  "clipPerm": true,
+  "tokens": {
+   "line": "(未定义)",
+   "line2": "#334154",
+   "nebula": "#4FC1E0",
+   "fsXs": "11.5px",
+   "r2": "3px",
+   "computedBorder": "1px solid rgb(51, 65, 84)"
+  }
+ },
+ "fold": [
+  {
+   "before216": {
+    "scrollH": 845,
+    "clientH": 637,
+    "needScroll": 208,
+    "cardH": 845.44,
+    "dialogH": 639,
+    "qrW": 208,
+    "qrH": 216,
+    "qrRatio": 0.963,
+    "hintH": 39.09,
+    "footBottom": 839.44,
+    "dialogBottom": 656,
+    "footVisibleWithoutScroll": false
+   },
+   "after160": {
+    "scrollH": 789,
+    "clientH": 637,
+    "needScroll": 152,
+    "cardH": 789.44,
+    "dialogH": 639,
+    "qrW": 160,
+    "qrH": 160,
+    "qrRatio": 1,
+    "hintH": 39.09,
+    "footBottom": 783.44,
+    "dialogBottom": 656,
+    "footVisibleWithoutScroll": false
+   },
+   "width": 320,
+   "height": 568
+  },
+  {
+   "before216": {
+    "scrollH": 793,
+    "clientH": 666,
+    "needScroll": 127,
+    "cardH": 792.64,
+    "dialogH": 668,
+    "qrW": 216,
+    "qrH": 216,
+    "qrRatio": 1,
+    "hintH": 19.55,
+    "footBottom": 787.14,
+    "dialogBottom": 685.5,
+    "footVisibleWithoutScroll": false
+   },
+   "after160": {
+    "scrollH": 737,
+    "clientH": 666,
+    "needScroll": 71,
+    "cardH": 736.64,
+    "dialogH": 668,
+    "qrW": 160,
+    "qrH": 160,
+    "qrRatio": 1,
+    "hintH": 19.55,
+    "footBottom": 731.14,
+    "dialogBottom": 685.5,
+    "footVisibleWithoutScroll": false
+   },
+   "width": 360,
+   "height": 640
+  },
+  {
+   "before216": {
+    "scrollH": 771,
+    "clientH": 764,
+    "needScroll": 7,
+    "cardH": 770.55,
+    "dialogH": 766,
+    "qrW": 216,
+    "qrH": 216,
+    "qrRatio": 1,
+    "hintH": 19.55,
+    "footBottom": 765.05,
+    "dialogBottom": 783.5,
+    "footVisibleWithoutScroll": true
+   },
+   "after160": {
+    "scrollH": 715,
+    "clientH": 715,
+    "needScroll": 0,
+    "cardH": 714.55,
+    "dialogH": 716.55,
+    "qrW": 160,
+    "qrH": 160,
+    "qrRatio": 1,
+    "hintH": 19.55,
+    "footBottom": 733.77,
+    "dialogBottom": 758.77,
+    "footVisibleWithoutScroll": true
+   },
+   "width": 390,
+   "height": 790
+  },
+  {
+   "before216": {
+    "scrollH": 771,
+    "clientH": 753,
+    "needScroll": 18,
+    "cardH": 770.55,
+    "dialogH": 755,
+    "qrW": 216,
+    "qrH": 216,
+    "qrRatio": 1,
+    "hintH": 19.55,
+    "footBottom": 765.05,
+    "dialogBottom": 772.5,
+    "footVisibleWithoutScroll": true
+   },
+   "after160": {
+    "scrollH": 715,
+    "clientH": 715,
+    "needScroll": 0,
+    "cardH": 714.55,
+    "dialogH": 716.55,
+    "qrW": 160,
+    "qrH": 160,
+    "qrRatio": 1,
+    "hintH": 19.55,
+    "footBottom": 728.27,
+    "dialogBottom": 753.27,
+    "footVisibleWithoutScroll": true
+   },
+   "width": 414,
+   "height": 790
+  },
+  {
+   "before216": {
+    "scrollH": 726,
+    "clientH": 726,
+    "needScroll": 0,
+    "cardH": 726.17,
+    "dialogH": 728.17,
+    "qrW": 216,
+    "qrH": 216,
+    "qrRatio": 1,
+    "hintH": 20.39,
+    "footBottom": 734.08,
+    "dialogBottom": 759.08,
+    "footVisibleWithoutScroll": true
+   },
+   "after160": {
+    "scrollH": 670,
+    "clientH": 670,
+    "needScroll": 0,
+    "cardH": 670.17,
+    "dialogH": 672.17,
+    "qrW": 160,
+    "qrH": 160,
+    "qrRatio": 1,
+    "hintH": 20.39,
+    "footBottom": 706.08,
+    "dialogBottom": 731.08,
+    "footVisibleWithoutScroll": true
+   },
+   "width": 480,
+   "height": 790
+  },
+  {
+   "before216": {
+    "scrollH": 726,
+    "clientH": 726,
+    "needScroll": 0,
+    "cardH": 726.17,
+    "dialogH": 728.17,
+    "qrW": 216,
+    "qrH": 216,
+    "qrRatio": 1,
+    "hintH": 20.39,
+    "footBottom": 734.08,
+    "dialogBottom": 759.08,
+    "footVisibleWithoutScroll": true
+   },
+   "after160": {
+    "scrollH": 726,
+    "clientH": 726,
+    "needScroll": 0,
+    "cardH": 726.17,
+    "dialogH": 728.17,
+    "qrW": 216,
+    "qrH": 216,
+    "qrRatio": 1,
+    "hintH": 20.39,
+    "footBottom": 734.08,
+    "dialogBottom": 759.08,
+    "footVisibleWithoutScroll": true
+   },
+   "width": 481,
+   "height": 790
+  },
+  {
+   "before216": {
+    "scrollH": 734,
+    "clientH": 734,
+    "needScroll": 0,
+    "cardH": 734.44,
+    "dialogH": 736.44,
+    "qrW": 216,
+    "qrH": 216,
+    "qrRatio": 1,
+    "hintH": 20.39,
+    "footBottom": 738.22,
+    "dialogBottom": 763.22,
+    "footVisibleWithoutScroll": true
+   },
+   "after160": {
+    "scrollH": 734,
+    "clientH": 734,
+    "needScroll": 0,
+    "cardH": 734.44,
+    "dialogH": 736.44,
+    "qrW": 216,
+    "qrH": 216,
+    "qrRatio": 1,
+    "hintH": 20.39,
+    "footBottom": 738.22,
+    "dialogBottom": 763.22,
+    "footVisibleWithoutScroll": true
+   },
+   "width": 1440,
+   "height": 790
+  }
+ ]
+}
