@@ -74,5 +74,23 @@ coverage/
 .DS_Store
 Thumbs.db
 
+# ---- 运行时生成物 ----
+# public/sitemap.xml 由 PublicSurface / `console.php sitemap` 在运行时重写，
+# 内容随数据变化（闸门收起作品后 URL 数就会变）。它曾入过库，库里那份是
+# 开发机产物：URL 全是 http://127.0.0.1:8090/…，还是闸门前的 1290 条。
+# 一旦被推上线，搜索引擎就会去抓本机地址。线上以服务器磁盘那份为准；
+# 文件缺失时 nginx 的 try_files 会落到动态 SitemapController，行为不变。
+server/public/sitemap.xml
+
+# ---- 授权线（2026-11-08 撤出库，待定） ----
+# 条款 v1.0 正本、迁移 013 与同步脚本留在磁盘但不入版本库。
+# 注意：这意味着条款正本目前没有版本历史，`license-sync.php --check`
+# 只能靠 sha256 发现两份副本不一致，无法回溯改过什么。
+# 若日后决定入库，删掉下面四行再 git add。
+server/bin/license-sync.php
+server/database/migrations/013_content_license.sql
+server/database/migrations/013_content_license_rollback.sql
+server/resources/legal/submission-license-v1.md
+
 # ---- 孤立临时文件 ----
 w1440
