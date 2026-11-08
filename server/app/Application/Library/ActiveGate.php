@@ -123,6 +123,31 @@ final class ActiveGate
     }
 
     /**
+     * 一次落库要写的三条理由。纯函数，单测只测这一段。
+     *
+     * 不变式有三条，缺一条就会在别处塌：`restoreAll()` 靠 `LIKE 'active-gate:%'`
+     * 一次捞全，靠 `groupByRule()` 分出三类。
+     *
+     *   1. 三条都以 REASON_PREFIX 开头 —— 否则整体回滚捞不到它，只能上后台一条条点；
+     *   2. 两条带分类的必须能被 groupByRule() 认回原来的桶 —— 否则回滚页的分项数字
+     *      会把它算成「作者不活跃」，而它其实是匿名或撤稿收的；
+     *   3. 分类后缀用 `-` 收尾而不是 `:`，`active-gate:` 后面直接跟月份的老数据
+     *      （2026-11-08 之前写的）仍然只匹配前缀，落进 activity 兜底，不会报错。
+     *
+     * @return array{hide:string, anon:string, closed:string}
+     */
+    public static function reasonsFor(?string $month = null): array
+    {
+        $month ??= date('Y-m');
+
+        return [
+            'hide'   => self::REASON_PREFIX . $month,
+            'anon'   => self::ANON_REASON . $month,
+            'closed' => self::CLOSED_REASON . $month,
+        ];
+    }
+
+    /**
      * 本闸门收起过的全部拆解，按规矩分组。
      *
      * 分组只为打印（让运维看清「多少条是匿名收的、多少条是源站撤稿收的、
@@ -140,12 +165,30 @@ final class ActiveGate
         );
         $stmt->execute([':prefix' => self::REASON_PREFIX . '%']);
 
+        return self::groupByRule($stmt->fetchAll());
+    }
+
+    /**
+     * 按理由前缀把「本闸门藏的」分成三类。纯函数，单测只测这一段。
+     *
+     * 认不出来的一律归 `activity`：那是三条里唯一会在条件变化后被放回的一类，
+     * 归错它的代价最小。历史上 `active-gate:YYYY-MM`（没写分类后缀）也确实属于
+     * 这一类，所以这个兜底同时兼容旧数据。
+     *
+     * @param list<array<string,mixed>> $rows 至少含 id 与 hidden_reason
+     * @return array{anon:list<int>, closed:list<int>, activity:list<int>}
+     */
+    public static function groupByRule(array $rows): array
+    {
         $out = ['anon' => [], 'closed' => [], 'activity' => []];
-        foreach ($stmt->fetchAll() as $r) {
+        foreach ($rows as $r) {
+            if (!is_array($r)) {
+                continue;
+            }
             $reason = (string) ($r['hidden_reason'] ?? '');
             $kind   = str_starts_with($reason, self::ANON_REASON) ? 'anon'
                 : (str_starts_with($reason, self::CLOSED_REASON) ? 'closed' : 'activity');
-            $out[$kind][] = (int) $r['id'];
+            $out[$kind][] = (int) ($r['id'] ?? 0);
         }
 
         return $out;
@@ -306,10 +349,10 @@ final class ActiveGate
      */
     public function apply(array $plan, ?int $actorId = null): array
     {
-        $month        = date('Y-m');
-        $reason       = self::REASON_PREFIX . $month;
-        $anonReason   = self::ANON_REASON . $month;
-        $closedReason = self::CLOSED_REASON . $month;
+        $reasons      = self::reasonsFor();
+        $reason       = $reasons['hide'];
+        $anonReason   = $reasons['anon'];
+        $closedReason = $reasons['closed'];
 
         $blank   = ['requested' => 0, 'changed' => 0, 'pages' => 0];
         $anon    = $blank;
@@ -432,10 +475,23 @@ final class ActiveGate
             throw new RuntimeException('目录快照格式不对：' . $path);
         }
 
+        return self::buildCatalogIndex($data);
+    }
+
+    /**
+     * 把目录快照的原始结构折成三张表。纯函数，不碰文件系统 —— 单测只测这一段。
+     *
+     * 缺失/损坏一律由调用方抛异常，这里只处理「结构已经合法」的输入。
+     *
+     * @param array<string,mixed> $data catalog.json 解码后的数组
+     * @return array{uid:array<int,int>, anon:array<int,true>, available:array<int,true>, fetched_at:int}
+     */
+    public static function buildCatalogIndex(array $data): array
+    {
         $uid       = [];
         $anon      = [];
         $available = [];
-        foreach ($data['items'] as $i) {
+        foreach (($data['items'] ?? []) as $i) {
             if (!is_array($i)) {
                 continue;
             }

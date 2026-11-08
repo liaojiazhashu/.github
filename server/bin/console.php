@@ -1564,7 +1564,7 @@ switch ($command) {
      *   3. 长期没投稿也没评稿的作者 —— 其拆解不公开（作者级，按时间窗判）。
      *
      *   php -c php.ini bin/console.php library:active-gate                  # 只试算
-     *   php -c php.ini bin/console.php library:active-gate --months=3
+     *   php -c php.ini bin/console.php library:active-gate --months=3       # 试算别的口径
      *   php -c php.ini bin/console.php library:active-gate --apply
      *   php -c php.ini bin/console.php library:active-gate --refresh-activity
      *   php -c php.ini bin/console.php library:active-gate --restore-all --apply   # 整体撤销
@@ -1577,8 +1577,10 @@ switch ($command) {
      * 当前拆解可见），但作品行、检索索引、人工「隐藏作品」都不受影响。
      * 恢复只认本闸门写下的 `active-gate:` 理由，人工藏起来的永不自动放出。
      *
-     * 默认时间窗取 AuthorActivity::WINDOW_MONTHS，与后台分类页同一个数字；
-     * `--months` 只用于临时试算别的口径，别拿它长期跑。
+     * 默认时间窗取 AuthorActivity::WINDOW_MONTHS，与后台分类页、源站采集同一个数字。
+     * `--months` 只用于临时试算别的口径，**不能与 --apply 同用**（会被拒绝，退出码 2）：
+     * 落库的口径只能有一处定义，否则后台写着两个月、线上按三个月收，两边都不报错。
+     * --restore-all 不判口径，故不受这条限制。
      *
      * 定时任务排在每月 3 日 03:00（采集是 2 日 18:00）—— 采集会顺带把目录与
      * 活跃度快照刷到当天最新，隔几个小时跑正好拿新数据判源站状态。
@@ -1672,6 +1674,18 @@ switch ($command) {
                 $done['pages']
             ));
             break;
+        }
+
+        // --months 只给试算用。落库必须走「与后台分类页、源站采集同一处定义」的时间窗，
+        // 否则会出现后台写着两个月、线上按三个月收，而两边都不报错的情形。
+        if (isset($options['months']) && $months !== ActiveGate::DEFAULT_MONTHS && isset($options['apply'])) {
+            fwrite(STDERR, sprintf(
+                "--apply 不能和 --months 同用：落库只能按 %d 个月跑。\n"
+                . "  --months=%d 只用于试算；真要改口径，改 AuthorActivity::WINDOW_MONTHS。\n",
+                ActiveGate::DEFAULT_MONTHS,
+                $months
+            ));
+            exit(2);
         }
 
         try {

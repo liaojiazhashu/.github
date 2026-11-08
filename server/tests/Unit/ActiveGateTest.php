@@ -562,6 +562,121 @@ final class ActiveGateTest extends TestCase
         }
     }
 
+    // ---------------------------------------------------------------- 理由前缀
+
+    public function testThreeReasonsAllShareTheGatePrefixAndStayDistinct(): void
+    {
+        // 整体回滚只按 REASON_PREFIX 捞（`LIKE 'active-gate:%'`）。任何一条理由
+        // 没挂在这个前缀下，`--restore-all` 就漏掉它 —— 而它已经写进了 267 行的
+        // hidden_reason，只能上后台一条条点。
+        $r = ActiveGate::reasonsFor('2026-11');
+
+        self::assertSame(['hide', 'anon', 'closed'], array_keys($r), 'apply() 依赖这三个键名');
+
+        foreach ($r as $kind => $reason) {
+            self::assertStringStartsWith(ActiveGate::REASON_PREFIX, $reason, $kind . ' 没挂在统一前缀下');
+            self::assertStringContainsString('2026-11', $reason, $kind . ' 缺月份，两次操作会混成一条');
+        }
+
+        self::assertCount(3, array_unique($r), '三条理由必须互不相同，否则分项统计会串桶');
+    }
+
+    public function testEveryReasonRoundTripsBackToItsOwnBucket(): void
+    {
+        // 写下去的理由，必须能在读回来时认回原来的桶。这条断了不会报错：
+        // 回滚页的「匿名 N 条、源站撤稿 N 条、作者不活跃 N 条」会算错，
+        // 而人是看着这几个数字决定要不要全撤的 —— 错的数字比没有数字更糟。
+        $r = ActiveGate::reasonsFor('2026-11');
+
+        $byRule = ActiveGate::groupByRule([
+            ['id' => 11, 'hidden_reason' => $r['anon']],
+            ['id' => 22, 'hidden_reason' => $r['closed']],
+            ['id' => 33, 'hidden_reason' => $r['hide']],
+        ]);
+
+        self::assertSame([11], $byRule['anon']);
+        self::assertSame([22], $byRule['closed']);
+        self::assertSame([33], $byRule['activity'], '不带分类后缀的那条属于活跃度');
+    }
+
+    public function testUnknownReasonFallsBackToActivity(): void
+    {
+        // 兜底归 activity：三类里只有它会在条件变化后被放回，归错的代价最小。
+        // 2026-11-08 之前写的是 `active-gate:YYYY-MM`（没有分类后缀），走的正是
+        // 这条路 —— 所以这个兜底同时是旧数据兼容层，删掉它会让历史记录失去归类。
+        $byRule = ActiveGate::groupByRule([
+            ['id' => 1, 'hidden_reason' => 'active-gate:2026-10'],
+            ['id' => 2, 'hidden_reason' => 'active-gate:'],
+            ['id' => 3, 'hidden_reason' => null],
+        ]);
+
+        self::assertSame([1, 2, 3], $byRule['activity']);
+        self::assertSame([], $byRule['anon']);
+        self::assertSame([], $byRule['closed']);
+    }
+
+    // ---------------------------------------------------------------- 目录索引
+
+    public function testCatalogIndexDerivesUidAnonAndAvailability(): void
+    {
+        // 三张表来自同一次遍历，漏掉任何一张都会让闸门判错：
+        // uid 漏 → 全落「未判定」；anon 漏 → 匿名稿不再收起；
+        // available 漏 → 那篇被当成撤稿，作者再活跃也放不出来。
+        $idx = ActiveGate::buildCatalogIndex([
+            'meta'  => ['fetched_at' => 1_760_000_000],
+            'items' => [
+                ['cid' => 1, 'authorUid' => 10, 'authorName' => '阿活',
+                 'type' => 'post', 'isDelete' => 0, 'isopen' => 1, 'status' => 'publish'],
+                ['cid' => 2, 'authorUid' => 20, 'authorName' => AuthorActivity::ANON_PLACEHOLDER,
+                 'type' => 'post', 'isDelete' => 0, 'isopen' => 1, 'status' => 'publish'],
+            ],
+        ]);
+
+        self::assertSame([1 => 10, 2 => 20], $idx['uid']);
+        self::assertSame([2 => true], $idx['anon']);
+        self::assertSame([1 => true, 2 => true], $idx['available']);
+        self::assertSame(1_760_000_000, $idx['fetched_at']);
+    }
+
+    public function testCatalogIndexTreatsClosedDeletedAndDraftAsUnavailable(): void
+    {
+        // 四种「读者打不开」的情形都要落进 available 的差集，少认一种，
+        // 那篇拆解就会留在公开区 —— 它是撤稿收不起来的唯一来源。
+        $base = ['authorUid' => 10, 'authorName' => '阿活',
+                 'type' => 'post', 'isDelete' => 0, 'isopen' => 1, 'status' => 'publish'];
+
+        $idx = ActiveGate::buildCatalogIndex(['items' => [
+            ['cid' => 1] + $base,                      // 正常
+            ['cid' => 2, 'isopen' => 0] + $base,       // 作者改成未公开
+            ['cid' => 3, 'isDelete' => 1] + $base,     // 站方删除
+            ['cid' => 4, 'status' => 'draft'] + $base, // 退回草稿
+            ['cid' => 5, 'type' => 'comment'] + $base, // 不是投稿
+        ]]);
+
+        self::assertSame([1 => true], $idx['available']);
+        self::assertCount(5, $idx['uid'], '不可用的也必须留在 uid 表里，差集才算得出来');
+    }
+
+    public function testCatalogIndexFallsBackToBuiltAtAndSkipsEntriesWithoutCid(): void
+    {
+        // meta 里两种时间戳都出现过（同步写的 fetched_at、早期构建写的 built_at）。
+        // cid 缺失或为 0 的条目直接跳过：它们进 uid 表会变成 `0 => 0`，
+        // 让「cid 不在目录里」这条保护失效。
+        $idx = ActiveGate::buildCatalogIndex([
+            'meta'  => ['built_at' => 1_750_000_000],
+            'items' => [
+                ['authorUid' => 10, 'authorName' => '阿活'],   // 没有 cid
+                ['cid' => 0, 'authorUid' => 11],               // cid 为 0
+                'not-an-array',
+                ['cid' => 3, 'authorUid' => 13, 'authorName' => '阿三',
+                 'type' => 'post', 'isDelete' => 0, 'isopen' => 1, 'status' => 'publish'],
+            ],
+        ]);
+
+        self::assertSame([3 => 13], $idx['uid']);
+        self::assertSame(1_750_000_000, $idx['fetched_at'], 'meta 没有 fetched_at 时退回 built_at');
+    }
+
     // ---------------------------------------------------------------- 装配
 
     /**
