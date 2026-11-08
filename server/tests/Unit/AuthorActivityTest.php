@@ -88,8 +88,8 @@ final class AuthorActivityTest extends TestCase
 
     public function testExactlyOnTheBoundaryCountsAsInRange(): void
     {
-        // 边界取「含」：正好一年前那一天投的稿，仍算近一年内。
-        // 取「不含」会让阈值附近的人莫名变僵尸，且每年漂移一天。
+        // 边界取「含」：正好压在阈值那一刻投的稿，仍算窗内。
+        // 取「不含」会让阈值附近的人莫名变僵尸，且每次执行漂移一天。
         $state = $this->activity->judge($this->author([
             'latest_post_at' => self::SINCE,
         ]), self::SINCE);
@@ -256,7 +256,7 @@ final class AuthorActivityTest extends TestCase
 
         $row = str_getcsv($lines[1], ',', '"', '\\');
         self::assertSame('含,逗号的标题', $row[3]);
-        self::assertSame('活跃（近一年有投稿或评稿）', $row[11]);
+        self::assertSame('活跃（近' . AuthorActivity::WINDOW_LABEL . '有投稿或评稿）', $row[11]);
     }
 
     public function testAuthorsCsvSkipsAnonWorks(): void

@@ -903,16 +903,19 @@ switch ($command) {
         break;
 
     /**
-     * 按「近一年在站内有没有产出」给作者和作品分类。
+     * 按「时间窗内站内有没有产出」给作者和作品分类。
      *
-     *   php -c php.ini bin/console.php source:activity            # 默认近一年
+     *   php -c php.ini bin/console.php source:activity            # 默认两个月
      *   php -c php.ini bin/console.php source:activity --refresh  # 忽略缓存重查
      *   php -c php.ini bin/console.php source:activity --since=2025-11-01
      *   php -c php.ini bin/console.php source:activity --limit=5  # 只查前 5 人（冒烟）
      *
-     * 判据：近一年**投过稿**（站内任意栏目，不限于练笔）或**评过稿**→ 活跃；
+     * 判据：时间窗内**投过稿**（站内任意栏目，不限于练笔）或**评过稿**→ 活跃；
      * 两样都没有 → 僵尸。评论单独记一份，只用来识别「只评论不评稿」的人，
      * 不参与主分类（口径见 AuthorActivity 类注释）。
+     *
+     * 窗口长度取 AuthorActivity::WINDOW_MONTHS，与后台分类页、公开区闸门同一个
+     * 数字 —— 这里的结论会直接决定公开区保留哪些作品，两边不能各算各的。
      *
      * 一个人一次请求，两百多人要跑几分钟，所以做成命令；中途失败记 unknown
      * 而不是当成「没评过稿」—— 那会把活跃作者静默地判成僵尸。
@@ -936,7 +939,7 @@ switch ($command) {
         $since = (string) ($options['since'] ?? '');
         $sinceTs = $since !== ''
             ? (strtotime($since . ' 00:00:00') ?: 0)
-            : (strtotime('-1 year') ?: 0);
+            : AuthorActivity::since();
         if ($sinceTs <= 0) {
             fwrite(STDERR, "--since 看不懂：$since（要 YYYY-MM-DD）\n");
             exit(1);
@@ -963,7 +966,7 @@ switch ($command) {
             count($cache['items']),
             count($works),
             date('Y-m-d H:i', $sinceTs),
-            $since !== '' ? '手工指定' : '今天往前一年'
+            $since !== '' ? '手工指定' : '今天往前' . AuthorActivity::WINDOW_LABEL
         ));
 
         // 冒烟：只查前 N 人，避免第一次就把五分钟花在一个可能的 bug 上。
@@ -1309,8 +1312,12 @@ switch ($command) {
         break;
 
     /**
-     * 每月 2 日 18:00 的采集：第二十五期起、非匿名公开发表、作者近一年活跃的作品
+     * 每月 2 日 18:00 的采集：第二十五期起、非匿名公开发表、作者近期活跃的作品
      * → 采进银河图书馆 → 送进拆解流水线。
+     *
+     * 「近期」＝ AuthorActivity::WINDOW_MONTHS（当前两个月），与后台分类页、
+     * 公开区闸门同一个数字。收紧窗口意味着这条线采得更少 —— 但采进来的每一篇
+     * 都是公开区会保留的，不会出现「刚拆完就被闸门收起来」的白花钱。
      *
      *   php -c php.ini bin/console.php source:active-collect                 # 只看会派什么
      *   php -c php.ini bin/console.php source:active-collect --apply         # 真派（默认上架）
@@ -1363,7 +1370,7 @@ switch ($command) {
         $collect = new ActiveCollect($catalog, $activity, $oneClick);
         $limit   = (int) ($options['limit'] ?? OneClick::MAX_TARGETS);
 
-        fwrite(STDOUT, "刷新活跃度快照（近一年）…\n");
+        fwrite(STDOUT, sprintf("刷新活跃度快照（近%s）…\n", AuthorActivity::WINDOW_LABEL));
         $plan = $collect->plan($fromIssue, $limit, isset($options['refresh-activity']));
 
         fwrite(STDOUT, sprintf(
@@ -1547,7 +1554,10 @@ switch ($command) {
         break;
 
     /**
-     * 作者活跃度闸门：把长期没投稿也没评稿的作者，其当前拆解从公开区收起来。
+     * 公开区闸门：按两条规则把不该公开的拆解收起来。
+     *
+     *   1. 匿名作品 —— 一律不公开（作品级，不看作者活跃度）；
+     *   2. 长期没投稿也没评稿的作者 —— 其拆解不公开（作者级，按时间窗判）。
      *
      *   php -c php.ini bin/console.php library:active-gate                  # 只试算
      *   php -c php.ini bin/console.php library:active-gate --months=3
@@ -1558,6 +1568,9 @@ switch ($command) {
      * 只动 hq_analysis.visibility：隐藏后作品在公开区整体消失（LIVE_WORK 要求
      * 当前拆解可见），但作品行、检索索引、人工「隐藏作品」都不受影响。
      * 恢复只认本闸门写下的 `active-gate:` 理由，人工藏起来的永不自动放出。
+     *
+     * 默认时间窗取 AuthorActivity::WINDOW_MONTHS，与后台分类页同一个数字；
+     * `--months` 只用于临时试算别的口径，别拿它长期跑。
      *
      * 不带 --apply 时一个字节都不写 —— 包括不碰页面缓存与 sitemap。
      */
@@ -1576,8 +1589,9 @@ switch ($command) {
             exit(1);
         }
 
-        // 快照超过一天才重建。这里的 since 仍是「近一年」：快照里的 state 是
-        // 后台一键拆解在用的标签，不能因为本命令看两个月就把它改成两个月的口径。
+        // 快照超过一天才重建。里面存的是**原始时间戳**而不是结论，结论在读取时
+        // 现算，所以后台（两个月）与本命令 `--months` 试算别的口径可以共用同一份
+        // 快照，各算各的。重建时统一按 AuthorActivity::since() 建，保持标签同源。
         if (isset($options['refresh-activity']) && $activity->builtAt() < time() - 86_400) {
             $cache = $catalog->load();
             if ($cache === null) {
@@ -1588,7 +1602,7 @@ switch ($command) {
             fwrite(STDOUT, sprintf("活跃度快照过期，重建中（%d 篇，一人一次请求）…\n", count($cache['items'])));
             $payload = $activity->build(
                 $cache['items'],
-                strtotime('-1 year') ?: 0,
+                AuthorActivity::since(),
                 true,
                 true,
                 static function (int $done, int $total, string $name): void {
@@ -1616,18 +1630,25 @@ switch ($command) {
         // 整体回滚：口径判断错了，或先撤下来再讨论时用。
         // 与其他命令一致，不带 --apply 只数不写。
         if (isset($options['restore-all'])) {
-            $ids = $gate->gatedAnalysisIds();
+            $byRule = $gate->gatedIdsByRule();
+            $ids    = $gate->gatedAnalysisIds();
 
             if ($ids === []) {
                 fwrite(STDOUT, "没有由本闸门隐藏的拆解，无需回滚。\n");
                 break;
             }
 
+            // 两类一起撤：判断口径整个错了的时候，要的是「一条命令全撤」，
+            // 不该逼人先分清哪条是匿名收的、哪条是活跃度收的。
+            fwrite(STDOUT, sprintf(
+                "待回滚 %d 条：匿名规则 %d 条、不活跃 %d 条。\n",
+                count($ids),
+                count($byRule['anon']),
+                count($byRule['activity'])
+            ));
+
             if (!isset($options['apply'])) {
-                fwrite(STDOUT, sprintf(
-                    "将回滚 %d 条拆解（理由 active-gate:*）。预览，加 --apply 才生效。\n",
-                    count($ids)
-                ));
+                fwrite(STDOUT, "预览，加 --apply 才生效。\n");
                 break;
             }
 
@@ -1650,21 +1671,37 @@ switch ($command) {
         }
 
         $b = $plan['buckets'];
-        fwrite(STDOUT, "作者活跃度闸门（只改拆解可见性，不动作品与检索）\n");
+        fwrite(STDOUT, "公开区闸门（只改拆解可见性，不动作品与检索）\n");
         fwrite(STDOUT, sprintf(
             "  时间窗：近 %d 个月，%s 之后投过稿或评过稿算活跃\n",
             $plan['months'],
             $plan['since_label']
         ));
         fwrite(STDOUT, sprintf(
-            "  快照：%s · %d 位作者，其中活跃 %d 位\n\n",
+            "  快照：%s · %d 位作者，其中活跃 %d 位\n",
             $plan['snapshot_label'],
             $plan['snapshot_authors'],
             $plan['active_authors']
         ));
+        fwrite(STDOUT, sprintf(
+            "  目录：%d 条作品标为匿名（一律不公开）\n\n",
+            $plan['anon_in_catalog']
+        ));
 
-        // 四个标签都是四字，等宽下自然对齐，不必按字节补空格
-        foreach (['keep' => '保留可见', 'hide' => '应当隐藏', 'unknown' => '无法判定', 'manual' => '人工隐藏'] as $key => $label) {
+        // 五个标签都是四字，等宽下自然对齐，不必按字节补空格。
+        // 匿名那一桶不打印作者数：匿名作品本来就不该被归到任何一个 uid 名下，
+        // 打一个「1 位作者」出来，等于用命令行的输出把匿名揭开了。
+        foreach ([
+            'keep'    => '保留可见',
+            'anon'    => '匿名隐藏',
+            'hide'    => '应当隐藏',
+            'unknown' => '无法判定',
+            'manual'  => '人工隐藏',
+        ] as $key => $label) {
+            if ($key === 'anon') {
+                fwrite(STDOUT, sprintf("  %s  %5d 篇\n", $label, $b[$key]['works']));
+                continue;
+            }
             fwrite(STDOUT, sprintf(
                 "  %s  %5d 篇 · %4d 位作者\n",
                 $label,
@@ -1697,7 +1734,9 @@ switch ($command) {
         }
 
         fwrite(STDOUT, sprintf(
-            "\n将隐藏拆解 %d 篇；将恢复可见 %d 篇（此前被本闸门隐藏）。\n",
+            "\n将隐藏拆解 %d 篇（匿名 %d 篇 + 不活跃 %d 篇）；将恢复可见 %d 篇（此前被本闸门隐藏）。\n",
+            count($plan['toHideAnon']) + count($plan['toHide']),
+            count($plan['toHideAnon']),
             count($plan['toHide']),
             count($plan['toRestore'])
         ));
@@ -1707,21 +1746,24 @@ switch ($command) {
             break;
         }
 
-        if ($plan['toHide'] === [] && $plan['toRestore'] === []) {
+        if ($plan['toHideAnon'] === [] && $plan['toHide'] === [] && $plan['toRestore'] === []) {
             fwrite(STDOUT, "没有需要改动的拆解。\n");
             break;
         }
 
         $result = $gate->apply($plan, (int) ($options['actor'] ?? 1));
         fwrite(STDOUT, sprintf(
-            "已执行（理由 %s）：隐藏 %d 篇、改动 %d；恢复 %d 篇、改动 %d；失效页面 %d 个。\n",
-            $result['reason'],
+            "已执行：匿名隐藏 %d 篇（改动 %d）；不活跃隐藏 %d 篇（改动 %d）；"
+            . "恢复 %d 篇（改动 %d）；失效页面 %d 个。\n",
+            $result['anon']['requested'],
+            $result['anon']['changed'],
             $result['hide']['requested'],
             $result['hide']['changed'],
             $result['restore']['requested'],
             $result['restore']['changed'],
             $result['pages']
         ));
+        fwrite(STDOUT, sprintf("  理由：%s / %s\n", $result['anon_reason'], $result['reason']));
         break;
 
     /** 重建检索关键词表（词表归并、批量发布之后跑一次） */
@@ -2196,6 +2238,9 @@ switch ($command) {
 
     default:
         // 帮助里必须列全，否则运维会以为某个命令不存在。
+        // 时间窗的数字与说法从这里取，避免改了 WINDOW_MONTHS 之后帮助还写着旧值。
+        $wm = AuthorActivity::WINDOW_MONTHS;
+        $wl = AuthorActivity::WINDOW_LABEL;
         fwrite(STDOUT, <<<TXT
 银河图书馆控制台
 
@@ -2228,8 +2273,10 @@ switch ($command) {
   library:unpublish --work=CODE | --all [--apply] [--actor=ID]
 
 可见性
-  library:active-gate [--months=2] [--refresh-activity] [--apply] [--actor=ID]
-                                            按作者活跃度收起不活跃作者的拆解；
+  library:active-gate [--months={$wm}] [--refresh-activity] [--apply] [--actor=ID]
+                                            收起不该公开的拆解：匿名作品一律收，
+                                            作者不活跃的也收（默认近{$wl}）；
+                                            --restore-all 整体撤销本闸门收过的；
                                             只改拆解可见性，人工隐藏的不会被恢复；
                                             不带 --apply 只试算，一个字节都不写
 
@@ -2256,7 +2303,7 @@ switch ($command) {
                                             不带 --out 则落 storage/artifacts/
   source:issue-sync [--apply]               用官网 26 个活动校正期次表
   source:activity [--since=DATE] [--refresh] [--limit=N] [--no-comments]
-                                            按近一年有无投稿/评稿分「活跃」「僵尸」，
+                                            按近{$wl}有无投稿/评稿分「活跃」「僵尸」，
                                             一人一次请求（约三分钟）
   source:activity-override [--list] | --set=作者=active|zombie | --remove=作者
                                             人工指定作者分类；重跑分类不会被冲掉

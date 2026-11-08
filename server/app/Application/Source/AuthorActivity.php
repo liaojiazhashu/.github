@@ -7,12 +7,16 @@ namespace App\Application\Source;
 use RuntimeException;
 
 /**
- * 按「近一年在站内有没有产出」给作者与作品分类。
+ * 按「时间窗内站内有没有产出」给作者与作品分类。
  *
  * ## 两类怎么划，为什么这么划
  *
- * - **活跃**：近一年内投过稿，或者评过稿。
- * - **僵尸**：近一年内投稿与评稿**都没有**，只剩更早的东西。
+ * - **活跃**：时间窗内投过稿，或者评过稿。
+ * - **僵尸**：时间窗内投稿与评稿**都没有**，只剩更早的东西。
+ *
+ * 时间窗长度只有一处定义（`WINDOW_MONTHS`，当前两个月）。后台「作者分类」、
+ * 每月自动采集、公开区活跃度闸门都从这里取 —— 这三处一旦各写各的，
+ * 后台显示「920 位活跃作者」而公开区只剩 659 篇，数字对不上且不报错。
  *
  * 「投稿」看的是这位作者在站内的**全部**文章（不只练笔那几篇）—— 一个人可能
  * 三年没参加练笔，却一直在别的栏目写，那他不是僵尸。只看练笔会把人冤枉死。
@@ -28,7 +32,7 @@ use RuntimeException;
  * ## 缓存的是事实，不是结论
  *
  * 落盘的每条记录只存「最近一次评稿在什么时候」这类原始时间戳，不存
- * 「他是活跃还是僵尸」。因为分类阈值（一年）每天都在动，今天活跃的人
+ * 「他是活跃还是僵尸」。因为分类阈值（几个月）每天都在动，今天活跃的人
  * 可能明天就滑出去了；存结论会让缓存一过期就给出错误的分类。
  *
  * ## 查不到 ≠ 没有
@@ -39,10 +43,23 @@ use RuntimeException;
 
 final class AuthorActivity
 {
-    /** 近一年有投稿或评稿 */
+    /**
+     * 活跃判定的时间窗（月）。**全站唯一一处定义。**
+     *
+     * 后台「作者分类」、每月自动采集（ActiveCollect）、公开区活跃度闸门
+     * （ActiveGate）三处共用这个数字。不各写各的 `-1 year` / `-2 months`：
+     * 这三处一旦不一致，后台看到的活跃名单和公开区实际保留的作品就对不上，
+     * 而且不报错 —— 页面写 920 位活跃作者，公开区只剩 659 篇。
+     */
+    public const WINDOW_MONTHS = 2;
+
+    /** 时间窗的中文说法。文案里只引用它，避免「两个月」「2 个月」「二月」三种写法 */
+    public const WINDOW_LABEL = '两个月';
+
+    /** 时间窗内投过稿或评过稿 */
     public const ACTIVE = 'active';
 
-    /** 近一年什么都没有 */
+    /** 时间窗内什么都没有 */
     public const ZOMBIE = 'zombie';
 
     /** 只有评论、没有评稿（口径待定，单列不归两类） */
@@ -58,13 +75,31 @@ final class AuthorActivity
     public const UNKNOWN = 'unknown';
 
     public const LABELS = [
-        self::ACTIVE       => '活跃（近一年有投稿或评稿）',
-        self::ZOMBIE       => '僵尸（近一年无投稿无评稿）',
-        self::COMMENT_ONLY => '仅评论（近一年只发过短评）',
+        self::ACTIVE       => '活跃（近' . self::WINDOW_LABEL . '有投稿或评稿）',
+        self::ZOMBIE       => '僵尸（近' . self::WINDOW_LABEL . '无投稿无评稿）',
+        self::COMMENT_ONLY => '仅评论（近' . self::WINDOW_LABEL . '只发过短评）',
         self::ANON         => '匿名（不处理）',
         self::GONE         => '作者已注销（不处理）',
         self::UNKNOWN      => '未查到（需重跑）',
     ];
+
+    /**
+     * 当前时间窗的起点时间戳。
+     *
+     * 自然月回推，不做整点对齐 —— 对齐到月初会让「今天」执行的那一次实际上
+     * 少看几天。三处调用方必须同源：同一天里后台页面与公开区闸门要算出同一份名单。
+     *
+     * @param int|null $now 基准时刻，默认当前；只在测试里传固定值
+     */
+    public static function since(?int $now = null): int
+    {
+        $ts = strtotime('-' . self::WINDOW_MONTHS . ' months', $now ?? time());
+        if ($ts === false) {
+            throw new RuntimeException('时间窗算不出来：-' . self::WINDOW_MONTHS . ' months');
+        }
+
+        return $ts;
+    }
 
     /**
      * 匿名与已注销在 catalog 里的名字。这两个不是人名，是站方给的状态。
@@ -109,7 +144,7 @@ final class AuthorActivity
      * 建一份作者活跃度快照。
      *
      * @param list<array<string,mixed>> $items        全站目录（SourceCatalog::load()['items']）
-     * @param int                       $since        判定阈值的时间戳，早于它算「近一年之外」
+     * @param int                       $since        判定阈值的时间戳，早于它算时间窗外（一般取 since()）
      * @param bool                      $probeComments 对评稿不达标的人再查一次评论（多一轮请求）
      * @param bool                      $force        忽略缓存全部重查
      * @param callable(int,int,string):void|null $onUser 每人回调（已完成数、总数、名字）
@@ -282,10 +317,10 @@ final class AuthorActivity
     /**
      * 在 `$since` 之后投过稿或评过稿的 uid 集合。
      *
-     * 与 judge() 的区别只有时间窗：这里不判「活跃/僵尸」这类标签，只回答
-     * 「这个人最近动过没有」，所以**不看 `state`**。`state` 是近一年口径算出来的
-     * 标签，拿它来回答两个月的问题会得到相反的答案 —— 一个去年投稿、今年停笔的人
-     * 在快照里仍是「活跃」，但他已经两个月没动静了。
+     * 与 judge() 的区别不在时间窗，而在**不读现成的标签**：`state` 是给后台
+     * 分类页看的结论，已经被 `activity-override.json` 改过一轮，而且 `ok=false`
+     * 的人在里面只剩一个 `unknown`。公开区要的是「这个人最近到底动过没有」，
+     * 只能回到原始时间戳上算，并自己处理 `ok`。
      *
      * 匿名作者照常参与：`state=anon` 只表示「这个名字不能归属到人」，
      * 不影响那条记录里的原始时间戳。已注销同理。

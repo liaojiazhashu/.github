@@ -117,11 +117,15 @@ final class SourceController extends AdminController
     }
 
     /**
-     * 作者活跃度：近一年有没有投稿或评稿。
+     * 作者活跃度：时间窗内有没有投稿或评稿。
      *
      * 这一页回答的是「先拆谁的」——1197 篇不能平铺着拆，得先知道哪些作者还在站里、
-     * 哪些已经一年多没动静。和列表页的口径必须一致：都从「练笔可用」出发，
+     * 哪些已经很久没动静。和列表页的口径必须一致：都从「练笔可用」出发，
      * 差别只在于这里按作者聚合。
+     *
+     * 时间窗取 AuthorActivity::WINDOW_MONTHS，与公开区闸门、月采集同一个数字。
+     * 这三个地方对「活跃」的定义必须完全一样，否则这一页显示「活跃 920 位」，
+     * 公开区实际只保留 659 篇，而没有任何地方会报错。
      *
      * 数据来自离线快照（`source:activity` 跑出来的 activity.json），不在页面里
      * 现查 —— 一次要问两百多个人，页面等不起。
@@ -148,6 +152,7 @@ final class SourceController extends AdminController
                 'missing'    => true,
                 'state'      => $state,
                 'labels'     => AuthorActivity::LABELS,
+                'window_label' => AuthorActivity::WINDOW_LABEL,
                 'meta'       => $snap['meta'] ?? null,
                 'summary'    => [],
                 'authors'    => [],
@@ -211,6 +216,7 @@ final class SourceController extends AdminController
             'missing'    => false,
             'state'      => $state,
             'labels'     => AuthorActivity::LABELS,
+            'window_label' => AuthorActivity::WINDOW_LABEL,
             'meta'       => $snap['meta'],
             'summary'    => $sum,
             'authors'    => array_slice($filtered, ($page - 1) * self::PER_PAGE, self::PER_PAGE),

@@ -11,7 +11,10 @@ use PDO;
 use RuntimeException;
 
 /**
- * 作者活跃度闸门：把长期没投稿也没评稿的作者，其**当前拆解**从公开区收起来。
+ * 公开区闸门：按两条规则把不该公开的拆解收起来。
+ *
+ * 规则一 **匿名作品一律不公开**（作品级，无条件）；
+ * 规则二 **作者长期没投稿也没评稿的，其拆解不公开**（作者级，按时间窗判）。
  *
  * ## 为什么作用在 hq_analysis 上，而不是 hq_work
  *
@@ -24,11 +27,26 @@ use RuntimeException;
  * 反过来，如果直接改 hq_work.visibility，闸门的恢复动作就会把人工下线过的
  * 作品重新放出来。这是本类存在的第一个理由。
  *
+ * ## 匿名为什么必须单独一条规则，且排在活跃度之前
+ *
+ * 匿名是**作品级**的事实，不是作者级的：同一个人这一期显示「匿名用户」、
+ * 往期是真名。若只按作者活跃度判，这位作者只要近期投过稿，他那篇匿名作品
+ * 就会跟着放出来 —— 而站方把它匿掉，本来就是为了不让读者对上号。
+ *
+ * 所以判定顺序里匿名排在作者归属之前：不看 uid、不看活跃度，命中就收起来。
+ * 但收的**只有这一篇** —— 同一作者的实名作品照常按活跃度判，两者互不牵连。
+ *
+ * 未判定的五种情况（缺 cid、cid 不在目录、缺 uid、快照里没这人、`ok=false`）
+ * 对匿名不适用：匿名只依赖 cid 与目录里的名字，这两样齐了就能判。
+ *
  * ## 为什么恢复只认自己的理由前缀
  *
  * `hidden_reason` 以 `active-gate:` 开头 = 这条隐藏是本闸门写的。恢复时只碰
  * 这一类，人工在前台点「隐藏」（理由可能是空的、也可能写了别的话）永远不会被
  * 自动放出来。审计里能分清是谁藏的，业务表里也能。
+ *
+ * 两种规则共用同一个前缀、只在后面加 `anon-` 区分，是为了让「整体撤销」不必
+ * 让人记得哪条属于哪一类 —— 判断口径整个错了的时候，要的是一条命令全撤。
  *
  * ## 为什么未知一律不隐藏
  *
@@ -51,11 +69,23 @@ final class ActiveGate
     /** 闸门写进 hidden_reason 的前缀。恢复时靠它区分「我藏的」与「人藏的」 */
     public const REASON_PREFIX = 'active-gate:';
 
+    /**
+     * 匿名规则的完整前缀。
+     *
+     * 仍以 `active-gate:` 开头，所以 gatedIdsByRule() 与 classify() 的
+     * 「是不是本闸门藏的」判断照样认它，整体撤销也一并覆盖。
+     * `-` 而不是 `:` 收尾，是为了让 `LIKE 'active-gate:%'` 一次就能捞全两类。
+     */
+    public const ANON_REASON = self::REASON_PREFIX . 'anon-';
+
     /** 单批 id 数量。500 与 VisibilityService 内部一致：语句短、锁范围小 */
     public const BATCH = 500;
 
-    /** 默认时间窗。两个月：够盖住一期练笔的完整周期，又不至于把停笔一季的人算成活跃 */
-    public const DEFAULT_MONTHS = 2;
+    /**
+     * 默认时间窗。取自 AuthorActivity，与后台分类页、月采集同一个数字 ——
+     * 这里若另写一个 2，三处就会在某人改了一处之后悄悄分叉。
+     */
+    public const DEFAULT_MONTHS = AuthorActivity::WINDOW_MONTHS;
 
     public function __construct(
         private readonly PDO $pdo,
@@ -63,6 +93,34 @@ final class ActiveGate
         private readonly VisibilityService $visibility,
         private readonly Config $config,
     ) {
+    }
+
+    /**
+     * 本闸门收起过的全部拆解，按规则分组。
+     *
+     * 分组只为打印（让运维看清「多少条是匿名规则收的」）。回滚不看分组：
+     * 判断口径整个错了的时候，要的是「一条命令全撤」，不是让人逐条回忆归属。
+     *
+     * @return array{activity:list<int>, anon:list<int>}
+     */
+    public function gatedIdsByRule(): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT id, hidden_reason FROM hq_analysis
+              WHERE visibility = 'hidden' AND hidden_reason LIKE :prefix
+              ORDER BY id"
+        );
+        $stmt->execute([':prefix' => self::REASON_PREFIX . '%']);
+
+        $out = ['activity' => [], 'anon' => []];
+        foreach ($stmt->fetchAll() as $r) {
+            $kind = str_starts_with((string) ($r['hidden_reason'] ?? ''), self::ANON_REASON)
+                ? 'anon'
+                : 'activity';
+            $out[$kind][] = (int) $r['id'];
+        }
+
+        return $out;
     }
 
     /**
@@ -76,14 +134,11 @@ final class ActiveGate
      */
     public function gatedAnalysisIds(): array
     {
-        $stmt = $this->pdo->prepare(
-            "SELECT id FROM hq_analysis
-              WHERE visibility = 'hidden' AND hidden_reason LIKE :prefix
-              ORDER BY id"
-        );
-        $stmt->execute([':prefix' => self::REASON_PREFIX . '%']);
+        $byRule = $this->gatedIdsByRule();
+        $ids    = array_merge($byRule['activity'], $byRule['anon']);
+        sort($ids);
 
-        return array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+        return $ids;
     }
 
     /**
@@ -120,9 +175,11 @@ final class ActiveGate
      *   snapshot_label:string,
      *   snapshot_authors:int,
      *   active_authors:int,
+     *   anon_in_catalog:int,
      *   buckets:array<string,array{works:int, ids:list<int>, authors:array<int,array{name:string,works:int}>}>,
      *   unknown_reasons:array<string,int>,
      *   toHide:list<int>,
+     *   toHideAnon:list<int>,
      *   toRestore:list<int>
      * }
      */
@@ -134,6 +191,7 @@ final class ActiveGate
 
         // 自然月回推，不做整点对齐：对齐到月初会让「今天」执行的那次实际上
         // 少看几天 —— 与 ActiveCollect::refreshActivity 同一口径。
+        // 默认值取 AuthorActivity::WINDOW_MONTHS，所以后台分类页与这里算的是同一天。
         $since = strtotime('-' . $months . ' months');
         if ($since === false) {
             throw new RuntimeException('时间窗算不出来：-' . $months . ' months');
@@ -153,10 +211,10 @@ final class ActiveGate
             }
         }
 
-        $active   = $this->activity->activeUids($since);
-        $cidToUid = $this->catalogAuthors();
-        $rows     = $this->rows();
-        $classes  = self::classify($rows, $cidToUid, $authors, $active);
+        $active  = $this->activity->activeUids($since);
+        $index   = $this->catalogIndex();
+        $rows    = $this->rows();
+        $classes = self::classify($rows, $index['uid'], $authors, $active, $index['anon']);
 
         $builtAt = (int) ($snapshot['meta']['built_at'] ?? 0);
 
@@ -168,36 +226,57 @@ final class ActiveGate
             'snapshot_label'   => $builtAt > 0 ? date('Y-m-d H:i', $builtAt) : '未知',
             'snapshot_authors' => count($authors),
             'active_authors'   => count($active),
+            'anon_in_catalog'  => count($index['anon']),
             'buckets'          => $classes['buckets'],
             'unknown_reasons'  => $classes['unknown_reasons'],
             'toHide'           => $classes['toHide'],
+            'toHideAnon'       => $classes['toHideAnon'],
             'toRestore'        => $classes['toRestore'],
         ];
     }
 
     /**
-     * 落库。只做两件事：隐藏该藏的、恢复该恢复的。
+     * 落库。只做三件事：收匿名、收不活跃、放回该放的。
      *
      * 分批不只是为了 SQL 长度 —— 每批走一次 VisibilityService，就各有一条审计，
      * 一次操作动到上千条时，审计里按批留痕比塞一条巨大的汇总更好定位。
      *
+     * 匿名与不活跃分开写理由（`active-gate:anon-2026-11` / `active-gate:2026-11`），
+     * 这样审计与隐藏归档页能看出「这条是匿名规则收的」还是「这条是作者不活跃收的」。
+     * 两者前缀相同，整体回滚不分彼此。
+     *
      * 注意返回的 `pages` 是各批失效页面数之和，不同批可能命中同一个标签，
      * 所以它只是「体量参考」，不是去重后的页面数。
      *
-     * @param array{toHide:list<int>, toRestore:list<int>} $plan
+     * @param array{toHide:list<int>, toHideAnon?:list<int>, toRestore:list<int>} $plan
      * @return array{
+     *   anon:array{requested:int, changed:int, pages:int},
      *   hide:array{requested:int, changed:int, pages:int},
      *   restore:array{requested:int, changed:int, pages:int},
      *   changed:int,
      *   pages:int,
-     *   reason:string
+     *   reason:string,
+     *   anon_reason:string
      * }
      */
     public function apply(array $plan, ?int $actorId = null): array
     {
-        $reason  = self::REASON_PREFIX . date('Y-m');
-        $hide    = ['requested' => 0, 'changed' => 0, 'pages' => 0];
-        $restore = ['requested' => 0, 'changed' => 0, 'pages' => 0];
+        $month      = date('Y-m');
+        $reason     = self::REASON_PREFIX . $month;
+        $anonReason = self::ANON_REASON . $month;
+
+        $blank   = ['requested' => 0, 'changed' => 0, 'pages' => 0];
+        $anon    = $blank;
+        $hide    = $blank;
+        $restore = $blank;
+
+        // 匿名先写：它不依赖活跃度，且优先级更高，日志里排在前面读起来更顺
+        foreach (array_chunk($this->ids($plan['toHideAnon'] ?? []), self::BATCH) as $batch) {
+            $r = $this->visibility->hide(VisibilityService::ANALYSIS, $batch, $actorId, $anonReason);
+            $anon['requested'] += $r['requested'];
+            $anon['changed']   += $r['changed'];
+            $anon['pages']     += $r['pages'];
+        }
 
         foreach (array_chunk($this->ids($plan['toHide'] ?? []), self::BATCH) as $batch) {
             $r = $this->visibility->hide(VisibilityService::ANALYSIS, $batch, $actorId, $reason);
@@ -214,11 +293,13 @@ final class ActiveGate
         }
 
         return [
-            'hide'    => $hide,
-            'restore' => $restore,
-            'changed' => $hide['changed'] + $restore['changed'],
-            'pages'   => $hide['pages'] + $restore['pages'],
-            'reason'  => $reason,
+            'anon'        => $anon,
+            'hide'        => $hide,
+            'restore'     => $restore,
+            'changed'     => $anon['changed'] + $hide['changed'] + $restore['changed'],
+            'pages'       => $anon['pages'] + $hide['pages'] + $restore['pages'],
+            'reason'      => $reason,
+            'anon_reason' => $anonReason,
         ];
     }
 
@@ -249,17 +330,24 @@ final class ActiveGate
     }
 
     /**
-     * cid → authorUid。
+     * 目录快照里的两张表：cid → authorUid，以及「哪些 cid 是匿名作品」。
+     *
+     * 一次读盘出两张表。分成两个方法会让 987 KB 的 JSON 被解析两遍，
+     * 而这两张表本来就是同一次遍历的产物。
      *
      * 直接读 catalog.json 而不是装配 SourceCatalog：那个类要一个 SourceApi，
-     * 而这里只需要一张映射表，凭空造一个 API 对象是多出来的依赖面。
+     * 而这里只需要映射关系，凭空造一个 API 对象是多出来的依赖面。
+     *
+     * 匿名按**作品**判：目录里这一篇的 `authorName` 是站方给的占位名。
+     * 不用 `authorUid` 判 —— 同一个人这一期匿名、往期实名，按 uid 判会把
+     * 他的实名作品一起误收。
      *
      * 缺失/损坏一律抛异常：把它当成空表会让每一篇都归到「未判定」，
      * 结果是整轮什么都不做，看起来却像「跑过了、没人需要隐藏」。
      *
-     * @return array<int,int>
+     * @return array{uid:array<int,int>, anon:array<int,true>}
      */
-    private function catalogAuthors(): array
+    private function catalogIndex(): array
     {
         $dir = $this->config->string('source.cache_dir');
         if ($dir === '') {
@@ -281,31 +369,44 @@ final class ActiveGate
             throw new RuntimeException('目录快照格式不对：' . $path);
         }
 
-        $map = [];
+        $uid  = [];
+        $anon = [];
         foreach ($data['items'] as $i) {
             if (!is_array($i)) {
                 continue;
             }
             $cid = (int) ($i['cid'] ?? 0);
-            if ($cid > 0) {
-                $map[$cid] = (int) ($i['authorUid'] ?? 0);
+            if ($cid <= 0) {
+                continue;
+            }
+
+            $uid[$cid] = (int) ($i['authorUid'] ?? 0);
+
+            // trim 兜住「名字被写成空白」这种脏数据：纯粹的空名字同样无法归属到人
+            if (in_array(trim((string) ($i['authorName'] ?? '')), AuthorActivity::ANON_NAMES, true)) {
+                $anon[$cid] = true;
             }
         }
 
-        return $map;
+        return ['uid' => $uid, 'anon' => $anon];
     }
 
     /**
-     * 四分类 + 与现状求差。
+     * 五分类 + 与现状求差。
      *
-     * 四类互斥，判定顺序就是优先级：
+     * 五类互斥，判定顺序就是优先级：
      *   1. 人工隐藏 —— 已经被人藏了、且理由不是本闸门写的，一律不碰；
-     *   2. 未判定   —— 缺 cid / cid 不在目录 / 缺 uid / 快照里没有 / ok=false；
-     *   3. 保留     —— uid 在短窗活跃集合里；
-     *   4. 应当隐藏 —— 其余（快照里 ok=true，就是确实没动静）。
+     *   2. 匿名     —— 目录里这一篇的名字是「匿名用户」，无条件收起来；
+     *   3. 未判定   —— 缺 cid / cid 不在目录 / 缺 uid / 快照里没有 / ok=false；
+     *   4. 保留     —— uid 在活跃集合里；
+     *   5. 应当隐藏 —— 其余（快照里 ok=true，就是确实没动静）。
      *
      * 人工隐藏排在未判定之前：这类行无论如何都不会被动，把它算进「未判定」
      * 会让「未判定」这个数字虚高，掩盖真正的数据缺口。
+     *
+     * 匿名排在未判定之前：匿名只取决于 cid 与目录里的名字，不经过 uid 与快照，
+     * 所以它不可能落进那五种「未判定」。放到后面反而会让「作者 uid 是临时的」
+     * 这一类匿名稿被当成未判定，永远收不起来。
      *
      * 做成**静态纯函数**：这是唯一会「算错也不报错」的地方，单测要能直接喂数据，
      * 不必为了一个分类去装配 PDO、目录快照与可见性服务。
@@ -314,24 +415,33 @@ final class ActiveGate
      * @param array<int,int>            $cidToUid
      * @param array<int,array<string,mixed>> $authors
      * @param array<int,array{name:string,last:int}> $active
+     * @param array<int,true>           $anonCids 目录里标成匿名的 cid 集合
      * @return array{
      *   buckets:array<string,array{works:int, ids:list<int>, authors:array<int,array{name:string,works:int}>}>,
      *   unknown_reasons:array<string,int>,
      *   toHide:list<int>,
+     *   toHideAnon:list<int>,
      *   toRestore:list<int>
      * }
      */
-    public static function classify(array $rows, array $cidToUid, array $authors, array $active): array
-    {
+    public static function classify(
+        array $rows,
+        array $cidToUid,
+        array $authors,
+        array $active,
+        array $anonCids = []
+    ): array {
         $buckets = [
             'keep'    => ['works' => 0, 'ids' => [], 'authors' => []],
             'hide'    => ['works' => 0, 'ids' => [], 'authors' => []],
+            'anon'    => ['works' => 0, 'ids' => [], 'authors' => []],
             'unknown' => ['works' => 0, 'ids' => [], 'authors' => []],
             'manual'  => ['works' => 0, 'ids' => [], 'authors' => []],
         ];
-        $reasons   = [];
-        $toHide    = [];
-        $toRestore = [];
+        $reasons    = [];
+        $toHide     = [];
+        $toHideAnon = [];
+        $toRestore  = [];
 
         foreach ($rows as $row) {
             $analysisId = (int) ($row['analysis_id'] ?? 0);
@@ -352,6 +462,17 @@ final class ActiveGate
             // 人工隐藏优先于一切判定：作者是否活跃都不影响「人藏的东西不能自动放出来」
             if ($hidden && !$byGate) {
                 self::add($buckets['manual'], $analysisId, $uid, $name);
+                continue;
+            }
+
+            // 匿名：作品级、无条件。只收这一篇，同一作者的实名作品走下面的活跃度判定。
+            // 不计作者 —— 匿名作品本来就不该被归到任何一个 uid 名下，这一桶的
+            // 「作者数」没有意义，命令行也不打印它。
+            if ($cid > 0 && isset($anonCids[$cid])) {
+                self::add($buckets['anon'], $analysisId, 0, '');
+                if (!$hidden) {
+                    $toHideAnon[] = $analysisId;
+                }
                 continue;
             }
 
@@ -385,7 +506,9 @@ final class ActiveGate
 
             if (isset($active[$uid])) {
                 self::add($buckets['keep'], $analysisId, $uid, $name);
-                // 只有本闸门藏过的才恢复；这里 $hidden 已隐含 $byGate（人工的上面就跳走了）
+                // 只有本闸门藏过的才恢复；这里 $hidden 已隐含 $byGate（人工的上面就跳走了）。
+                // 恢复不区分当初是匿名规则还是活跃度规则收的 —— 能走到这里说明这篇
+                // 已经不是匿名了，理由字符串只是历史痕迹，不值得为它多写一条 UPDATE。
                 if ($hidden && $byGate) {
                     $toRestore[] = $analysisId;
                 }
@@ -410,6 +533,7 @@ final class ActiveGate
             'buckets'         => $buckets,
             'unknown_reasons' => $reasons,
             'toHide'          => array_values($toHide),
+            'toHideAnon'      => array_values($toHideAnon),
             'toRestore'       => array_values($toRestore),
         ];
     }

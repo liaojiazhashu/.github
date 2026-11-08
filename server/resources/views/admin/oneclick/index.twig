@@ -50,8 +50,8 @@
         <label for="author_state">作者类型</label>
         <select id="author_state" name="author_state">
           <option value="all"{% if scope.author_state == 'all' %} selected{% endif %}>不限</option>
-          <option value="active"{% if scope.author_state == 'active' %} selected{% endif %}>活跃作者（近一年有投稿或评稿）</option>
-          <option value="zombie"{% if scope.author_state == 'zombie' %} selected{% endif %}>僵尸作者（近一年都没有）</option>
+          <option value="active"{% if scope.author_state == 'active' %} selected{% endif %}>活跃作者（近{{ window_label }}有投稿或评稿）</option>
+          <option value="zombie"{% if scope.author_state == 'zombie' %} selected{% endif %}>僵尸作者（近{{ window_label }}都没有）</option>
         </select>
         {% if activity_at == 0 %}
           <div class="field__hint is-danger">还没做过作者分类，选这两项会筛出空结果。先到「站内文章 → 作者分类」跑一次。</div>

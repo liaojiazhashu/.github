@@ -76,6 +76,8 @@ final class OneClickController extends AdminController
             'batches'    => $this->batches->recent(6),
             'catalog_at' => (int) ($meta['built_at'] ?? 0),
             'activity_at' => $this->activity->builtAt(),
+            // 分类口径的中文说法从 AuthorActivity 取，别在模板里写死「近一年」
+            'window_label' => AuthorActivity::WINDOW_LABEL,
             'just_launched' => (string) ($query['batch'] ?? ''),
         ]);
     }
