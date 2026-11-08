@@ -1,0 +1,463 @@
+<main id="main" class="page">
+
+  <!-- ========================================================= 页面头 -->
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="面包屑">
+        <a href="index.html">首页</a>
+        {{ico:chevronRight:ico-18 breadcrumb__sep}}
+        <a href="index.html#business">三大板块</a>
+        {{ico:chevronRight:ico-18 breadcrumb__sep}}
+        <span class="breadcrumb__current">银河图书馆</span>
+      </nav>
+
+      <p class="eyebrow mt-5" data-reveal="fade">免费开放的在线索引馆 · 馆藏与检索</p>
+      <h1 class="page-hero__title" data-reveal="up">银河图书馆</h1>
+      <p class="page-hero__desc" data-reveal="up" style="--reveal-delay:90ms">
+        一座给科幻作品建的索引馆，由成都荒启文化传播有限公司开发维护，免费开放、不设任何付费项目。
+        它要解决的不是「哪一篇更好」——
+        那是评稿的事；它要解决的是三件更基础的事：读过的东西找不回来、
+        一个好判断说不清依据、十几条意见落不成一条路径。
+        所以每一篇入馆作品都会被拆开、编上词条、留成两页，全部免登录可读。
+      </p>
+
+      <div class="hero__actions" data-reveal="up" style="--reveal-delay:160ms">
+        <a class="btn btn--primary btn--lg" href="{{LIBRARY_URL}}" target="_blank" rel="noopener">进入银河图书馆 {{ico:arrowRight:ico-18}}</a>
+      </div>
+
+      <div class="page-hero__stats" data-reveal="fade" style="--reveal-delay:240ms">
+        <div>
+          <p class="hero__meta-num"><span data-count="5">0</span><small>词上限</small></p>
+          <p class="hero__meta-label">每篇最多五个，宁缺毋滥</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="2">0</span><small>页视角</small></p>
+          <p class="hero__meta-label">读者一页 · 作者一页</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="9">0</span><small>期每年</small></p>
+          <p class="hero__meta-label">按期次持续入馆</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="0">0</span><small>分</small></p>
+          <p class="hero__meta-label">只写依据，不打分</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= 设计目标 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">为什么建这座馆</p>
+        <h2 class="section-head__title" data-reveal="up">它为了把三件事做成而设计</h2>
+        <p class="section-head__desc" data-reveal="up">
+          这三件事，单靠「多写多读」解决不了。它们各自缺一样东西：
+          一个能反查的索引、一份能核对的依据、一条排好顺序的路径。
+        </p>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="card card--numbered" data-reveal="up" style="display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">01</span>
+          <div class="ico-box ico-box--sm">{{ico:search:ico-20}}</div>
+          <h3 class="card__title mt-5">让写过的东西找得回来</h3>
+          <p class="card__desc">
+            每年九期，一期九篇。两年之后，光靠记忆没人说得清「哪些篇写过记忆可改写」。
+            所以每篇作品都被编进同一套科幻词条 —— 词条是入口，作品才是内容。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <span class="micro">结果是：从一个概念能反查到所有用过它的作品</span>
+          </div>
+        </article>
+
+        <article class="card card--numbered" data-reveal="up" style="--reveal-delay:100ms;display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">02</span>
+          <div class="ico-box ico-box--sm ico-box--cyan">{{ico:target:ico-20}}</div>
+          <h3 class="card__title mt-5">让判断有依据可核对</h3>
+          <p class="card__desc">
+            评稿给的是结论：好或不好。拆解给的是依据：好在第几节、靠哪一句、
+            换成别的处理会失去什么。每条判断都指回原文，读者可以自己复核。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <span class="micro">结果是：不同意的时候，知道该反驳哪一句</span>
+          </div>
+        </article>
+
+        <article class="card card--numbered" data-reveal="up" style="--reveal-delay:200ms;display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">03</span>
+          <div class="ico-box ico-box--sm">{{ico:flow:ico-20}}</div>
+          <h3 class="card__title mt-5">让意见落成一条路径</h3>
+          <p class="card__desc">
+            一轮评稿下来，十几条意见散在聊天记录里，内容互相牵连。
+            拆解把它们分成结构层、执行层、细节层，并指出先动哪一处最划算。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <span class="micro">结果是：改之前就知道会牵动哪里</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= 功能 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">它提供什么</p>
+        <h2 class="section-head__title" data-reveal="up">三种用法，对应三种人</h2>
+        <p class="section-head__desc" data-reveal="up">
+          同一批材料，用途不同看到的东西也不同。三件事各自有入口，不必从头读起。
+        </p>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="card" data-reveal="up" style="display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm">{{ico:book:ico-20}}</div>
+          <p class="card__kicker mt-5">Index</p>
+          <h3 class="card__title">拿一个概念，找一批作品</h3>
+          <p class="card__desc">
+            给做研究、做选题、想找同类的人。词库里每个词都有释义、起源与发展、
+            世界科幻里的三部代表作，并列出用过它的所有作品。搜索框认的也是这套词。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="{{LIBRARY_URL}}/terms" target="_blank" rel="noopener">按词找作品 {{ico:arrowRight:ico-18}}</a>
+          </div>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:90ms;display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm ico-box--cyan">{{ico:document:ico-20}}</div>
+          <p class="card__kicker mt-5">Read</p>
+          <h3 class="card__title">四分钟，判断一篇值不值得读</h3>
+          <p class="card__desc">
+            给来找作品的人。读者页只回答四件事：这是谁的故事、科幻上立住了什么、
+            好在哪里、适合谁 —— 也包括「谁会觉得不值」。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="{{LIBRARY_URL}}/works" target="_blank" rel="noopener">翻馆藏 {{ico:arrowRight:ico-18}}</a>
+          </div>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:180ms;display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm">{{ico:clipboard:ico-20}}</div>
+          <p class="card__kicker mt-5">Revise</p>
+          <h3 class="card__title">写完之后，先改哪一处</h3>
+          <p class="card__desc">
+            给写这篇的人。节点轴标出改变主角处境的那几件事，伏笔台账标出哪些还没收，
+            建议按三层排好 —— 最后给一条修改方向，而不是一张待办清单。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="{{LIBRARY_URL}}/method" target="_blank" rel="noopener">这套结果怎么来的 {{ico:arrowRight:ico-18}}</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 两种人两页 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">两份结果</p>
+        <h2 class="section-head__title" data-reveal="up">同一篇作品，给两种人各备一页</h2>
+        <p class="section-head__desc" data-reveal="up">
+          来找作品的人要知道「这是什么、值不值得看」；作者要知道「哪里站不住、先改哪一处」。
+          这两件事压不进一份文档，所以每篇作品在馆里都有两页，页头随时切换。
+        </p>
+      </div>
+
+      <div class="grid grid--2 grid--gap-lg mt-8">
+        <article class="card card--numbered card--beacon" data-reveal="up"
+                 style="display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">01</span>
+          <div class="ico-box ico-box--sm">{{ico:user:ico-20}}</div>
+          <p class="card__kicker mt-5">Reader</p>
+          <h3 class="card__title">读者视角</h3>
+          <p class="card__desc">
+            给搜索科幻作品的人：判断一篇值不值得读，找到同一路子的更多作品。
+            这一页只回答问题，不替你做决定。
+          </p>
+          <ul class="list-check card__desc">
+            <li>三句话说清这是谁的故事、他要什么、最后拿什么换的</li>
+            <li>核心设定：这篇在科幻上立住了什么</li>
+            <li>魅力所在：好在哪、为什么好，每条都落到具体位置</li>
+            <li>如果拍成片子：色调、镜头、可对标的坐标，以及用文字写出的那一幕</li>
+            <li>适合谁看 —— 也包括谁会觉得不值</li>
+          </ul>
+          <div class="card__foot" style="margin-top:auto">
+            <span class="micro">默认打开的就是这一页</span>
+          </div>
+        </article>
+
+        <article class="card card--numbered" data-reveal="up" style="--reveal-delay:110ms;display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">02</span>
+          <div class="ico-box ico-box--sm ico-box--cyan">{{ico:sliders:ico-20}}</div>
+          <p class="card__kicker mt-5">Author</p>
+          <h3 class="card__title">作者视角</h3>
+          <p class="card__desc">
+            给写这篇的人：评稿告诉你好不好，这一页告诉你问题出在哪一层、先动哪一处、
+            改了会牵动什么。
+          </p>
+          <ul class="list-check card__desc">
+            <li>剧情节点轴：改变主角处境的那几件事，按位置排开</li>
+            <li>伏笔台账：埋在哪、收在哪，哪些还没收</li>
+            <li>建议分结构层、执行层、细节层，每条给几种走法</li>
+            <li>修改方向：先改哪一处最划算</li>
+          </ul>
+          <div class="card__foot" style="margin-top:auto">
+            <span class="micro">页头切到「作者视角」</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 关键词口径 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="split split--top">
+        <div>
+          <p class="eyebrow" data-reveal="fade">关键词</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">
+            五个是上限，不是配额
+          </h2>
+          <p class="body mt-6" data-reveal="up">
+            一篇作品能挂几个词，取决于它真正写了几个<strong>能跨作品复用的科幻概念</strong>，
+            不取决于我们想不想把页面填满。两三个是常态，抽不出就不给。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            这条规则不是洁癖。一个词如果只挂着一篇作品，它就不是索引，
+            只是那篇作品的目录 —— 读者点进去，看到的是同一篇，检索功能等于零。
+          </p>
+        </div>
+
+        <div class="grid" data-reveal="up" style="--reveal-delay:120ms">
+          <div class="panel">
+            <p class="panel__title">{{ico:check:ico-18}} 收进来的词</p>
+            <ul class="list-dot panel__body">
+              <li>拿掉科幻设定就站不住的：世代飞船、记忆编辑、公民分级</li>
+              <li>别的作者也在写、读者会拿它去搜的</li>
+              <li>一句脱离原文也读得懂的定义</li>
+            </ul>
+          </div>
+          <div class="panel panel--cyan">
+            <p class="panel__title">{{ico:close:ico-18}} 一律不收</p>
+            <ul class="list-dot list-dot--cyan panel__body">
+              <li>纯文学里同样成立的物象：茶、信件、影子、雨水</li>
+              <li>只在这一篇成立的自造名词与编号</li>
+              <li>剧情概括、人物关系、主题词</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== 入口 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">入口</p>
+        <h2 class="section-head__title" data-reveal="up">整座馆都在线上，现在就能进</h2>
+        <p class="section-head__desc" data-reveal="up">
+          词库、馆藏、每篇作品的两页拆解、以及拆解方法本身 ——
+          <strong>全部免登录可读</strong>。这里看到的就是馆里的实时内容，不是截图，也不是样本。
+          馆内作品的著作权归作者本人；拆解属评论与研究性质，作者可随时要求下线。
+        </p>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="card" data-reveal="up" style="display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm">{{ico:book:ico-20}}</div>
+          <p class="card__kicker mt-5">Terms</p>
+          <h3 class="card__title">科幻词库</h3>
+          <p class="card__desc">
+            拿着一个概念来找作品。每条词都有释义、起源与发展、
+            世界科幻中的三部代表作，并列出馆藏里用过它的全部作品。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="{{LIBRARY_URL}}/terms" target="_blank" rel="noopener">进词库 {{ico:arrowRight:ico-18}}</a>
+          </div>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:100ms;display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm ico-box--cyan">{{ico:layers:ico-20}}</div>
+          <p class="card__kicker mt-5">Works</p>
+          <h3 class="card__title">馆藏</h3>
+          <p class="card__desc">
+            按期次、体裁、字数翻，也可以按词筛。
+            点进任何一篇，默认落在读者页。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="{{LIBRARY_URL}}/works" target="_blank" rel="noopener">翻馆藏 {{ico:arrowRight:ico-18}}</a>
+          </div>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:200ms;display:flex;flex-direction:column">
+          <div class="ico-box ico-box--sm">{{ico:compass:ico-20}}</div>
+          <p class="card__kicker mt-5">Method</p>
+          <h3 class="card__title">拆解方法</h3>
+          <p class="card__desc">
+            词怎么收、两页怎么分工、每条判断的依据是什么、这套方法的边界在哪。
+            全部写在一页里，不用猜。
+          </p>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="{{LIBRARY_URL}}/method" target="_blank" rel="noopener">看方法 {{ico:arrowRight:ico-18}}</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="hero__actions" data-reveal="up" style="margin-top:40px">
+        <a class="btn btn--primary btn--lg" href="{{LIBRARY_URL}}" target="_blank" rel="noopener">进入银河图书馆 {{ico:arrowRight:ico-18}}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== FAQ -->
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">常见问题</p>
+        <h2 class="section-head__title" data-reveal="up">关于这座馆</h2>
+      </div>
+
+      <div class="accordion mt-7" data-accordion="single" data-reveal="up">
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>拆解和评稿是什么关系？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              两件独立的事。评稿按练笔规则给五维打分、算出排名与奖金；
+              拆解不给分，只写依据与改法。同一篇作品会同时进评稿流程和拆解流程，
+              但两边的结论互不引用 —— 分数不进入拆解，拆解也不影响分数。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>进馆要注册吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              不用，也没有账号系统。词库、馆藏、每篇作品的两页拆解、拆解方法，
+              全部直接打开就能看。馆里放的拆解是公开内容，原文本身不在公开网络上发布。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>为什么分成读者和作者两页？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              因为两种人的问题不一样。找作品的人想知道「这是什么、值不值得看」，
+              作者想知道「哪里站不住、先改哪一处」。同一堆材料写两遍，
+              比写一份谁都能看、谁都不够用的文档要诚实。
+              每篇作品页头都有切换，两页看到的是同一篇的两个切面。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>为什么有的作品只有两三个关键词？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              因为五个是上限，不是配额。词只收与科幻强关联、且能跨作品复用的概念；
+              一篇作品真正写了几个，就挂几个。为了把页面填满而塞进去的词，
+              在词库里只会挂着一篇作品，那是目录，不是索引。
+              实在抽不出合格词的作品，就如实空着。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>馆里为什么现在只有荒启练笔的作品？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              这座馆以拆解<strong>全部中文科幻小说</strong>为目标，不隶属练笔活动。
+              但拆解要逐篇拿到作者授权 —— 现阶段授权来自荒启练笔的投稿，
+              所以馆藏暂时只来自练笔。授权范围扩大之后，任何作者的作品都可以进馆。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>可以拆解我自己的作品吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              可以。但入馆需先取得你的授权，现阶段授权来自荒启练笔的投稿，
+              因此馆暂时不能直接收外部稿件。
+              稿件仅用于本次拆解，不做其他用途；词条会入库，正文不公开。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>软科幻适合进馆吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              适合。词条里「科幻设定」只收真正推动情节的那项技术或规则，
+              软科幻里承载社会隐喻的那件装置同样算数。
+              判断口径随作者取向切换，不拿硬科幻的标准去量软科幻。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>多久更新一次？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              现阶段馆藏跟着练笔活动的节奏走：每年九期，每期截稿后统一拆解、统一入馆。
+              所以馆藏是一条一条长出来的，不是一次上架的成品库 ——
+              想看现在到哪一期，进馆看首页即可。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== CTA -->
+  <section class="section section--sm">
+    <div class="container">
+      <div class="cta-block" data-reveal="up">
+        <div class="cta-block__inner">
+          <div class="cta-block__text">
+            <h2 class="cta-block__title">进去看一眼</h2>
+            <p class="cta-block__desc">
+              不需要账号。挑一个词，看它下面挂着哪几篇作品；
+              再点开任意一篇，页头切一次，就是另一页。
+            </p>
+          </div>
+          <div class="cta-block__actions">
+            <a class="btn btn--primary btn--lg" href="{{LIBRARY_URL}}" target="_blank" rel="noopener">进入银河图书馆</a>
+            <a class="btn btn--outline btn--lg" href="contact.html">联系我们</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>

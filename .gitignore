@@ -53,10 +53,16 @@ coverage/
 # 截图基线和构建中间件不进
 .build/fonts/
 .build/audit-baseline/
-.build/pages/
-.build/css-parts/
 .build/shots/
 .build/shots-library/
+
+# 官网与样式表的源文件从 2026-11-08 起入库。
+# 在此之前只存构建产物（根目录六个 .html 与 css/style.css），
+# 换个机器就没法重建页面，只能照着线上 HTML 反推。
+# 改文案改 .build/pages/*.html，改样式改 .build/css-parts/*.css，
+# 然后 node tools/build-pages.cjs / node tools/build-css.cjs。
+# 旧版页面留档不进库（23KB 的单文件备份，没有版本意义）。
+.build/pages/_retired-works.bak
 
 # ---- 本机与服务器环境差异 ----
 .user.ini

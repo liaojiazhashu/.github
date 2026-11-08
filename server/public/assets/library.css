@@ -1580,13 +1580,15 @@ html[data-theme="day"] .themebtn__moon { display: block; }
 .foot__note { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.8; max-width: 44ch; }
 .foot__note--dim { margin-top: 14px; font-size: 11.5px; }
 
-/* 页脚联系行：两行邮箱，各占一行（grid 而不是 inline，窄屏不会挤成一条）。
+/* 页脚联系行：标签一列、邮箱一列，两行对齐（max-content 让标签列取最宽那个，
+   两个标签字数不同也不会错位）。用 grid 而不是 inline：窄屏不会挤成一条。
    颜色用 --text-3 而不是 .foot__note 的 --muted：这里是可点的东西，
    要在页脚一片灰字里分得出来；下划线用 --line-2，不跟正文抢注意力。 */
 .foot__contact {
   margin: 16px 0 0;
   display: grid;
-  gap: 2px;
+  grid-template-columns: max-content 1fr;
+  gap: 2px 10px;
   font-size: 12.5px;
   line-height: 1.9;
   color: var(--muted);

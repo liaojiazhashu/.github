@@ -1,0 +1,397 @@
+<main id="main" class="page">
+
+  <!-- ============================================================ 首屏 -->
+  <section class="hero">
+    <div class="container container--full hero__inner">
+      <div class="hero__content">
+        <p class="eyebrow" data-reveal="fade">HUANGQI SCI-FI · 文化科技</p>
+
+        <h1 class="hero__title">
+          <span class="hero__title-line" data-reveal="up">从荒芜中</span>
+          <span class="hero__title-line hero__title-accent" data-reveal="up" style="--reveal-delay:90ms">开启新世界</span>
+        </h1>
+
+        <p class="hero__desc" data-reveal="up" style="--reveal-delay:200ms">
+          成都荒启文化传播有限公司是一家专注于数字内容与平台开发的文化传播企业，主营数字内容制作、软件开发与技术服务。
+          公司持有「荒启科幻」品牌，自主开发并运营 APP「荒启科幻」与银河图书馆在线索引平台，并为纯公益社群「荒启科幻练笔」提供平台工具支持。
+        </p>
+
+        <div class="hero__actions" data-reveal="up" style="--reveal-delay:320ms">
+          <a class="btn btn--primary btn--lg" href="#business">了解三大板块 {{ico:arrowRight:ico-18}}</a>
+          <a class="btn btn--outline btn--lg" href="contact.html#invite">获取邀请码</a>
+        </div>
+
+        <div class="hero__meta" data-reveal="fade" style="--reveal-delay:460ms">
+          <div class="hero__meta-item">
+            <p class="hero__meta-num"><span data-count="2025" data-count-plain>0</span></p>
+            <p class="hero__meta-label">公司成立年份</p>
+          </div>
+          <div class="hero__meta-item">
+            <p class="hero__meta-num"><span data-count="2">0</span><small>款</small></p>
+            <p class="hero__meta-label">自研产品</p>
+          </div>
+          <div class="hero__meta-item">
+            <p class="hero__meta-num"><span data-count="4">0</span><small>条</small></p>
+            <p class="hero__meta-label">开发业务线</p>
+          </div>
+          <div class="hero__meta-item">
+            <p class="hero__meta-num"><span data-count="1">0</span><small>座</small></p>
+            <p class="hero__meta-label">免费开放的作品索引</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 首屏右侧：原创深空探测船「长针」（v2.3.17，企业号已下线）。
+         造型语言刻意避开企业号的「大圆盘 + 两舷引擎舱」与旧空间站的「两端双环」，
+         改用「一条细长中轴 + 尾部一台大环形推进器」的探测器构型：
+           ① 探针头 —— 六棱面楔形，前端一根细针 + 三层同心「传感眼」，
+              面上有横肋与 X 分面，读作多面体而不是圆锥；
+           ② 细颈 —— 两段收窄线 + 两道肋；
+           ③ 主舱 —— 梭形，前粗后细，中脊亮线 + 七道横肋；
+           ④ 尾管 + 核心舱 —— 主舱尾收窄成一根尾管，接进环心的圆形核心舱；
+           ⑤ 环形推进器 —— 核心舱向外的 X 形四辐条挂起一台大环（外缘 / 内壁 /
+              分段包边 / 挖空带面四层），环上八枚舱节点 + 三枚信标绕自身圆心
+              缓慢自转；环心是空的，尾焰正从环心穿出，读作「环形加速器」；
+           ⑥ 尾焰 —— 自核心舱后缘喷出，穿过环心，四层平涂 + 三条流线。
+         立体感不靠渐变（全站禁渐变），靠三条：
+           1) 整机 rotate(-9°) + 纵向压扁 0.84 —— 俯视略斜的透视；
+           2) 平涂色阶分光面 —— 每段壳体＝顶面 currentColor 0.07 平涂
+              + 下缘三层同位暗边（31.8 / 17.7 / 7.8 单位），读作上亮下暗的柱体；
+           3) 环带用 evenodd 挖空填一层极淡带面，压扁后自带「环有宽度」的证据。
+         动画：整机 18s 漂移 / 环形推进器 22s 自转 / 尾焰四层错相吞吐
+         + 流线向尾部流动 / 舰首传感眼呼吸 / 环上三枚信标闪烁。
+         线色走 --text-1（夜=浅灰 / 昼=近墨黑，浅黄太阳上读作逆光剪影），
+         强调件（传感眼 / 信标 / 核心舱口）用 --accent-1，
+         尾焰另有 --warp-flame / --warp-core。
+         v2.3.22 缩尺：CSS 显示宽度 26vw → 14vw → 7vw（船身 ~80px @1440，
+         日面 1040px，直径比 13:1、面积比 170:1）。两次缩尺都按同一倍率把
+         stroke-width 与小标识件半径反向补偿（tools/scale-ship-strokes.cjs，
+         ×1.5 之后 ×2），渲染线宽维持在 1px 左右，坐标与 transform 一律未动。
+         —— 改尺寸请只改 CSS 宽度，并跑那个脚本同步倍率；不要手改这里的数值。 -->
+    <svg class="hero-ship" data-scale="v2322" viewBox="0 0 920 320" aria-hidden="true">
+      <!-- 整机：先纵向压扁（俯视透视），再整机旋转 -9° -->
+      <g class="hero-ship__body"
+         transform="rotate(-9 400 160) translate(400 160) scale(1 0.84) translate(-400 -160)">
+
+        <!-- ① 探针头：六棱面楔形。下缘三层同位暗边做出厚度 -->
+        <path d="M40 200 L96 154 L188 164 L188 236 L96 246 Z" fill="currentColor" opacity="0.07"/>
+        <g fill="none" stroke="currentColor">
+          <path d="M40 200 L96 246 L188 236" stroke-width="31.8" opacity="0.05"/>
+          <path d="M40 200 L96 246 L188 236" stroke-width="17.7" opacity="0.08"/>
+          <path d="M40 200 L96 246 L188 236" stroke-width="7.8" opacity="0.2"/>
+        </g>
+        <path d="M40 200 L96 154 L188 164 L188 236 L96 246 Z" fill="none"
+              stroke="currentColor" stroke-width="9.3" opacity="0.9"/>
+        <!-- 分面：两道横肋 + 一组 X + 上缘高光 -->
+        <g fill="none" stroke="currentColor">
+          <path d="M96 154 L96 246 M160 162 L160 238" stroke-width="6.3" opacity="0.5"/>
+          <path d="M96 154 L160 238 M96 246 L160 162" stroke-width="5.1" opacity="0.28"/>
+          <path d="M96 154 L160 162" stroke-width="5.4" opacity="0.55"/>
+        </g>
+        <!-- 中脊 + 前端探针 -->
+        <path d="M56 200 H188" fill="none" stroke="currentColor" stroke-width="5.1" opacity="0.38"/>
+        <path d="M40 200 H12" fill="none" stroke="currentColor" stroke-width="7.2" opacity="0.7"/>
+        <circle cx="12" cy="200" r="5.4" fill="var(--accent-1, #4FC1E0)"/>
+        <!-- 传感眼：三层同心圈，中心点随呼吸明灭 -->
+        <g fill="none" stroke="currentColor">
+          <circle cx="66" cy="200" r="30" stroke-width="6" opacity="0.6"/>
+          <circle cx="66" cy="200" r="16.8" stroke-width="4.5" opacity="0.45"/>
+        </g>
+        <circle class="hero-ship__eye" cx="66" cy="200" r="7.8" fill="var(--accent-1, #4FC1E0)"/>
+
+        <!-- ② 细颈 -->
+        <g fill="none" stroke="currentColor">
+          <path d="M188 164 L248 172 M188 236 L248 228" stroke-width="7.2" opacity="0.8"/>
+          <path d="M206 166 V234 M228 170 V230" stroke-width="5.4" opacity="0.45"/>
+        </g>
+
+        <!-- ③ 主舱：梭形。顶面浅平涂 + 下缘三层暗边 + 七道横肋 + 中脊 -->
+        <path d="M248 172 C 300 152 360 146 440 156 C 510 164 570 170 600 174
+                 C 604 188 604 212 600 226
+                 C 570 230 510 236 440 244 C 360 254 300 248 248 228 Z"
+              fill="currentColor" opacity="0.07"/>
+        <g fill="none" stroke="currentColor">
+          <path d="M248 228 C 300 248 360 254 440 244 C 510 236 570 230 600 226"
+                stroke-width="39" opacity="0.05"/>
+          <path d="M248 228 C 300 248 360 254 440 244 C 510 236 570 230 600 226"
+                stroke-width="21.3" opacity="0.08"/>
+          <path d="M248 228 C 300 248 360 254 440 244 C 510 236 570 230 600 226"
+                stroke-width="9.3" opacity="0.2"/>
+        </g>
+        <path d="M248 172 C 300 152 360 146 440 156 C 510 164 570 170 600 174
+                 C 604 188 604 212 600 226
+                 C 570 230 510 236 440 244 C 360 254 300 248 248 228 Z"
+              fill="none" stroke="currentColor" stroke-width="9.3" opacity="0.9"/>
+        <g fill="none" stroke="currentColor">
+          <path d="M280 162 V238 M330 150 V250 M380 148 V252 M430 154 V246
+                   M480 160 V240 M530 166 V234 M580 172 V228" stroke-width="5.4" opacity="0.3"/>
+          <path d="M248 200 H600" stroke-width="5.1" opacity="0.26"/>
+        </g>
+
+        <!-- ③b 一对后掠稳定翼：只有主舱的梭形时全船像「一根带环的针」，
+             两片薄翼把横向轮廓拉开，才读得出是一艘船。翼面平涂 0.05，
+             内部两道肋 + 一条翼梁，用线段把「薄片」讲清楚。 -->
+        <g>
+          <path d="M400 158 L500 167 L542 112 L448 121 Z" fill="currentColor" opacity="0.05"/>
+          <path d="M400 158 L500 167 L542 112 L448 121 Z" fill="none"
+                stroke="currentColor" stroke-width="7.8" opacity="0.78"/>
+          <path d="M408 157 L490 165 M472 123 L520 119 M488 164 L502 125"
+                fill="none" stroke="currentColor" stroke-width="5.1" opacity="0.4"/>
+        </g>
+        <g>
+          <path d="M400 242 L500 233 L542 288 L448 279 Z" fill="currentColor" opacity="0.05"/>
+          <path d="M400 242 L500 233 L542 288 L448 279 Z" fill="none"
+                stroke="currentColor" stroke-width="7.8" opacity="0.78"/>
+          <path d="M408 243 L490 235 M472 277 L520 281 M488 236 L502 275"
+                fill="none" stroke="currentColor" stroke-width="5.1" opacity="0.4"/>
+        </g>
+
+        <!-- ④ 尾管：主舱尾收窄后接进环心的核心舱 -->
+        <g fill="none" stroke="currentColor">
+          <path d="M600 174 L660 182 M600 226 L660 218" stroke-width="7.8" opacity="0.82"/>
+          <path d="M620 178 V222 M640 180 V220" stroke-width="5.1" opacity="0.38"/>
+        </g>
+
+        <!-- ⑤ 环形推进器：环心为空，尾焰正从中间穿过。
+             正圆在「船自身平面」内画，由整机的 scale(1 .84) 压成椭圆。
+             带面（evenodd 挖空）+ 外缘 + 内壁 + 分段包边四层叠压。 -->
+        <g transform="translate(680 200)">
+          <path fill="currentColor" fill-rule="evenodd" opacity="0.07"
+                d="M-90 0 A90 90 0 1 0 90 0 A90 90 0 1 0 -90 0 Z
+                   M-72 0 A72 72 0 1 0 72 0 A72 72 0 1 0 -72 0 Z"/>
+          <g fill="none" stroke="currentColor">
+            <circle r="90" stroke-width="8.4" opacity="0.86"/>
+            <circle r="72" stroke-width="5.1" opacity="0.5"/>
+            <circle r="81" stroke-width="12" stroke-dasharray="7.5 30" opacity="0.42"/>
+          </g>
+          <!-- 旋转部分：X 形四辐条 + 八枚舱节点 + 三枚信标 -->
+          <g class="hero-ship__scan" fill="none" stroke="currentColor">
+            <path d="M14.14 14.14 L50.91 50.91 M-14.14 14.14 L-50.91 50.91
+                     M-14.14 -14.14 L-50.91 -50.91 M14.14 -14.14 L50.91 -50.91"
+                  stroke-width="8.4" opacity="0.7"/>
+            <g stroke="none" fill="currentColor">
+              <circle cx="81" cy="0" r="7.8"/><circle cx="57.3" cy="57.3" r="7.8"/>
+              <circle cx="0" cy="81" r="7.8"/><circle cx="-57.3" cy="57.3" r="7.8"/>
+              <circle cx="-81" cy="0" r="7.8"/><circle cx="-57.3" cy="-57.3" r="7.8"/>
+              <circle cx="0" cy="-81" r="7.8"/><circle cx="57.3" cy="-57.3" r="7.8"/>
+            </g>
+            <g class="hero-ship__beacon" stroke="none" fill="var(--accent-1, #4FC1E0)">
+              <circle cx="0" cy="-81" r="9.6"/>
+              <circle cx="70.15" cy="40.5" r="9.6"/>
+              <circle cx="-70.15" cy="40.5" r="9.6"/>
+            </g>
+          </g>
+          <!-- 核心舱：环心的圆形舱体，尾焰自它后缘喷出 -->
+          <circle r="20" fill="currentColor" opacity="0.09"/>
+          <g fill="none" stroke="currentColor">
+            <circle r="20" stroke-width="7.8" opacity="0.86"/>
+            <circle r="13" stroke-width="5.1" opacity="0.45"/>
+          </g>
+          <circle cx="20" cy="0" r="9" fill="var(--accent-1, #4FC1E0)" opacity="0.55"/>
+          <circle cx="-20" cy="0" r="9" fill="var(--accent-1, #4FC1E0)" opacity="0.55"/>
+        </g>
+
+        <!-- ⑥ 尾焰（画在环之上）：自核心舱后缘喷出，穿过环心向后拉出长尾。
+             若先画尾焰再画环，火焰会被环带切掉 72~90 那一圈，
+             「穿心」的读法就断了 —— 顺序在这里是语义，不只是叠压。
+             四层平涂（0.10/0.20/0.42/0.95）逐层收窄提亮，用色阶代替渐变。 -->
+        <g class="hero-ship__jet">
+          <path class="hero-ship__jet--halo" fill="var(--warp-flame, #3E9FE8)" opacity="0.10"
+                d="M686 180 C 766 170 840 178 890 200 C 840 222 766 230 686 220 Z"/>
+          <path class="hero-ship__jet--outer" fill="var(--warp-flame, #3E9FE8)" opacity="0.2"
+                d="M686 184 C 758 176 820 183 862 200 C 820 217 758 224 686 216 Z"/>
+          <path class="hero-ship__jet--mid" fill="var(--warp-flame, #3E9FE8)" opacity="0.42"
+                d="M686 188 C 748 183 798 188 832 200 C 798 212 748 217 686 212 Z"/>
+          <path class="hero-ship__jet--core" fill="var(--warp-core, #B6ECFF)" opacity="0.95"
+                d="M686 192 C 738 188 778 192 804 200 C 778 208 738 212 686 208 Z"/>
+        </g>
+        <g class="hero-ship__jet-flow" fill="none" stroke="var(--warp-core, #B6ECFF)"
+           stroke-width="7.2" stroke-linecap="round" opacity="0.5">
+          <path d="M702 192 H 848"/>
+          <path d="M702 208 H 848"/>
+          <path d="M702 200 H 872" opacity="0.65"/>
+        </g>
+      </g>
+
+      <!-- 下方虚线漂移轨道：探测器正缓缓驶向这片天区深处 -->
+      <path d="M60 296 Q400 320 700 288" fill="none" stroke="currentColor" stroke-width="4.2"
+            stroke-dasharray="4 16" opacity="0.3"/>
+    </svg>
+
+    <div class="hero__scroll" aria-hidden="true">
+      <span>SCROLL</span>
+      <span class="hero__scroll-line"></span>
+    </div>
+  </section>
+
+  <!-- ==================================================== 问题与做法 -->
+  <!-- 使命 / 愿景 / 名字释义不在此重复：品牌全景统一在 about.html 讲，
+       首页只保留「为什么做」与「怎么做」两段，避免与首屏定位、三大业务重复。 -->
+  <section class="section section--sm section--panel">
+    <div class="container">
+      <div class="grid grid--2 grid--gap-xl">
+        <div data-reveal="up">
+          <p class="eyebrow">我们解决的问题</p>
+          <p class="body mt-4">
+            写作者缺反馈、组织者缺系统、深度读者缺路径、研究者缺数据。
+            这四件事看似分属不同人群，本质上是同一条断链 ——
+            创作、组织与索引之间没有形成循环。
+          </p>
+        </div>
+        <div data-reveal="up" style="--reveal-delay:120ms">
+          <p class="eyebrow">我们的做法</p>
+        <p class="body mt-4">
+          公司把写作协作中重复的流程做成平台工具，再把工具开放给文学组织与开发者；
+          获得作者授权的作品，由银河图书馆整理成可检索、可复核的公开索引。
+        </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================== 三大业务总览 -->
+  <!-- 三块必须同等权重：每张卡都是「两句话定位 + 四条要点 + 一个入口」，
+       要点各四条，不多不少。开发卡曾经还是 v2.3.19 之前的五个模块旧清单，
+       而图书馆下面另挂一整节作品展示 —— 那正是权重失衡的来源，已一并纠正。
+       v2.3.24：开发卡的旧清单已换成四条业务线。 -->
+  <section class="section" id="business">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">三大板块</p>
+        <h2 class="section-head__title" data-reveal="up">三个板块，一条主线</h2>
+        <p class="section-head__desc" data-reveal="up" style="--reveal-delay:100ms">
+          公司以自研产品为主线：APP「荒启科幻」承载写作与评稿流程，银河图书馆承载公开索引，
+          数字化产品开发对外承接定制开发与技术服务 —— 三块彼此衔接，也可以单独取用。
+        </p>
+        <hr class="rule-grad section-head__rule">
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="card card--numbered card--beacon spotlight" data-reveal="up"
+                 style="display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">01</span>
+          <div class="ico-box">{{ico:users:ico-24}}</div>
+          <p class="card__kicker mt-5">社群 · 公益</p>
+          <h3 class="card__title">科幻社群</h3>
+          <p class="card__desc">
+            「荒启科幻练笔」由科幻爱好者组成、成员自主运营，是纯公益写作社群，每年 9 期。投稿、评稿与反馈全部在公司提供的 APP「荒启科幻」内完成。
+          </p>
+          <ul class="list-check card__desc">
+            <li>每年 9 期，按月份划分周期，截止在早上 7 点</li>
+            <li>算法分配评稿任务，每篇作品至少 10 位读者</li>
+            <li>五维评分，超过四份评稿时去掉一个最高分与最低分</li>
+            <li>参加全程免费，优秀作品与评稿获社群自设的荣誉激励</li>
+          </ul>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="community.html">了解社群机制 {{ico:arrowRight:ico-18}}</a>
+          </div>
+        </article>
+
+        <article class="card card--numbered card--beacon spotlight" data-reveal="up"
+                 style="--reveal-delay:110ms;display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">02</span>
+          <div class="ico-box ico-box--cyan">{{ico:gear:ico-24}}</div>
+          <p class="card__kicker mt-5">开发 · 公司业务</p>
+          <h3 class="card__title">数字化产品开发</h3>
+          <p class="card__desc">
+            成都荒启文化传播有限公司的软件开发业务：社区与内容系统、教育考试系统、AI 应用与定制开发 —— 四条业务线共用一套底座。
+          </p>
+          <ul class="list-check card__desc">
+            <li>四条业务线：社区与内容、教育考试、AI 应用、定制开发</li>
+            <li>起点是自用的练笔系统，已跑满二十余期</li>
+            <li>一套代码覆盖 Web、H5、安卓、iOS 与小程序</li>
+            <li>托管、私有化、源码交付，源码文档一并交付</li>
+          </ul>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="tools.html">查看四条业务线 {{ico:arrowRight:ico-18}}</a>
+          </div>
+        </article>
+
+        <article class="card card--numbered card--beacon spotlight" data-reveal="up"
+                 style="--reveal-delay:220ms;display:flex;flex-direction:column">
+          <span class="card__index" aria-hidden="true">03</span>
+          <div class="ico-box">{{ico:graph:ico-24}}</div>
+          <p class="card__kicker mt-5">图书馆 · 免费</p>
+          <h3 class="card__title">银河图书馆</h3>
+          <p class="card__desc">
+            公司开发维护的免费在线索引馆。把每一篇入馆作品摊成两页：读者一页看它值不值得读，作者一页看先改哪一处。按词就能查回来。
+          </p>
+          <ul class="list-check card__desc">
+            <li>三类词条：科幻设定、世界观、科幻意象，每个词都能反向查到作品</li>
+            <li>每篇作品两页，页头切换：读者视角与作者视角</li>
+            <li>每页的判断都指回原文位置，不给分、不排名、不裁决</li>
+            <li>词库与拆解全部免登录可读，不需要账号</li>
+          </ul>
+          <div class="card__foot" style="margin-top:auto">
+            <a class="link-arrow" href="library.html">走进银河图书馆 {{ico:arrowRight:ico-18}}</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================== 目标受众 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">目标受众</p>
+        <h2 class="section-head__title" data-reveal="up">为谁而做</h2>
+        <p class="section-head__desc" data-reveal="up">
+          四类人群的需求并不相同，但都能在这套平台与活动中找到自己的位置。
+        </p>
+      </div>
+
+      <div class="grid grid--4 grid--gap-lg mt-8">
+        <article class="persona" data-reveal="up">
+          <div class="ico-box ico-box--sm">{{ico:book:ico-20}}</div>
+          <h3 class="persona__title">科幻写作者</h3>
+          <p class="persona__need">需要社群氛围、写作反馈和清晰的成长路径。最怕的是写完无人读、改完无人评。</p>
+          <p class="persona__serve"><b>对应活动</b>　九期节奏、分配式评稿与去极值排名，全程免费</p>
+        </article>
+        <article class="persona" data-reveal="up" style="--reveal-delay:90ms">
+          <div class="ico-box ico-box--sm">{{ico:clipboard:ico-20}}</div>
+          <h3 class="persona__title">文学组织运营者</h3>
+          <p class="persona__need">需要高效的工具来管理投稿和评审流程，往往受困于人工统计与反复催稿。</p>
+          <p class="persona__serve"><b>对应业务</b>　四类开发服务，可整体交付，也可按模块单独提供</p>
+        </article>
+        <article class="persona" data-reveal="up" style="--reveal-delay:180ms">
+          <div class="ico-box ico-box--sm">{{ico:compass:ico-20}}</div>
+          <h3 class="persona__title">科幻深度读者</h3>
+          <p class="persona__need">希望更深入地理解作品结构和主题，常在复杂设定里丢失线索。</p>
+          <p class="persona__serve"><b>对应功能</b>　索引卡与修改清单</p>
+        </article>
+        <article class="persona" data-reveal="up" style="--reveal-delay:270ms">
+          <div class="ico-box ico-box--sm">{{ico:graph:ico-20}}</div>
+          <h3 class="persona__title">科幻研究者</h3>
+          <p class="persona__need">需要结构化数据支持学术分析，手工整理的语料往往难以复用与比较。</p>
+          <p class="persona__serve"><b>对应功能</b>　科幻词库里可检索的概念词条，与指回原文的拆解卡</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== CTA -->
+  <section class="section section--sm">
+    <div class="container">
+      <div class="cta-block" data-reveal="up">
+        <div class="cta-block__inner">
+          <div class="cta-block__text">
+            <h2 class="cta-block__title">从任意一个板块进入</h2>
+            <p class="cta-block__desc">
+              想写就加入公益社群，想给组织配一套工具就找公司咨询开发合作，
+              想先看看作品被拆开是什么样就直接进银河图书馆 —— 三条路彼此独立。
+              练笔每年九期循环进行，最新一期与截稿时间以社群公告为准。
+            </p>
+          </div>
+          <div class="cta-block__actions">
+            <a class="btn btn--primary btn--lg" href="contact.html#invite">加入社群 {{ico:arrowRight:ico-18}}</a>
+            <a class="btn btn--outline btn--lg" href="tools.html">咨询开发合作</a>
+            <a class="btn btn--outline btn--lg" href="library.html">走进银河图书馆</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>

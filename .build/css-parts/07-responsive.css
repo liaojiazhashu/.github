@@ -1,0 +1,267 @@
+/* ==========================================================================
+   07 响应式断点（覆盖 320px ~ 4K 共 10 档）
+   ========================================================================== */
+
+/* ---------------------------------------------------- ≤1439px 笔记本 ---- */
+@media (max-width: 1439px) {:root {
+    --w-content: 1080px;
+    --w-wide: 1240px;
+  }
+}
+
+/* ---------------------------------------------------- ≤1279px 小笔记本 -- */
+@media (max-width: 1279px) {:root {
+    --gutter: clamp(20px, 4vw, 56px);
+    --sec-y: clamp(56px, 6.4vw, 96px);
+  }
+.works-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.site-footer__main {
+    grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+    gap: 32px;
+  }
+}
+
+/* -------------------------------------------------- ≤1023px 平板竖屏 ---- */
+@media (max-width: 1023px) {:root {
+    --sec-y: clamp(52px, 6vw, 84px);
+  }
+.nav, .site-header__actions .btn--outline { display: none; }
+.nav-toggle { display: inline-flex; }
+.site-header__inner { height: 68px; }
+.site-header.is-stuck .site-header__inner { height: 60px; }
+/* 锚点净空：页头 68+1=69px + 16px = 85（基准 93 见 01-tokens） */
+html { scroll-padding-top: 85px; }
+.brand__img { width: 148px; }
+.site-header.is-stuck .brand__img { width: 132px; }
+.split { grid-template-columns: minmax(0, 1fr); gap: clamp(28px, 4vw, 44px); }
+.grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hero { min-height: 100vh; min-height: 100svh; padding-top: clamp(44px, 9vh, 84px); }
+.hero__content { max-width: 100%; }
+.brand__img { width: 128px; }
+.btn--download { padding-inline: 12px; }
+.site-footer__main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 34px;
+  }
+.deflist__item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+.index-item {
+    grid-template-columns: 52px minmax(0, 1fr);
+    row-gap: 12px;
+  }
+.index-item__tags { grid-column: 2; justify-content: flex-start; }
+}
+
+/* ---------------------------------------------------- ≤767px 平板竖屏 --- */
+@media (max-width: 767px) {:root {
+    --gutter: 20px;
+    --sec-y: 52px;
+    --sec-y-sm: 40px;
+    --sp-9: 56px;
+    --sp-10: 72px;
+    --fs-body: 14.5px;
+    --fs-lead: 15.5px;
+  }
+.grid--2, .grid--3, .grid--4, .works-grid, .compare, .flow-compare {
+    grid-template-columns: minmax(0, 1fr);
+  }
+/* 小屏内容区窄，背景装饰与文字抢同一块地方：整层淡下来（v2.8）。
+   面板可读性由 v2.8 抬实的 --panel-glass / --surface-glass 负责。 */
+.bg-overlay { opacity: 0.5; }
+.cta-block__inner { flex-direction: column; align-items: flex-start; }
+.cta-block__actions { width: 100%; }
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      rgba(6, 8, 13, 0.34) 0%,
+      rgba(6, 8, 13, 0.20) 46%,
+      rgba(6, 8, 13, 0.38) 100%);
+    pointer-events: none;
+  }
+.hero__inner { position: relative; z-index: 1; }
+.hero__title, .hero__desc, .hero__meta-num { text-shadow: 0 2px 16px rgba(10, 22, 40, 0.55); }
+:root[data-theme="day"] .hero::before {
+    background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.30) 0%,
+      rgba(255, 255, 255, 0.14) 46%,
+      rgba(255, 255, 255, 0.34) 100%);
+  }
+:root[data-theme="day"] .hero__title, :root[data-theme="day"] .hero__desc, :root[data-theme="day"] .hero__meta-num { text-shadow: 0 1px 12px rgba(255, 255, 255, 0.65); }
+.cta-block__actions .btn { flex: 1 1 auto; }
+.hero__meta { gap: 22px 28px; }
+.hero__scroll { display: none; }
+.card__index { font-size: 36px; top: 14px; right: 16px; }
+.site-footer__main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+    padding-top: 42px;
+  }
+.site-footer__bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
+.graph-legend { gap: 14px; }
+.timeline { padding-left: 24px; }
+.tl-item::before { left: -24px; }
+.contact-line { flex-direction: column; gap: 6px; }
+.contact-line__label { width: auto; }
+.kv__row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.data-table th, .data-table td { padding: 12px 14px; }
+.data-table--stack { min-width: 0; }
+.data-table--stack, .data-table--stack tbody, .data-table--stack tr { display: block; width: 100%; }
+.data-table--stack thead { display: none; }
+.data-table--stack tr { padding: 14px 0; border-bottom: 1px solid var(--line-1); }
+.data-table--stack tr:last-child { border-bottom: 0; }
+.data-table--stack td { display: block; width: 100%; padding: 0; border: 0; }
+.data-table--stack td + td { margin-top: 7px; }
+.data-table--stack td:first-child { color: var(--text-1); font-weight: 500; }
+.data-table--stack td:last-child { color: var(--text-3); }
+.data-table--stack td:nth-child(3)::before { content: '例：'; }
+}
+
+/* 触屏上的可点区域：面包屑与箭头链接在桌面是 21/23px 高的行内文字，
+   手指按下去常常偏到相邻链接上。撑到 34px，用负外边距把多出来的高度抵掉，
+   排版位置一点不动。 */
+@media (max-width: 767px) {
+  .breadcrumb a,
+  .link-arrow {
+    min-height: 34px;
+  }
+  .breadcrumb a { margin-block: -6px; }
+}
+
+/* ---------------------------------------------- ≤367px 顶栏收次要 CTA ----- */
+/* 顶栏那一行的最小宽度是算出来的，不是估的（≤479 已收 28px，见上一块）：
+     padding 16×2 + brand 116 + gap 12 + actions 207.08
+     （主题 38 +「获取邀请码」113.08 + 菜单 40 + 两个 8 gap）
+     = 367.08
+   而 body 上有 overflow-x: hidden —— 超出的部分不是「撑出滚动条」，是**直接被裁掉**，
+   被裁的正是最右边那颗菜单按钮。收间距之前这条线是 395.08：390 切 5.08、375 切 20.08、
+   360 切 35.08、330 整颗落在视口外 —— 那些机器上「打开菜单」这个动作是坏的。
+   367 是 367.08 向下取整（实测 368 已放得下）。
+   顺带：这 5px 横向溢出也正是「设备模拟里布局视口被撑大到 395」的来源，两件事同源。 */
+@media (max-width: 367px) {
+  .site-header__actions .btn { display: none; }
+}
+
+/* -------------------------------------------------- ≤479px 手机竖屏 ----- */
+@media (max-width: 479px) {:root {
+    --gutter: 16px;
+    --fs-xs: 11.5px;
+    --r-3: 6px;
+    --r-4: 9px;
+  }
+.btn { height: 44px; padding-inline: 18px; }
+.btn--lg { height: 48px; }
+.hero__actions { flex-direction: column; align-items: stretch; }
+.hero__actions .btn { width: 100%; }
+.hero__meta-item { min-width: 42%; }
+.card, .panel, .persona, .metric { padding: 20px; }
+.nav-toggle { width: 40px; height: 40px; }
+.brand__img { width: 132px; }
+/* 顶栏这一行在 ≤479 收 28px，把它的最小宽从 395.08 压到 367.08：
+     inner gap 24→12（−12）、actions gap 12→8（−8）、页头 CTA 左右内边距 18→14（−8）。
+   **不动 `padding-inline`**：`.container` 的左右留白跟着 `--gutter`（≤479 时 16px），
+   单独把它改成 12 会让 brand 比下面所有正文左移 4px —— 那 4px 省不得（fe 拦下的）。
+   收完之后 368 以上都放得下，只有 ≤367 才在下一块里把 CTA 收进抽屉。
+   （为什么不直接收 CTA：它是本轮 P0 加的，390 上 about/tools/contact/library 四页
+    一收，第一屏到正文就一个入群入口都没有了，只剩页底那个 —— 那正是当初要解决的问题。）
+   实测：395.08 = 16×2 + brand 116 + gap 24 + actions 223.08，逐项都对得上。 */
+.site-header__inner { gap: 12px; }
+.site-header__actions { gap: 8px; }
+.site-header__actions .btn { padding-inline: 14px; }
+.chip { padding: 3px 8px; }
+.to-top { width: 40px; height: 40px; }
+/* 二维码窄屏给 160。理由是设计不是折叠：在手机上的人扫不了自己这块屏，
+   216px 是留给跨设备扫码的；顺带把弹层压矮 56px（414×790 用 216 时
+   cardH 770.55 > 上限 755、要滚 18px；用 160 后 390/414/479 在 790 高下都不滚）。
+   断点两侧是 479 / 480，中间没有空档：479 拿 160（cardH 692.45），
+   480 拿 216（cardH 726.17）。480 是「宽度够 216、又最可能配
+   小屏高度」的那一档——不分档的话它的最低不滚视口高是 763（二分法量的，不是
+   扫描上界），再矮就开始滚：740 高时滚 23px。判「要不要再往下压二维码」看这一档。
+   img 带 width="216" height="216" 属性，只写 width 会变形
+   —— 实测 320 下渲染成 208×216（宽度被 max-width:100% 夹住、高度按属性走），
+   所以 height 必须一起写；二维码是方的，160/160 比 height:auto 更稳。 */
+.invite-modal__qr { width: 160px; height: 160px; }
+}
+
+/* -------------------------------------------------- ≤359px 极小屏 ------- */
+@media (max-width: 359px) {:root {
+    --fs-display: 27px;
+    --fs-h1: 25px;
+    --fs-h2: 21px;
+    --fs-h3: 17px;
+    --fs-h4: 15.5px;
+    --fs-body: 14px;
+    --fs-lead: 14.5px;
+  }
+.brand__img { width: 116px; }
+.hero__meta-num { font-size: 20px; }
+.card__index { display: none; }
+}
+
+/* 低矮横屏（如 800×600 桌面、手机横屏）：压缩内边距但仍满屏 */
+@media (max-height: 620px) and (orientation: landscape) {.hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+.hero__meta { margin-top: 28px; padding-top: 18px; }
+.page-hero { padding-top: 40px; padding-bottom: 32px; }
+}
+
+/* -------------------------------------------------- ≥1440px 桌面 -------- */
+@media (min-width: 1440px) {:root {
+    --w-content: 1200px;
+    --w-wide: 1360px;
+  }
+}
+
+/* -------------------------------------------------- ≥1680px 大屏 -------- */
+@media (min-width: 1680px) {:root {
+    --w-content: 1280px;
+    --w-wide: 1460px;
+    --sec-y: clamp(96px, 6vw, 132px);
+  }
+.hero { min-height: 100vh; min-height: 100svh; }
+}
+
+/* -------------------------------------------------- ≥1920px 超宽 --------- */
+@media (min-width: 1920px) {:root {
+    --w-content: 1360px;
+    --w-wide: 1560px;
+    --w-max: 1720px;
+  }
+.works-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.bg-grid { background-size: 96px 96px; }
+}
+
+/* -------------------------------------------------- ≥2560px 4K ---------- */
+@media (min-width: 2560px) {:root {
+    --w-content: 1560px;
+    --w-wide: 1760px;
+    --fs-body: 17px;
+    --fs-lead: 20px;
+    --fs-h3: 28px;
+    --fs-h4: 21px;
+    --gutter: 96px;
+  }
+.works-grid { gap: 28px; }
+.grid { gap: 28px; }
+.site-header__inner { height: 88px; }
+/* 锚点净空：页头 88+1=89px + 16px = 105（基准 93 见 01-tokens） */
+html { scroll-padding-top: 105px; }
+.brand__img { width: 196px; }
+.site-header.is-stuck .brand__img { width: 170px; }
+.nav__link { font-size: 15px; padding-inline: 18px; }
+.bg-grid { background-size: 120px 120px; }
+}
+
+/* 打印 */
+@media print {.bg-overlay, .site-header, .to-top, .scroll-progress { display: none !important; }
+html, body { background: #fff; color: #000; }
+}

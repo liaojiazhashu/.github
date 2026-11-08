@@ -1,0 +1,254 @@
+/* ---- 隐藏属性兜底 --------------------------------------------------------
+   HTML 的 hidden 属性由 UA 样式表的 [hidden] {display:none}
+提供，但任何一条
+   带 display 的类规则都会把它覆盖（例如 .works-grid {display:grid}
+）。
+   作品库空状态与「加载更多」都依赖 hidden 属性切换，因此在这里统一兜底。 */
+[hidden] {
+  display: none !important;
+}
+.h1 {
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+.h2 {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-head);
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+.h3 {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-head);
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.005em;
+}
+.h4 {
+  font-size: var(--fs-h4);
+  line-height: var(--lh-head);
+  font-weight: 600;
+  color: var(--text-1);
+}
+.body {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text-2);
+}
+.small {
+  font-size: var(--fs-sm);
+  line-height: 1.68;
+  color: var(--text-3);
+}
+.micro {
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--text-3);
+}
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+.num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  color: var(--text-1);
+}
+.text-1 { color: var(--text-1); }
+.text-2 { color: var(--text-2); }
+.text-3 { color: var(--text-3); }
+.text-cyan { color: var(--accent-2); }
+.strong { color: var(--text-1); font-weight: 500; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: -80px;
+  z-index: var(--z-top);
+  padding: 10px 18px;
+  background: var(--accent-1);
+  color: var(--on-accent);
+  border-radius: var(--r-2);
+  font-size: var(--fs-sm);
+  transition: top var(--dur-2) var(--ease);
+}
+.skip-link:focus {
+  top: 12px;
+}
+.mt-0 { margin-top: 0; }
+.mt-2 { margin-top: var(--sp-2); }
+.mt-3 { margin-top: var(--sp-3); }
+.mt-4 { margin-top: var(--sp-4); }
+.mt-5 { margin-top: var(--sp-5); }
+.mt-6 { margin-top: var(--sp-6); }
+.mt-7 { margin-top: var(--sp-7); }
+.mt-8 { margin-top: var(--sp-8); }
+.mb-0 { margin-bottom: 0; }
+.mb-4 { margin-bottom: var(--sp-4); }
+.mb-5 { margin-bottom: var(--sp-5); }
+.mb-6 { margin-bottom: var(--sp-6); }
+.mb-7 { margin-bottom: var(--sp-7); }
+.ico {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+.ico-18 { width: 18px; height: 18px; }
+.ico-20 { width: 20px; height: 20px; }
+.ico-24 { width: 24px; height: 24px; }
+.ico-box {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-2);
+  background: var(--accent-1-soft);
+  color: var(--accent-1-hi);
+}
+.ico-box--sm {
+  width: 38px;
+  height: 38px;
+}
+.ico-box--cyan {
+  color: var(--accent-2);
+  background: var(--accent-2-soft);
+  border-color: var(--accent-2-line);
+}
+.rule {
+  height: 1px;
+  background: var(--line-1);
+  border: 0;
+}
+.rule-grad {
+  height: 1px;
+  border: 0;
+  background: var(--grad-line);
+}
+.list-dot > li {
+  position: relative;
+  padding-left: 20px;
+  line-height: 1.7;
+}
+.list-dot > li + li {
+  margin-top: 10px;
+}
+.list-dot > li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.72em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-1);
+  box-shadow: 0 0 0 3px rgba(79, 193, 224, 0.14);
+}
+.list-dot--cyan > li::before {
+  background: var(--accent-2);
+  box-shadow: 0 0 0 3px rgba(139, 158, 216, 0.14);
+}
+.list-check > li {
+  position: relative;
+  padding-left: 26px;
+  line-height: 1.7;
+}
+.list-check > li + li {
+  margin-top: 9px;
+}
+.list-check > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.42em;
+  width: 13px;
+  height: 7px;
+  border-left: 1.6px solid var(--accent-2);
+  border-bottom: 1.6px solid var(--accent-2);
+  transform: rotate(-45deg);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-1);
+  background: var(--wash-1);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.chip--accent {
+  border-color: var(--accent-1-line);
+  background: var(--accent-1-soft);
+  color: var(--accent-1-hi);
+}
+.chip--cyan {
+  border-color: var(--accent-2-line);
+  background: var(--accent-2-soft);
+  color: var(--accent-2);
+}
+.chip--warn {
+  border-color: rgba(224, 168, 78, 0.3);
+  background: var(--accent-warn-soft);
+  color: var(--accent-warn);
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+}
+.eyebrow::before {
+  content: '';
+  width: 26px;
+  height: 1px;
+  background: var(--accent-2-line);
+}
+.notice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r-2);
+  background: var(--wash-1);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+.notice .ico {
+  margin-top: 3px;
+  color: var(--text-4);
+}

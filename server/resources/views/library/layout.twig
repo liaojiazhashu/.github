@@ -87,10 +87,13 @@
       <p class="foot__note">每篇入馆作品都有两页：读者视角讲核心设定、魅力、影视化描述与适合谁；作者视角讲节点、伏笔、建议与修改方向。两边都不给分，只给可检索的结论。</p>
       {# 联系入口：官网 contact.html 是主渠道，馆内也留一份 ——
          读者发现数据错误、作者要问拆解口径时，不必先回官网找联系方式。
-         两个标签都是四个字，靠一个全角空格就能对齐，不用另做栅格。 #}
+         两个标签字数不同（公司事务 4 字 / 欧洲事务联系 6 字），
+         靠 grid 的 max-content 列对齐，不用全角空格凑 —— 那种对齐一改字就散。 #}
       <p class="foot__contact">
-        <span>公司事务　<a href="mailto:huangqi.sifi@gmail.com">huangqi.sifi@gmail.com</a></span>
-        <span>欧洲分部　<a href="mailto:founpghkf@gmail.com">founpghkf@gmail.com</a></span>
+        <span>公司事务</span>
+        <a href="mailto:huangqi.sifi@gmail.com">huangqi.sifi@gmail.com</a>
+        <span>欧洲事务联系</span>
+        <a href="mailto:founpghkf@gmail.com">founpghkf@gmail.com</a>
       </p>
     </div>
     <div class="foot__col foot__col--stats">

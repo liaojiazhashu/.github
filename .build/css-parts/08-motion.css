@@ -1,0 +1,85 @@
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+[data-reveal="fade"] { transform: none; }
+[data-reveal="left"] { transform: translateX(-22px); }
+[data-reveal="right"] { transform: translateX(22px); }
+[data-reveal="scale"] {
+  transform: scale(0.97) translateY(12px);
+}
+[data-reveal].is-in[data-reveal="left"], [data-reveal].is-in[data-reveal="right"], [data-reveal].is-in[data-reveal="scale"] { transform: none; }
+.hero [data-reveal] { transition-duration: 760ms; }
+.spotlight {
+  position: relative;
+  overflow: hidden;
+}
+.spotlight::after {
+  content: '';
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  left: var(--sx, 50%);
+  top: var(--sy, 50%);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(79, 193, 224, 0.16) 0%, rgba(79, 193, 224, 0) 66%);
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease);
+  pointer-events: none;
+  z-index: 0;
+}
+.spotlight:hover::after { opacity: 1; }
+@keyframes dot-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+/* --------------------------------------------------------- 降级处理 ---- */
+/* 尊重系统「减少动态效果」设置：关闭所有位移与循环动画，仅保留静态呈现 */
+@media (prefers-reduced-motion: reduce) {html { scroll-behavior: auto; }
+*, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+[data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+.bar-fill, .score-line__fill { transition: none; }
+.bg-shard { animation: none; }
+.hero__scroll-line::after { animation: none; opacity: 0; }
+}
+/* 不支持 backdrop-filter 时的兜底：改用较实的底色，保证文字可读。
+   v1.6 起玻璃面覆盖了卡片 / 面板 / 表格等主要容器，兜底也要同步覆盖，
+   否则旧浏览器上整个内容层会「透明到没法读」。 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {.site-header.is-stuck { background: var(--header-stuck-bg); }
+.nav__drop { background: var(--surface-2); }
+.to-top { background: var(--surface-2); }
+.site-footer { background: var(--footer-bg); }
+.card, .cta-block { background: var(--surface-2); }
+.panel, .compare__col, .table-wrap, .work-card { background: var(--panel-glass-99); }
+}
+/* 不支持 :has() 时的兜底 */
+@supports not selector(:has(*)) {
+}
+/* 高对比度模式 */
+@media (prefers-contrast: more) {:root {
+    --text-2: #D6DEE9;
+    --text-3: #B3BECF;
+    --line-1: #47586F;
+    --line-2: #5E7290;
+  }
+.card, .persona { border-color: var(--line-2); }
+}
+/* 深色输入控件一致性 */
+@media (prefers-color-scheme: light) {
+}

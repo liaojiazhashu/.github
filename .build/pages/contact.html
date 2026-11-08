@@ -1,0 +1,361 @@
+<main id="main" class="page">
+
+  <!-- ========================================================= 页面头 -->
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="面包屑">
+        <a href="index.html">首页</a>
+        {{ico:chevronRight:ico-18 breadcrumb__sep}}
+        <span class="breadcrumb__current">联系我们</span>
+      </nav>
+
+      <p class="eyebrow mt-5" data-reveal="fade">联系我们</p>
+      <h1 class="page-hero__title" data-reveal="up">联系我们</h1>
+      <p class="page-hero__desc" data-reveal="up" style="--reveal-delay:90ms">
+        本页是成都荒启文化传播有限公司的对外联系入口，也是加入「荒启科幻练笔」公益社群的通道。
+        加群只需回答一道问题 ——「科幻的定义是什么？」。没有标准答案，写下你自己的想法即可；参加全程免费。
+      </p>
+
+      <div class="page-hero__stats" data-reveal="fade" style="--reveal-delay:200ms">
+        <div>
+          <p class="hero__meta-num"><span data-count="2">0</span><small>个</small></p>
+          <p class="hero__meta-label">对外公开渠道</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="4">0</span><small>条</small></p>
+          <p class="hero__meta-label">开发业务线</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="2">0</span><small>款</small></p>
+          <p class="hero__meta-label">自研产品</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span>0</span><small>元</small></p>
+          <p class="hero__meta-label">加入与参与的费用</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================== 获取邀请码 -->
+  <!-- 全站「获取邀请码」的落点就在这里（邀请码弹窗、首页 CTA、图书馆 CTA 都指向 #invite）。
+       旧版这一节其实在讲下载与阅读，而真正发码的 #join 是另一节 —— 锚点指过来什么也看不到，
+       v2.3.22 把「怎么拿到码」和「拿到之后做什么」拆成两节，前者就是本节的唯一内容。 -->
+  <section class="section" id="invite">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">加入通道</p>
+        <h2 class="section-head__title" data-reveal="up">获取邀请码</h2>
+        <p class="section-head__desc" data-reveal="up">
+          邀请码只在交流 QQ 群发放：申请加群、回答入群问题，通过后即可获得。
+          不收费、不填表，也不需要作品或推荐人。
+        </p>
+        <hr class="rule-grad section-head__rule">
+      </div>
+
+      <div class="split split--top mt-8">
+        <div data-reveal="up">
+          <div class="panel panel--accent">
+            <p class="panel__title">{{ico:users:ico-18}} 交流 QQ 群</p>
+            <p class="qq-badge"><span class="mono">280660235</span><button class="copy-btn" type="button" data-copy="280660235" aria-label="复制群号 280660235">复制群号</button></p>
+            <img class="invite-modal__qr" src="assets/qq/qq-group-qr.png"
+                 alt="荒启科幻交流群二维码，群号 280660235" width="216" height="216"
+                 loading="lazy" decoding="async">
+            <p class="panel__body">
+              群名「荒启科幻交流群」。在 QQ 中搜索群号或<b>扫描二维码</b>直接申请加群，
+              通过后群内会给出注册邀请码 —— 客户端与阅读站共用同一个账号。
+            </p>
+          </div>
+
+          <div class="notice mt-5" data-reveal="fade">
+            {{ico:shield:ico-18}}
+            <span>
+              入群不需要填表单、交作品、找推荐人，也不收取任何费用；入群即表示接受
+              《荒启科幻练笔活动正式规则 4.1》，完整条款见<a class="link-arrow" href="community.html">社群页</a>。
+              凡要求提供上述内容的环节，都不是荒启科幻的流程。
+            </span>
+          </div>
+        </div>
+
+        <aside class="split__aside" data-reveal="left">
+          <div class="steps steps--stack" data-reveal="up">
+            <div class="step">
+              <p class="step__num" aria-hidden="true"></p>
+              <h3 class="step__title">申请加入</h3>
+              <p class="step__desc">
+                在 QQ 中搜索群号 <span class="mono">280660235</span>，申请加入「荒启科幻交流群」。<button class="copy-btn" type="button" data-copy="280660235" aria-label="复制群号 280660235">复制群号</button>
+              </p>
+            </div>
+            <div class="step">
+              <p class="step__num" aria-hidden="true"></p>
+              <h3 class="step__title">回答入群问题</h3>
+              <p class="step__desc">
+                问题是<b>「科幻的定义是什么？」</b>。它没有标准答案，也不考记诵 ——
+                写下你自己的想法就够了，几句话也行。
+                入群之后，群公告里会给出练笔活动的完整规则。
+              </p>
+            </div>
+            <div class="step">
+              <p class="step__num" aria-hidden="true"></p>
+              <h3 class="step__title">获得邀请码</h3>
+              <p class="step__desc">
+                通过后在群内取得注册邀请码，在客户端或阅读站注册时填写，一个账号两端通用。
+              </p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== 拿到邀请码之后 -->
+  <section class="section section--tinted" id="start">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">准入之后</p>
+        <h2 class="section-head__title" data-reveal="up">拿到邀请码之后</h2>
+        <p class="section-head__desc" data-reveal="up">
+          两个入口通向同一套作品与评稿系统，用同一个账号登录；
+          不想注册也可以直接<a href="{{LIBRARY_URL}}" target="_blank" rel="noopener">进银河图书馆</a>翻词库与拆解页 —— 读不需要账号。
+        </p>
+        <hr class="rule-grad section-head__rule">
+      </div>
+
+      <div class="grid grid--2 grid--gap-lg mt-8">
+        <div class="panel panel--accent" data-reveal="up">
+          <p class="panel__title">{{ico:cpu:ico-18}} 客户端下载</p>
+          <p class="panel__body">
+            提供电脑端（.exe）、安卓端（.apk）与 iOS 端（.ipa）三个版本，安装包可以直接下载；
+            首次启动时输入邀请码完成注册即可使用。
+          </p>
+          <div class="invite-modal__actions invite-modal__actions--stack mt-5">
+            {{APP_DL_BUTTONS:btn--primary btn--sm}}
+          </div>
+        </div>
+        <div class="panel panel--cyan" data-reveal="up"
+             style="--reveal-delay:90ms; display:flex; flex-direction:column">
+          <p class="panel__title">{{ico:book:ico-18}} 在线阅读</p>
+          <p class="panel__body">
+            在线阅读在独立的 H5 阅读站进行（新窗口打开），<b>打开即需要登录</b> ——
+            没有账号进不去，这一点与客户端一致。
+          </p>
+          <div class="row mt-5" style="margin-top:auto">
+            <a class="btn btn--primary" href="{{READER_URL}}" target="_blank" rel="noopener">进入在线阅读</a>
+            <a class="btn btn--outline" href="#invite">还没有邀请码</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 联系方式 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">联系方式</p>
+        <h2 class="section-head__title" data-reveal="up">四个公开渠道</h2>
+      </div>
+
+      <div class="split split--top mt-7">
+        <div data-reveal="up">
+          <div class="contact-line">
+            <span class="contact-line__label">交流 QQ 群</span>
+            <span class="contact-line__value"><span class="mono">280660235</span>　荒启科幻交流群</span>
+          </div>
+          <div class="contact-line">
+            <span class="contact-line__label">微信公众号</span>
+            <span class="contact-line__value">荒启科幻</span>
+          </div>
+          <div class="contact-line">
+            <span class="contact-line__label">公司邮箱</span>
+            <span class="contact-line__value"><a class="mono" href="mailto:huangqi.sifi@gmail.com">huangqi.sifi@gmail.com</a></span>
+          </div>
+          <div class="contact-line">
+            <span class="contact-line__label">欧洲事务联系</span>
+            <span class="contact-line__value"><a class="mono" href="mailto:founpghkf@gmail.com">founpghkf@gmail.com</a></span>
+          </div>
+          <div class="contact-line">
+            <span class="contact-line__label">公司事务</span>
+            <span class="contact-line__value">开发合作、版权与授权、签约与开票，请发邮件到公司邮箱并注明来意；社群事务请到 QQ 群或公众号</span>
+          </div>
+
+          <div class="notice mt-6">
+            {{ico:document:ico-18}}
+            <span>主办单位：<b>成都荒启文化传播有限公司</b>（统一社会信用代码
+            <span class="mono">91510100MAEY15D64X</span>，四川 · 成都）。
+            签约、开票、版权与授权事务均以公司全称为准。「荒启科幻」是公司品牌名；
+            「荒启科幻练笔」是由科幻爱好者组成、成员自主运营的纯公益社群，公司提供网络平台工具，
+            不参与其日常运营，也不从社群活动中获取经营收益。</span>
+          </div>
+        </div>
+
+        <div data-reveal="up" style="--reveal-delay:120ms">
+          <div class="panel">
+            <p class="panel__title">{{ico:shieldCheck:ico-18}} 三个板块在哪里看</p>
+            <ul class="list-dot panel__body">
+              <li><b>科幻社群</b>　成员自主运营的公益社群，练笔规则与节奏见<a class="link-arrow" href="community.html">社群页</a></li>
+              <li><b>数字化产品开发</b>　公司的四条业务线与三种合作方式，见<a class="link-arrow" href="tools.html">开发页</a></li>
+              <li><b>银河图书馆</b>　公司维护的免费在线索引馆：关键词索引、剧情分析与修改清单，见<a class="link-arrow" href="library.html">图书馆页</a></li>
+            </ul>
+          </div>
+
+          <div class="panel panel--cyan mt-5">
+            <p class="panel__title">{{ico:database:ico-18}} 关于社群数据</p>
+            <p class="panel__body">
+              成员名单与作品数据由社群自主管理，不对外提供。
+              作品版权完全属于作者本人，社群设立的荣誉激励不附带任何权益让渡。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== FAQ -->
+  <section class="section section--tinted">
+    <div class="container container--narrow">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">常见问题</p>
+        <h2 class="section-head__title" data-reveal="up">加入之前常被问到的事</h2>
+      </div>
+
+      <div class="accordion mt-7" data-accordion="single" data-reveal="up">
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>完全没有发表过作品，可以加入吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              可以。加入条件与发表经历无关，我们关心的是你是否愿意按期给出具体的、针对文本的评稿 ——
+              这也是唯一的门槛。
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>只写非科幻题材，能加入吗？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              社群的核心是科幻，但「科幻」的边界我们理解得比较宽——
+              奇幻边界、推想小说、带有科幻元素的现实题材都在范围内。
+              如果你的写作与科幻完全没有交集，这里的评稿标准可能并不适用于你，
+              这种情况下我们会如实告知。
+            </div>
+          </div>
+        </div>
+
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            <span>作品版权归谁？</span>
+            <span class="acc-btn__icon" aria-hidden="true">{{ico:plus:ico-18}}</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-panel__inner">
+              完全归作者本人。社群不主张任何形式的版权，也不改变署名方式、不影响作品后续的投稿与出版。
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================== 隐私说明 -->
+  <section class="section" id="privacy">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">隐私</p>
+        <h2 class="section-head__title" data-reveal="up">这一站不问你要任何信息</h2>
+        <p class="section-head__desc" data-reveal="up">
+          下面几条都能自己核对——打开浏览器的开发者工具，看「网络」和「应用」两个面板就够了，
+          不需要相信任何转述。
+        </p>
+        <hr class="rule-grad section-head__rule">
+      </div>
+
+      <div class="panel" data-reveal="up">
+        <p class="panel__title">{{ico:shield:ico-18}} 个人信息处理者是谁</p>
+        <p class="panel__body">
+          本站与「银河图书馆」的个人信息处理者是<b>成都荒启文化传播有限公司</b>
+          （统一社会信用代码 <span class="mono">91510100MAEY15D64X</span>，
+          注册地址：四川省成都高新区神仙树西路 3 号 1 栋 11 层 9 号）。
+          本页没有表单。与个人信息有关的查询、更正、删除请求，请发邮件到
+          <a class="mono" href="mailto:huangqi.sifi@gmail.com">huangqi.sifi@gmail.com</a>；
+          其他问题到交流 QQ 群 <span class="mono">280660235</span> 找管理员，或在公众号「荒启科幻」留言。
+        </p>
+      </div>
+
+      <div class="panel mt-5" data-reveal="up">
+        <p class="panel__title">{{ico:document:ico-18}} 没有表单，也就不问你要任何东西</p>
+        <p class="panel__body">
+          全站六个页面都没有输入框：没有注册、没有订阅、没有留言表单。
+          为了看内容，你不需要交出姓名、邮箱或手机号。
+        </p>
+      </div>
+
+      <div class="panel mt-5" data-reveal="up">
+        <p class="panel__title">{{ico:shieldCheck:ico-18}} 没有统计脚本，没有第三方嵌入</p>
+        <p class="panel__body">
+          页面上没有一个来自外部域名的脚本、字体或图片请求，也就没有埋点、热力图和广告归因。
+          我们看不到你从哪来、看了多久、点过什么。
+        </p>
+      </div>
+
+      <div class="panel mt-5" data-reveal="up">
+        <p class="panel__title">{{ico:sliders:ico-18}} 唯一的本地存储是「昼/夜」这个选择</p>
+        <p class="panel__body">
+          你把界面切成白天或夜间时，浏览器会在你自己的机器上存一个键
+          <span class="mono">hq-theme</span>，值是 <span class="mono">day</span> 或
+          <span class="mono">night</span>。它不会被发送到服务器，我们也读不到；
+          清掉这个站点的数据它就没了，代价只是下次要重新选一次。
+        </p>
+      </div>
+
+      <div class="panel mt-5" data-reveal="up">
+        <p class="panel__title">{{ico:database:ico-18}} 服务器会记访问日志</p>
+        <p class="panel__body">
+          托管方按常规记录访问日志（IP、时间、浏览器标识，以及你请求的地址）。
+          要注意<b>检索词就在那个地址里</b>：在「银河图书馆」搜过什么，会随访问日志留在服务器上。
+          日志只用于排查故障和拦截滥用，不用于给任何人画像，也不对外提供。
+          入群之后在 QQ 群、在公众号里的消息，按腾讯的平台规则处理，不在本站范围内。
+        </p>
+      </div>
+
+      <div class="notice mt-6">
+        {{ico:document:ico-18}}
+        <span>本站没有账号、没有表单，应用侧不保存任何个人信息，所以没有「申请删除我的数据」这一步可走。
+        如果你想把访问日志里属于你的那几条清掉，或者发现哪里与上面写的不符，请发邮件到
+        <a class="mono" href="mailto:huangqi.sifi@gmail.com">huangqi.sifi@gmail.com</a>，
+        或到交流 QQ 群 <span class="mono">280660235</span> 找管理员。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== CTA -->
+  <section class="section section--sm">
+    <div class="container">
+      <div class="cta-block" data-reveal="up">
+        <div class="cta-block__inner">
+          <div class="cta-block__text">
+            <h2 class="cta-block__title">先看看社群怎么运转</h2>
+            <p class="cta-block__desc">
+              入群之前，可以先浏览社群的活动节奏与评稿机制，
+              或者翻一翻银河图书馆里的结构摘要——两者都能帮你判断这里是否值得加入。
+            </p>
+          </div>
+          <div class="cta-block__actions">
+            <a class="btn btn--primary btn--lg" href="community.html">了解社群机制 {{ico:arrowRight:ico-18}}</a>
+            <a class="btn btn--outline btn--lg" href="library.html">走进银河图书馆</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>

@@ -1,0 +1,830 @@
+<main id="main" class="page">
+
+  <!-- ========================================================= 页面头 -->
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="面包屑">
+        <a href="index.html">首页</a>
+        {{ico:chevronRight:ico-18 breadcrumb__sep}}
+        <a href="index.html#business">三大板块</a>
+        {{ico:chevronRight:ico-18 breadcrumb__sep}}
+        <span class="breadcrumb__current">科幻社群</span>
+      </nav>
+
+      <p class="eyebrow mt-5" data-reveal="fade">公益社群 · 荒启科幻练笔</p>
+      <h1 class="page-hero__title" data-reveal="up">科幻社群</h1>
+      <p class="page-hero__desc" data-reveal="up" style="--reveal-delay:90ms">
+        「荒启科幻练笔」是由科幻爱好者组成、成员自主运营的纯公益写作社群。
+        不做发布平台，只做一件事：保证每一篇投稿至少被十位不同的读者认真读完，
+        并拿到具体、可用、无处可躲的反馈。参加全程免费。
+      </p>
+
+      <div class="page-hero__stats" data-reveal="fade" style="--reveal-delay:200ms">
+        <div>
+          <p class="hero__meta-num"><span data-count="9">0</span><small>期 / 年</small></p>
+          <p class="hero__meta-label">年度期数</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="10">0</span><small>位 / 篇</small></p>
+          <p class="hero__meta-label">每篇作品的最低评稿人数</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="5">0</span><small>个维度</small></p>
+          <p class="hero__meta-label">评稿的量化维度</p>
+        </div>
+        <div>
+          <p class="hero__meta-num"><span data-count="2024" data-count-plain>0</span></p>
+          <p class="hero__meta-label">练笔起步年份</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 运营模式 -->
+  <section class="section">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow" data-reveal="fade">运作模式</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">用节奏代替热情</h2>
+          <p class="body mt-6" data-reveal="up">
+            写作最容易失败的地方不是才华，而是节奏。多数人的第一篇作品停在草稿里，
+            不是因为写不下去，而是因为没有下一个人等着读它。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            因此练笔的第一条设计原则是稳定：每年九期，投稿与评稿全部在
+            成都荒启文化传播有限公司开发的 APP「荒启科幻」内完成。期次连续编号、不因年份重置，
+            成员随时知道自己处在第几期、下一期什么时候开始。
+          </p>
+
+          <div class="grid grid--auto mt-7" data-reveal="up">
+            <div class="panel">
+              <p class="panel__title">{{ico:calendar:ico-18}} 九期节奏</p>
+              <p class="panel__body">每年九期，周期按月份划分、长短交替（见右侧分布）。每期提供推荐主题，但不具强制性，作者可自由创作。</p>
+            </div>
+            <div class="panel">
+              <p class="panel__title">{{ico:flow:ico-18}} 投稿与评稿同在 APP</p>
+              <p class="panel__body">投稿和评稿都通过公司开发的 APP「荒启科幻」进行。写、读、评、计分、反馈形成一条闭环，不需要在多个工具之间搬运稿件。</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="split__aside" data-reveal="left">
+          <div class="demo-frame">
+            <div class="demo-frame__bar">
+              <span class="demo-frame__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+              <span class="demo-frame__title">年度九期 / 月份分布（长条为周期长度）</span>
+            </div>
+            <div class="demo-frame__body">
+              <div class="bar-list">
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 1 期　1-2 月</span><span class="bar-item__val">2 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill" data-value="100"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 2 期　3 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 3 期　4 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 4 期　5-6 月</span><span class="bar-item__val">2 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill" data-value="100"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 5 期　7 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 6 期　8 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 7 期　9-10 月</span><span class="bar-item__val">2 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill" data-value="100"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 8 期　11 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-item__head"><span>第 9 期　12 月</span><span class="bar-item__val">1 个月</span></div>
+                  <div class="bar-track"><span class="bar-fill bar-fill--cyan" data-value="50"></span></div>
+                </div>
+              </div>
+              <p class="micro mt-5">跨度两个月的期次写作窗口更宽，跨度一个月的期次更紧凑。每期都从活动创建时开始，至截止日早上 7 点截止。</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 年度节奏 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">年度节奏</p>
+        <h2 class="section-head__title" data-reveal="up">一年九期，月份周期各不相等</h2>
+        <p class="section-head__desc" data-reveal="up">
+          九期不是平均切分十二个月：写作窗口宽窄交替，长窗口容纳长篇，短窗口逼出短篇。
+        </p>
+      </div>
+
+      <div class="notice mt-6" data-reveal="fade">
+        {{ico:clock:ico-18}}
+        <span>
+          练笔始于 2024 年 1 月 1 日，期次连续编号、每年九期循环。
+          最新一期与各期起止时间以社群公告为准；过期稿件不参与评比。
+        </span>
+      </div>
+
+      <div class="grid grid--3 mt-7" data-reveal="up">
+        <div class="metric">
+          {{ico:document:ico-24}}
+          <p class="metric__value">3000–33000 <small class="text-cyan" style="font-size:0.5em">字</small></p>
+          <p class="metric__label">练笔稿件的字数区间。不符合字数要求的稿件一律视为无效投稿，不予接受</p>
+        </div>
+        <div class="metric">
+          {{ico:clock:ico-24}}
+          <p class="metric__value">7:00 <small class="text-cyan" style="font-size:0.5em">截止</small></p>
+          <p class="metric__label">每期在截止日早上 7 点截止，过期稿件不参与评比</p>
+        </div>
+        <div class="metric">
+          {{ico:refresh:ico-24}}
+          <p class="metric__value">2025-11-01 <small class="text-cyan" style="font-size:0.5em">起实行</small></p>
+          <p class="metric__label">现行《荒启科幻练笔活动正式规则》为 4.1 版本，自 2025 年 11 月 1 日起实行</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================== 单期活动流程 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">单期流程</p>
+        <h2 class="section-head__title" data-reveal="up">一期活动是怎么跑完的</h2>
+        <p class="section-head__desc" data-reveal="up">
+          五个步骤，每一步都有明确的交付物与截止时间。流程本身不做简化，
+          因为简化掉的往往是反馈质量。
+        </p>
+      </div>
+
+      <div class="steps mt-8" data-reveal="up">
+        <div class="step">
+          <p class="step__num" aria-hidden="true"></p>
+          <h3 class="step__title">投稿</h3>
+          <p class="step__desc">
+            在 APP 内创建作品并提交，字数须落在 3000–33000 字之间，过期稿件不参与评比。
+          </p>
+        </div>
+        <div class="step">
+          <p class="step__num" aria-hidden="true"></p>
+          <h3 class="step__title">算法分配</h3>
+          <p class="step__desc">
+            算法工具完成派单，结果直接推送到 APP 评审中心；四条分配原则见下方机制。
+          </p>
+        </div>
+        <div class="step">
+          <p class="step__num" aria-hidden="true"></p>
+          <h3 class="step__title">评稿</h3>
+          <p class="step__desc">
+            在 APP 内填写六部分评稿单：五个维度各自打分，并写出十字以上的文字评价。
+          </p>
+        </div>
+        <div class="step">
+          <p class="step__num" aria-hidden="true"></p>
+          <h3 class="step__title">计分与反馈</h3>
+          <p class="step__desc">
+            系统汇总当期排名并生成个人反馈单，作者可在 APP 内看到收到的全部评稿。
+          </p>
+        </div>
+        <div class="step">
+          <p class="step__num" aria-hidden="true"></p>
+          <h3 class="step__title">线上指指点点大会</h3>
+          <p class="step__desc">
+            把文字评稿搬到当面：按发布时间逐篇开麦讨论，每期一次。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================= 评稿分配与评稿结构 -->
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">核心机制</p>
+        <h2 class="section-head__title" data-reveal="up">分配、评稿、计分、纪律</h2>
+        <p class="section-head__desc" data-reveal="up">
+          这四件事决定了反馈的质量。规则把它们全部写死，不做弹性处理 ——
+          弹性一旦出现在这里，反馈就不再可比。
+        </p>
+      </div>
+
+      <div class="grid grid--2 grid--gap-lg mt-8">
+        <article class="card" data-reveal="up">
+          <div class="card__head">
+            <div class="ico-box">{{ico:tree:ico-24}}</div>
+            <span class="chip chip--accent">01</span>
+          </div>
+          <h3 class="card__title">分配：算法工具的四条原则</h3>
+          <p class="card__desc">分配不靠人情，也不靠人工排表。</p>
+          <ul class="list-check card__desc">
+            <li>未完成练笔任务的成员，需要完成作者两倍的评稿任务</li>
+            <li>作者不可以为自己的作品写评稿</li>
+            <li>每个人的评稿任务里，稿件平均字数尽可能一致</li>
+            <li>每篇作品在分配时至少指派 10 个不同的读者（分配下限，不设上限）</li>
+          </ul>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:100ms">
+          <div class="card__head">
+            <div class="ico-box ico-box--cyan">{{ico:clipboard:ico-24}}</div>
+            <span class="chip chip--cyan">02</span>
+          </div>
+          <h3 class="card__title">评稿：六个组成部分</h3>
+          <p class="card__desc">评分保证可比，文字保证可用，两者都不可省。</p>
+          <ul class="list-check card__desc">
+            <li>综合评价：选填，用于写下不落在单一维度上的整体判断</li>
+            <li>设定、文笔、情节、人物、思想性：五个必填维度</li>
+            <li>每个维度的文字评价需在十个字以上，并对应打出 0–10 分</li>
+            <li>APP 自动取五个维度分数之和的平均分作为评稿结果</li>
+          </ul>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:200ms">
+          <div class="card__head">
+            <div class="ico-box">{{ico:gauge:ico-24}}</div>
+            <span class="chip chip--accent">03</span>
+          </div>
+          <h3 class="card__title">计分：去极值后取总分</h3>
+          <p class="card__desc">只考量合格评稿，不考量人情与情绪。</p>
+          <ul class="list-check card__desc">
+            <li>计分时考量所有合格评稿，不合格的评稿不参与计算</li>
+            <li>一篇作品超过四个评稿时，去掉一个最低分与一个最高分后得出总分</li>
+            <li>去极值的作用是削弱单份极端评分对结果的牵动</li>
+          </ul>
+        </article>
+
+        <article class="card" data-reveal="up" style="--reveal-delay:300ms">
+          <div class="card__head">
+            <div class="ico-box ico-box--cyan">{{ico:shieldCheck:ico-24}}</div>
+            <span class="chip chip--cyan">04</span>
+          </div>
+          <h3 class="card__title">纪律：评稿只对作品负责</h3>
+          <p class="card__desc">这是唯一一条没有商量余地的规则。</p>
+          <ul class="list-check card__desc">
+            <li>评稿只可以评价作品本身，不可以对作者进行评价、揣度或攻击</li>
+            <li>评稿内容需言之有物，不可以敷衍对待</li>
+            <li>绝对不允许使用任何 AI 工具撰写评稿，一经查实将直接移除该评稿作者</li>
+            <li>管理员有权删除危害社群环境或敷衍了事的评稿，并要求评稿作者重新完成该任务</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= 分配机制示意 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow" data-reveal="fade">分配机制</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">每篇作品，至少十位读者</h2>
+          <p class="body mt-6" data-reveal="up">
+            「每篇至少十位读者」是整套机制里最硬的一条约束。它意味着任何一篇投稿都不可能被冷落 ——
+            哪怕当期只有一篇稿子，也会有十个评稿任务被分配出去。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            与此同时，算法还要让每个人拿到的稿件总字数尽可能接近。
+            这两条约束会互相拉扯：想让字数均匀，读者就必须更分散；想让每篇都覆盖到十位读者，
+            字数就必然出现波动。算法在这两者之间取一个尽量好的解，而不是优先满足其中任意一条。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            十人是<b>分配下限</b>，不是实际评稿人数：分配以外的成员可以基于自己的喜好主动认领，
+            不设上限，所以一篇作品的实际评稿人数通常多于十人。
+          </p>
+        </div>
+
+        <aside class="split__aside" data-reveal="left">
+          <div class="graph-stage">
+            <svg viewBox="0 0 520 380" role="img" aria-label="一篇作品至少被分配给十位不同读者的示意图">
+              <g stroke="var(--accent-1-line)" stroke-width="1.3">
+                <path d="M260 190 L260 50"/>
+                <path d="M260 190 L377.6 76.7"/>
+                <path d="M260 190 L450.2 146.7"/>
+                <path d="M260 190 L450.2 233.3"/>
+                <path d="M260 190 L377.6 303.3"/>
+                <path d="M260 190 L260 330"/>
+                <path d="M260 190 L142.4 303.3"/>
+                <path d="M260 190 L69.8 233.3"/>
+                <path d="M260 190 L69.8 146.7"/>
+                <path d="M260 190 L142.4 76.7"/>
+              </g>
+
+              <g fill="var(--surface-2)" stroke="var(--line-2)" stroke-width="1.6">
+                <circle cx="260" cy="50" r="17"/>
+                <circle cx="377.6" cy="76.7" r="17"/>
+                <circle cx="450.2" cy="146.7" r="17"/>
+                <circle cx="450.2" cy="233.3" r="17"/>
+                <circle cx="377.6" cy="303.3" r="17"/>
+                <circle cx="260" cy="330" r="17"/>
+                <circle cx="142.4" cy="303.3" r="17"/>
+                <circle cx="69.8" cy="233.3" r="17"/>
+                <circle cx="69.8" cy="146.7" r="17"/>
+                <circle cx="142.4" cy="76.7" r="17"/>
+              </g>
+
+              <g fill="var(--text-4)" font-size="10.5" font-family="JetBrains Mono, monospace" text-anchor="middle">
+                <text x="260" y="54">01</text>
+                <text x="377.6" y="80.7">02</text>
+                <text x="450.2" y="150.7">03</text>
+                <text x="450.2" y="237.3">04</text>
+                <text x="377.6" y="307.3">05</text>
+                <text x="260" y="334">06</text>
+                <text x="142.4" y="307.3">07</text>
+                <text x="69.8" y="237.3">08</text>
+                <text x="69.8" y="150.7">09</text>
+                <text x="142.4" y="80.7">10</text>
+              </g>
+
+              <circle cx="260" cy="190" r="46" fill="var(--accent-1-soft)" stroke="var(--accent-1)" stroke-width="1.8"/>
+              <text x="260" y="186" fill="var(--text-1)" font-size="14" font-weight="600" text-anchor="middle" font-family="Noto Sans SC, sans-serif">一篇</text>
+              <text x="260" y="205" fill="var(--text-1)" font-size="14" font-weight="600" text-anchor="middle" font-family="Noto Sans SC, sans-serif">作品</text>
+
+              <text x="260" y="366" fill="var(--text-4)" font-size="11.5" text-anchor="middle" font-family="Noto Sans SC, sans-serif">
+                被指派的十位读者互不重叠，且都不包括作者本人
+              </text>
+            </svg>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= 界面示意 / 评稿 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">界面示意</p>
+        <h2 class="section-head__title" data-reveal="up">评审中心长什么样</h2>
+        <p class="section-head__desc" data-reveal="up">
+          以下为 APP 界面结构示意，用于说明信息如何呈现，其中的作品名与数值均为示例。
+        </p>
+      </div>
+
+      <div class="grid grid--2 grid--gap-lg mt-8">
+        <div class="demo-frame" data-reveal="up">
+          <div class="demo-frame__bar">
+            <span class="demo-frame__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="demo-frame__title">评审中心 / 待评列表 · 第 25 期（界面示意，非真实数据）</span>
+          </div>
+          <div class="demo-frame__body">
+            <div class="ui-row">
+              <span class="ui-row__idx">01</span>
+              <span class="ui-row__main">幻梦</span>
+              <span class="ui-row__meta">11,436 字</span>
+            </div>
+            <div class="ui-row">
+              <span class="ui-row__idx">02</span>
+              <span class="ui-row__main">和平存续</span>
+              <span class="ui-row__meta">6,247 字</span>
+            </div>
+            <div class="ui-row">
+              <span class="ui-row__idx">03</span>
+              <span class="ui-row__main">关于维修申请表 P1—025C 的故事</span>
+              <span class="ui-row__meta">7,577 字</span>
+            </div>
+            <div class="ui-row">
+              <span class="ui-row__idx">04</span>
+              <span class="ui-row__main">何须马革裹尸还</span>
+              <span class="ui-row__meta">8,004 字</span>
+            </div>
+            <div class="ui-row">
+              <span class="ui-row__idx">05</span>
+              <span class="ui-row__main">存在即合理号星际间武装货运飞船观察录</span>
+              <span class="ui-row__meta">11,164 字</span>
+            </div>
+            <p class="micro mt-4">任务清单由算法工具生成后直接推送到本页；清单里的稿件平均字数在全体成员之间拉平。</p>
+          </div>
+        </div>
+
+        <div class="demo-frame" data-reveal="up" style="--reveal-delay:120ms">
+          <div class="demo-frame__bar">
+            <span class="demo-frame__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="demo-frame__title">评稿单 / 六部分组成（界面示意，非真实数据）</span>
+          </div>
+          <div class="demo-frame__body">
+            <div class="score-grid">
+              <div class="score-line">
+                <span>设定</span>
+                <span class="score-line__track"><span class="score-line__fill" data-value="88"></span></span>
+                <span class="score-line__val">8.8</span>
+              </div>
+              <div class="score-line">
+                <span>文笔</span>
+                <span class="score-line__track"><span class="score-line__fill" data-value="79"></span></span>
+                <span class="score-line__val">7.9</span>
+              </div>
+              <div class="score-line">
+                <span>情节</span>
+                <span class="score-line__track"><span class="score-line__fill" data-value="71"></span></span>
+                <span class="score-line__val">7.1</span>
+              </div>
+              <div class="score-line">
+                <span>人物</span>
+                <span class="score-line__track"><span class="score-line__fill" data-value="84"></span></span>
+                <span class="score-line__val">8.4</span>
+              </div>
+              <div class="score-line">
+                <span>思想性</span>
+                <span class="score-line__track"><span class="score-line__fill" data-value="82"></span></span>
+                <span class="score-line__val">8.2</span>
+              </div>
+            </div>
+
+            <div class="panel mt-6">
+              <p class="panel__title">综合评价（选填）</p>
+              <p class="panel__body">
+                「第四章的视角切换让读者第一次意识到叙述者并不可靠，这个设计很准。
+                但前三章埋的线索密度不够，建议在第二章的对话里再加一处时间矛盾，
+                让重读时的第二次冲击更早到来。」
+              </p>
+              <p class="micro mt-3">五个必填维度的文字评价需在十字以上；综合评价不计分，只用于写下落在单一维度之外的整体判断。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================== 评分区间建议 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">评分标尺</p>
+        <h2 class="section-head__title" data-reveal="up">0–10 分对应什么</h2>
+        <p class="section-head__desc" data-reveal="up">
+          打分最怕的是各人心里那把尺子不一样。规则因此给出一份建议区间，
+          让「7 分」在所有人那里指同一种水平。
+        </p>
+      </div>
+
+      <div class="table-wrap mt-7" data-reveal="up">
+        <table class="data-table">
+          <caption class="sr-only">单个维度的 0–10 分评分区间建议</caption>
+          <thead>
+            <tr>
+              <th scope="col" style="width:120px">分数</th>
+              <th scope="col" style="width:110px">档位</th>
+              <th scope="col">说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="mono">0 – 1</span></td>
+              <td>外行</td>
+              <td>在该维度完全没有值得一提的地方</td>
+            </tr>
+            <tr>
+              <td><span class="mono">2 – 3</span></td>
+              <td>新手</td>
+              <td>在该维度极其粗拙，但是略有雏形</td>
+            </tr>
+            <tr>
+              <td><span class="mono">4 – 5</span></td>
+              <td>业余</td>
+              <td>在该维度的写作技法有过一定的训练</td>
+            </tr>
+            <tr>
+              <td><span class="mono">6 – 7</span></td>
+              <td>职业</td>
+              <td>在该维度的写作表现已经足以在公开发表渠道获得广泛认可</td>
+            </tr>
+            <tr>
+              <td><span class="mono">8 – 9</span></td>
+              <td>专家</td>
+              <td>在该维度的写作表现令人惊叹，扣人心弦</td>
+            </tr>
+            <tr>
+              <td><span class="mono">10</span></td>
+              <td>大师</td>
+              <td>在该维度的写作表现令人无可指摘，几近完美</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="micro mt-4" data-reveal="fade">
+        区间为建议值，不作为强制约束；但打分时请对齐同一把尺子 —— 跨期次的可比性依赖于它。
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================================================== 奖金与特别奖项 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">激励</p>
+        <h2 class="section-head__title" data-reveal="up">奖项设置与三个评稿奖</h2>
+        <p class="section-head__desc" data-reveal="up">
+          奖项由社群成员共同设立，资金来自社群自设的荣誉池 —— 纯粹为鼓励而设：
+          不要求授权、不影响署名与后续投稿出版，公司不参与奖项的设置与发放。
+          作品版权始终归作者本人。
+        </p>
+      </div>
+
+      <div class="table-wrap mt-7" data-reveal="up">
+        <table class="data-table">
+          <caption class="sr-only">每期作品奖金与特别奖项对照表</caption>
+          <thead>
+            <tr>
+              <th scope="col">类别</th>
+              <th scope="col">范围</th>
+              <th scope="col">奖励</th>
+              <th scope="col">认定依据</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>作品奖 · 第一名</td>
+              <td>当期投稿总数前 10%（向上取整）中的第 1 名</td>
+              <td><span class="mono">200 元</span></td>
+              <td>去掉一个最低分与一个最高分后的总分排名</td>
+            </tr>
+            <tr>
+              <td>作品奖 · 第二、三名</td>
+              <td>同一入围范围内的第 2、3 名</td>
+              <td><span class="mono">各 100 元</span></td>
+              <td>同上</td>
+            </tr>
+            <tr>
+              <td>作品奖 · 优秀奖</td>
+              <td>入围范围内除前三名以外的作品</td>
+              <td><span class="mono">各 50 元</span></td>
+              <td>同上</td>
+            </tr>
+            <tr>
+              <td>评稿奖 · 最欢乐评稿</td>
+              <td>当期全部评稿</td>
+              <td><span class="mono">50 元</span></td>
+              <td rowspan="3">APP 0.2.1 版本更新后新增的评稿评价功能</td>
+            </tr>
+            <tr>
+              <td>评稿奖 · 最有帮助评稿</td>
+              <td>当期全部评稿</td>
+              <td><span class="mono">50 元</span></td>
+            </tr>
+            <tr>
+              <td>评稿奖 · 最认真评稿</td>
+              <td>当期全部评稿</td>
+              <td><span class="mono">50 元</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-7" data-reveal="up">
+        <div class="panel">
+          <p class="panel__title">{{ico:target:ico-18}} 入围范围怎么算</p>
+          <p class="panel__body">每期根据当期投稿总数，取前百分之十（向上取整）的作品进入奖励范围。投稿 23 篇则取前 3 篇，投稿 4 篇也取前 1 篇。</p>
+        </div>
+        <div class="panel">
+          <p class="panel__title">{{ico:award:ico-18}} 三个评稿奖为什么单设</p>
+          <p class="panel__body">如果只奖励作品，评稿就永远是「顺手做完的任务」。三个评稿奖把评价的注意力引回到读者这一侧 —— 欢乐、有用、认真，是三件不同的事。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== 线上指指点点大会 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow" data-reveal="fade">线上直播</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">「指指点点大会」</h2>
+          <p class="body mt-6" data-reveal="up">
+            这是每期最有意思的环节，官方名称是「线上指指点点大会」。
+            名字起得很重，实际气氛比名字轻得多 —— 它更像是把评稿从文字里拎出来，
+            当面说一遍。
+          </p>
+          <p class="body mt-4" data-reveal="up">
+            时间固定在<strong>每月 16 日以后第一个周六晚 8 点</strong>，地点是<strong>腾讯会议</strong>。
+            讨论顺序按作品发布时间先后排列，不按分数、不按人气。
+          </p>
+
+          <div class="panel mt-7" data-reveal="up">
+            <p class="panel__title">{{ico:clock:ico-18}} 流程与限制</p>
+            <ul class="list-dot panel__body">
+              <li>先由作者表达创作历程与意图，其他人此时不开麦</li>
+              <li>随后其他成员轮流开麦评价或提问，<b>每次开麦不超过两分钟</b></li>
+              <li>开麦时严禁对作者本人进行评价、揣度或攻击，只谈作品</li>
+              <li>周六晚未能讨论完全部作品时，周日晚八点继续讨论后面的作品</li>
+              <li><b>该环节没有强制性</b>，作者可以自行选择是否参加</li>
+            </ul>
+          </div>
+        </div>
+
+        <aside class="split__aside" data-reveal="left">
+          <div class="demo-frame">
+            <div class="demo-frame__bar">
+              <span class="demo-frame__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+              <span class="demo-frame__title">单场议程 / 时间分配</span>
+            </div>
+            <div class="demo-frame__body">
+              <div class="ui-row">
+                <span class="ui-row__idx">01</span>
+                <span class="ui-row__main">作者讲述创作历程与意图</span>
+                <span class="ui-row__meta">开场</span>
+              </div>
+              <div class="ui-row">
+                <span class="ui-row__idx">02</span>
+                <span class="ui-row__main">成员轮流开麦评价或提问（每人 ≤ 2 分钟）</span>
+                <span class="ui-row__meta">轮次 × 人数</span>
+              </div>
+              <div class="ui-row">
+                <span class="ui-row__idx">03</span>
+                <span class="ui-row__main">作者回应与补充</span>
+                <span class="ui-row__meta">收束</span>
+              </div>
+              <div class="ui-row">
+                <span class="ui-row__idx">04</span>
+                <span class="ui-row__main">进入下一篇作品，按发布时间顺序</span>
+                <span class="ui-row__meta">循环</span>
+              </div>
+
+              <div class="panel mt-6">
+                <p class="panel__title">为什么限定两分钟</p>
+                <p class="panel__body">
+                  不限时的情况下，声音最大的人会占掉整场。两分钟的上限把发言权强制摊平，
+                  也让「讲清一件事」而不是「讲很多事」成为默认要求。
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= 管理规则 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">管理规则</p>
+        <h2 class="section-head__title" data-reveal="up">三条规则，没有例外</h2>
+        <p class="section-head__desc" data-reveal="up">
+          这三条是练笔能持续运行的底线。它们不针对任何人，只针对行为。
+        </p>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8" data-reveal="up">
+        <div class="card">
+          <div class="card__head">
+            <div class="ico-box">{{ico:users:ico-24}}</div>
+            <span class="chip chip--accent">01</span>
+          </div>
+          <h3 class="card__title">群成员仅由参与者组成</h3>
+          <p class="card__desc">
+            练笔群群内成员仅由练笔或评稿参与者组成，不接受任何闲杂分子。
+            想先了解荒启科幻的人，可以加 QQ 群「荒启科幻交流群」进行交流。
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card__head">
+            <div class="ico-box ico-box--cyan">{{ico:clock:ico-24}}</div>
+            <span class="chip chip--cyan">02</span>
+          </div>
+          <h3 class="card__title">评稿须在当月 16 日 7:00 前完成</h3>
+          <p class="card__desc">
+            每期评稿必须在当月 16 日 7:00 前在 APP 完成。
+            这个时间点排在「指指点点大会」之前，保证讨论开始时所有人已经读过全部稿件。
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card__head">
+            <div class="ico-box">{{ico:shieldCheck:ico-24}}</div>
+            <span class="chip chip--accent">03</span>
+          </div>
+          <h3 class="card__title">未完成评稿任务将被移除</h3>
+          <p class="card__desc">
+            投稿自愿，评稿必做：不投稿的那一期仍会领到任务，且任务量是投稿者的两倍。
+            没有完成任务会被直接移除，需在两个月以后方可继续参与活动。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 适合谁 -->
+  <section class="section section--tinted">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal="fade">适合谁</p>
+        <h2 class="section-head__title" data-reveal="up">三种人在这里收获最大</h2>
+      </div>
+
+      <div class="grid grid--3 grid--gap-lg mt-8">
+        <article class="persona" data-reveal="up">
+          <div class="ico-box ico-box--sm">{{ico:spark:ico-20}}</div>
+          <h3 class="persona__title">刚开始写科幻的人</h3>
+          <p class="persona__need">
+            你有一个想法，但不确定它是否成立；你写完了，但不确定哪里出了问题。
+            最需要的是有人认真读完，并指出具体在哪个段落出了问题。
+          </p>
+          <p class="persona__serve"><b>你会得到</b>　至少十位读者各自写下的设定、文笔、情节、人物、思想性评价，以及一份可对照的 0–10 分标尺</p>
+        </article>
+        <article class="persona" data-reveal="up" style="--reveal-delay:100ms">
+          <div class="ico-box ico-box--sm">{{ico:users:ico-20}}</div>
+          <h3 class="persona__title">寻求氛围的资深写作者</h3>
+          <p class="persona__need">
+            你已经写过不少，缺的不是技巧，而是持续的产出节奏，以及能和你讨论结构问题的同行。
+          </p>
+          <p class="persona__serve"><b>你会得到</b>　每年九期稳定的截稿节奏、当面讨论作品的直播环节，以及每期优秀作品可获的社群荣誉激励</p>
+        </article>
+        <article class="persona" data-reveal="up" style="--reveal-delay:200ms">
+          <div class="ico-box ico-box--sm">{{ico:compass:ico-20}}</div>
+          <h3 class="persona__title">愿意认真读稿的读者</h3>
+          <p class="persona__need">
+            你未必当期就投稿，但享受把一篇稿子读透、并把自己的判断写清楚的过程。
+            未投稿者在这里不是旁观者，而是完成任务量两倍的评稿人。
+          </p>
+          <p class="persona__serve"><b>你会得到</b>　优先参评最欢乐、最有帮助、最认真三个评稿奖项的资格，以及一套被认真对待的阅读方法</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 加入流程 -->
+  <section class="section">
+    <div class="container">
+      <div class="split split--top">
+        <div>
+          <p class="eyebrow" data-reveal="fade">加入流程</p>
+          <h2 class="section-head__title mt-5" data-reveal="up">四步拿到注册邀请码</h2>
+          <p class="body mt-5" data-reveal="up">
+            荒启科幻练笔是邀请码准入制活动。我们不设创作门槛，
+            但有一条前置条件：<strong>你必须接受全部规则，才可以获得注册邀请码。</strong>
+          </p>
+          <div class="row mt-7" data-reveal="up">
+            <a class="btn btn--primary" href="contact.html#invite">去拿邀请码 {{ico:arrowRight:ico-18}}</a>
+            <a class="btn btn--ghost" href="library.html">走进银河图书馆</a>
+          </div>
+        </div>
+
+        <div class="steps" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))" data-reveal="up">
+          <div class="step">
+            <p class="step__num" aria-hidden="true"></p>
+            <h3 class="step__title">先到交流群了解</h3>
+            <p class="step__desc">加入 QQ 群 280660235「荒启科幻交流群」，或通过微信公众号「荒启科幻」了解动态。这一步只是了解，不要求任何承诺。</p>
+          </div>
+          <div class="step">
+            <p class="step__num" aria-hidden="true"></p>
+            <h3 class="step__title">完整阅读并接受规则</h3>
+            <p class="step__desc">通读《荒启科幻练笔活动正式规则》，包括练笔、评比、管理三个部分。接受全部条款是获得邀请码的唯一前提。</p>
+          </div>
+          <div class="step">
+            <p class="step__num" aria-hidden="true"></p>
+            <h3 class="step__title">获取注册邀请码</h3>
+            <p class="step__desc">接受规则后即可获得注册邀请码，用于在 APP「荒启科幻」上完成注册。邀请码是准入凭证，不对外散发。</p>
+          </div>
+          <div class="step">
+            <p class="step__num" aria-hidden="true"></p>
+            <h3 class="step__title">进入练笔群</h3>
+            <p class="step__desc">注册后进入练笔群。群内成员仅由练笔或评稿参与者组成，你将在这里收到当期的推荐主题与评稿任务。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =========================================================== CTA -->
+  <section class="section section--sm">
+    <div class="container">
+      <div class="cta-block" data-reveal="up">
+        <div class="cta-block__inner">
+          <div class="cta-block__text">
+            <h2 class="cta-block__title">想为你的文学组织搭一套同样的机制？</h2>
+            <p class="cta-block__desc">
+              支撑这套机制的社区系统软件由成都荒启文化传播有限公司开发，
+              可按你的社团、工坊或文学社的流程定制开发并部署。「荒启科幻练笔」为成员自主运营的纯公益社群，参加活动全程免费。
+            </p>
+          </div>
+          <div class="cta-block__actions">
+            <a class="btn btn--primary btn--lg" href="tools.html">查看工具能力 {{ico:arrowRight:ico-18}}</a>
+            <a class="btn btn--outline btn--lg" href="contact.html">咨询定制</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>

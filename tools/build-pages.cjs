@@ -714,7 +714,7 @@ const PAGES = [
     current: 'contact',
     scene: 'contact',
     title: '联系我们｜荒启科幻 · 成都荒启文化传播有限公司',
-    desc: '成都荒启文化传播有限公司的联系渠道：公司邮箱 huangqi.sifi@gmail.com、欧洲分部 founpghkf@gmail.com、微信公众号「荒启科幻」，以及公益社群「荒启科幻练笔」的加入方式。'
+    desc: '成都荒启文化传播有限公司的联系渠道：公司邮箱 huangqi.sifi@gmail.com、欧洲事务联系 founpghkf@gmail.com、微信公众号「荒启科幻」，以及公益社群「荒启科幻练笔」的加入方式。'
   }
 ];
 

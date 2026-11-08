@@ -1,0 +1,339 @@
+.bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  pointer-events: none;
+  overflow: hidden;
+}
+/* 网格：双层刻度，像坐标纸。细网格 84px 提供质感，主网格 336px 提供秩序；
+   只在左上区域最清晰，向右下淡出，避免与正文争夺注意力。 */
+.bg-grid {
+  position: absolute;
+  inset: -10%;
+  background-image:
+    linear-gradient(to right, rgba(148, 170, 200, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 170, 200, 0.045) 1px, transparent 1px),
+    linear-gradient(to right, rgba(148, 170, 200, 0.085) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 170, 200, 0.085) 1px, transparent 1px);
+  background-size: 84px 84px, 84px 84px, 336px 336px, 336px 336px;
+  mask-image: radial-gradient(115% 85% at 22% 8%, #000 0%, rgba(0, 0, 0, 0.4) 48%, transparent 80%);
+  -webkit-mask-image: radial-gradient(115% 85% at 22% 8%, #000 0%, rgba(0, 0, 0, 0.4) 48%, transparent 80%);
+}
+/* 星点层：背景星野。16 枚 1–2px 的恒定星点，白色与雾蓝交替、
+   透明度随机感分布 —— 用纯 CSS radial-gradient 实现，分辨率无关。
+   与星座图（有连线的「被命名之星」）在密度与亮度上拉开层次。 */
+.bg-stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 6% 14%, rgba(237, 242, 248, 0.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 15% 68%, rgba(237, 242, 248, 0.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 24% 30%, rgba(237, 242, 248, 0.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 33% 84%, rgba(139, 158, 216, 0.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 41% 12%, rgba(237, 242, 248, 0.35) 50%, transparent 51%),
+    radial-gradient(2px 2px at 47% 56%, rgba(237, 242, 248, 0.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 55% 26%, rgba(139, 158, 216, 0.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 62% 74%, rgba(237, 242, 248, 0.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 69% 8%, rgba(237, 242, 248, 0.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 76% 44%, rgba(139, 158, 216, 0.45) 50%, transparent 51%),
+    radial-gradient(1px 1px at 83% 66%, rgba(237, 242, 248, 0.5) 50%, transparent 51%),
+    radial-gradient(2px 2px at 89% 20%, rgba(237, 242, 248, 0.45) 50%, transparent 51%),
+    radial-gradient(1px 1px at 94% 78%, rgba(139, 158, 216, 0.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 10% 44%, rgba(237, 242, 248, 0.3) 50%, transparent 51%),
+    radial-gradient(1px 1px at 50% 92%, rgba(237, 242, 248, 0.35) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 97% 50%, rgba(237, 242, 248, 0.4) 50%, transparent 51%);
+}
+/* 全幅星座图：三组星座连线 + 虚线大圆弧 + 两个带坐标十字的「被命名之星」。
+   fill/stroke 走 currentColor，主色调随 --accent-1。 */
+.bg-constellation {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--accent-1);
+  opacity: 0.6;
+}
+/* 上下压暗：只做极轻的固定层次，不再有径向暗角 —— 冷峻风要求画面平。 */
+.bg-vignette {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 7, 11, 0.42) 0%, rgba(5, 7, 11, 0) 16%, rgba(5, 7, 11, 0) 84%, rgba(5, 7, 11, 0.42) 100%);
+}
+/* 观测坐标图 / 轨道图：星图语法的局部特写。
+   动画极慢（60s+ 量级），几乎不可察觉，只保留「画面是活的」这一点。 */
+.bg-shard {
+  position: absolute;
+  opacity: 0.5;
+  color: var(--accent-1);
+}
+.bg-shard--a {
+  top: 4%;
+  left: -2%;
+  width: 30vw;
+  max-width: 460px;
+  transform: rotate(-6deg);
+  animation: shard-drift-a 60s var(--ease) infinite alternate;
+}
+.bg-shard--b {
+  top: 44%;
+  right: -4%;
+  width: 26vw;
+  max-width: 420px;
+  transform: rotate(10deg);
+  color: var(--accent-2);
+  opacity: 0.4;
+  animation: shard-drift-b 72s var(--ease) infinite alternate;
+}
+@keyframes shard-drift-a {
+  from { transform: rotate(-6deg) translate3d(0, 0, 0); }
+  to { transform: rotate(-3deg) translate3d(1.5%, 2.5%, 0); }
+}
+@keyframes shard-drift-b {
+  from { transform: rotate(10deg) translate3d(0, 0, 0); }
+  to { transform: rotate(14deg) translate3d(-1.5%, -2.5%, 0); }
+}
+/* 页面内容层：确保永远高于背景 */
+.page {
+  position: relative;
+  z-index: var(--z-content);
+}
+/* ---- 容器 ---- */
+.container {
+  width: 100%;
+  max-width: var(--w-content);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.container--wide { max-width: var(--w-wide); }
+.container--narrow { max-width: var(--w-narrow); }
+.container--full { max-width: var(--w-max); }
+/* ---- 区块 ---- */
+.section {
+  position: relative;
+  padding-block: var(--sec-y);
+  /* v2.3.19 渲染性能：内页很长（社群页 12 屏），把屏幕外区块的布局与绘制
+     推迟到滚动接近时再做，首屏只承担首屏的成本。
+     contain-intrinsic-size 用 auto 关键字：浏览器记住上次实测高度，
+     从第二次滚动起不再有滚动条跳动。不参与首屏的 .hero / .page-hero
+     不加，避免入场动画与锚点定位受影响。 */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 760px;
+}
+.section--sm { padding-block: var(--sec-y-sm); }
+/* 交替底色：长页面的节奏带。v2.2 起改为半透明（--tinted-bg）：
+   星图是网站的身份底色，任何滚动位置都必须能看到它 ——
+   实色区块把它完全盖住是「内容与背景割裂」的根源。 */
+.section--tinted::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--tinted-bg);
+  border-block: 1px solid var(--line-1);
+  pointer-events: none;
+}
+.section--panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--grad-panel);
+  border-block: 1px solid var(--line-1);
+  pointer-events: none;
+}
+.section > .container {
+  position: relative;
+  z-index: 1;
+}
+/* ---- 区块标题 ---- */
+.section-head {
+  max-width: 760px;
+}
+.section-head__title {
+  margin-top: 18px;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-head);
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.section-head__desc {
+  margin-top: 18px;
+  font-size: var(--fs-lead);
+  line-height: 1.72;
+  color: var(--text-2);
+}
+.section-head__rule {
+  margin-top: 26px;
+  max-width: 220px;
+}
+/* ---- 网格 ---- */
+.grid {
+  display: grid;
+  gap: var(--sp-5);
+}
+.grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grid--auto { grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); }
+.grid--gap-lg { gap: var(--sp-6); }
+.grid--gap-xl { gap: var(--sp-7); }
+/* ---- 通用分栏 ---- */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.split--top { align-items: start; }
+/* ---- 弹性工具 ---- */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+}
+.row--between { justify-content: space-between; }
+.col { display: flex; flex-direction: column; }
+/* ==========================================================================
+   页脚
+   ========================================================================== */
+
+.site-footer {
+  position: relative;
+  z-index: var(--z-content);
+  border-top: 1px solid var(--line-1);
+  /* v2.2：半透明（--footer-bg），页脚之下仍能隐约看到星图 */
+  background: var(--footer-bg);
+}
+.site-footer__main {
+  padding-block: clamp(48px, 5vw, 76px) clamp(32px, 3vw, 48px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+  gap: clamp(28px, 4vw, 56px);
+}
+.site-footer__brand img {
+  width: 178px;
+  height: auto;
+}
+.site-footer__tagline {
+  margin-top: 20px;
+  max-width: 320px;
+  font-size: var(--fs-sm);
+  line-height: 1.75;
+  color: var(--text-3);
+}
+.site-footer__col-title {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-1);
+  font-family: var(--font-display);
+}
+.site-footer__links {
+  margin-top: 18px;
+}
+.site-footer__links li + li {
+  margin-top: 11px;
+}
+.site-footer__links a {
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+  transition: color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+  display: inline-block;
+  /* 「联系我们」栏现在有邮箱地址：1279px 四列时每列约 192px，
+     huangqi.sifi@gmail.com 在 13px 下约 172px，只剩 20px 余量。
+     留一条兜底，宁可折行也不要顶出栏外。 */
+  overflow-wrap: anywhere;
+}
+.site-footer__links a:hover {
+  color: var(--accent-2);
+  transform: translateX(3px);
+}
+.site-footer__bottom {
+  border-top: 1px solid var(--line-1);
+  padding-block: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  font-size: var(--fs-xs);
+  color: var(--text-4);
+}
+/* 合规行（v2.3.26）：社群公益属性声明，独占一行置于版权行与链接之下 */
+.site-footer__compliance {
+  width: 100%;
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-4);
+  line-height: 1.7;
+}
+.site-footer__bottom-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.site-footer__bottom a:hover { color: var(--text-2); }
+.footer-brand-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--text-4);
+  text-transform: uppercase;
+}
+/* --------------------------------------------------------------------------
+   v2.3 白天模式背景层（宇宙视角）
+   夜间星图（bg-stars / bg-constellation / bg-shard）与昼景（bg-daysky）
+   互斥显示；网格保留但换日间线色 —— 坐标纸是两种模式共通的底层语言。
+   -------------------------------------------------------------------------- */
+.bg-daysky {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+:root[data-theme="day"] .bg-daysky { display: block; }
+:root[data-theme="day"] .bg-stars, :root[data-theme="day"] .bg-constellation, :root[data-theme="day"] .bg-shard--a, :root[data-theme="day"] .bg-shard--b { display: none; }
+/* 日间网格：浅天底上的深灰蓝细线，透明度与夜间观感对齐 */
+:root[data-theme="day"] .bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(70, 100, 130, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(70, 100, 130, 0.07) 1px, transparent 1px),
+    linear-gradient(to right, rgba(70, 100, 130, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(70, 100, 130, 0.12) 1px, transparent 1px);
+}
+/* 日间压暗改为极轻的明度呼吸：页顶微沉、页底提亮，给深空平面一点纵深 */
+:root[data-theme="day"] .bg-vignette {
+  background: linear-gradient(180deg, rgba(70, 100, 130, 0.10) 0%, rgba(70, 100, 130, 0) 18%, rgba(255, 255, 255, 0) 78%, rgba(255, 255, 255, 0.16) 100%);
+}
+/* v2.3 白天模式改为「宇宙视角」：锐利斜切色块 + 轨道环 + 平涂太阳 + 月牙 + 星光。
+   动画只保留两处极慢视差漂移，且只做纯平移（translateX）——
+   CSS transform 对 SVG 默认以 viewBox 中心为 transform-origin，
+   在 keyframes 里混入 scale 会把元素推出画面（v2.2 踩坑）。 */
+.daysky__stars { animation: daysky-drift-a 64s var(--ease) infinite alternate; }
+.daysky__rings { animation: daysky-drift-b 96s var(--ease) infinite alternate; }
+/* 日冕与放射光线做极缓的明暗呼吸，给「光」一点生命感 */
+.daysky__rays { animation: daysky-rays 14s var(--ease) infinite alternate; }
+.daysky__rings { animation: daysky-drift-b 96s var(--ease) infinite alternate, daysky-rays 14s var(--ease) infinite alternate; }
+@keyframes daysky-rays {
+  from { opacity: 0.10; }
+  to { opacity: 0.20; }
+}
+@keyframes daysky-drift-a {
+  from { transform: translateX(0); }
+  to { transform: translateX(26px); }
+}
+@keyframes daysky-drift-b {
+  from { transform: translateX(0); }
+  to { transform: translateX(-34px); }
+}
+/* 尊重减弱动效偏好：漂移与光呼吸静止 */
+@media (prefers-reduced-motion: reduce) {
+  .daysky__stars, .daysky__rings, .daysky__rays { animation: none; }
+}
