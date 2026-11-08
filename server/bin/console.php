@@ -1554,10 +1554,14 @@ switch ($command) {
         break;
 
     /**
-     * 公开区闸门：按两条规则把不该公开的拆解收起来。
+     * 公开区闸门：决定哪一篇拆解可以对外展示。
      *
-     *   1. 匿名作品 —— 一律不公开（作品级，不看作者活跃度）；
-     *   2. 长期没投稿也没评稿的作者 —— 其拆解不公开（作者级，按时间窗判）。
+     * 三条规矩全部满足才公开（可见 = 非匿名 ∧ 源站还打得开 ∧ 作者还活跃）：
+     *
+     *   1. 匿名作品 —— 一律不公开（作品级，无条件）；
+     *   2. 源站已撤稿 —— 作者改成未公开 / 站方删除 / 退回草稿的，其拆解不公开
+     *      （作品级，看目录快照；作者再活跃也不放行）；
+     *   3. 长期没投稿也没评稿的作者 —— 其拆解不公开（作者级，按时间窗判）。
      *
      *   php -c php.ini bin/console.php library:active-gate                  # 只试算
      *   php -c php.ini bin/console.php library:active-gate --months=3
@@ -1565,12 +1569,19 @@ switch ($command) {
      *   php -c php.ini bin/console.php library:active-gate --refresh-activity
      *   php -c php.ini bin/console.php library:active-gate --restore-all --apply   # 整体撤销
      *
+     * 三条规矩合在一个判定里，是因为它们写的是同一个字段。拆成三个命令各管一段，
+     * 会出现「A 刚收、B 立刻放回」的拉锯，而两边都认为自己是对的。
+     * 合起来之后恢复也只有一个出口：三条同时满足才放回。
+     *
      * 只动 hq_analysis.visibility：隐藏后作品在公开区整体消失（LIVE_WORK 要求
      * 当前拆解可见），但作品行、检索索引、人工「隐藏作品」都不受影响。
      * 恢复只认本闸门写下的 `active-gate:` 理由，人工藏起来的永不自动放出。
      *
      * 默认时间窗取 AuthorActivity::WINDOW_MONTHS，与后台分类页同一个数字；
      * `--months` 只用于临时试算别的口径，别拿它长期跑。
+     *
+     * 定时任务排在每月 3 日 03:00（采集是 2 日 18:00）—— 采集会顺带把目录与
+     * 活跃度快照刷到当天最新，隔几个小时跑正好拿新数据判源站状态。
      *
      * 不带 --apply 时一个字节都不写 —— 包括不碰页面缓存与 sitemap。
      */
@@ -1638,12 +1649,13 @@ switch ($command) {
                 break;
             }
 
-            // 两类一起撤：判断口径整个错了的时候，要的是「一条命令全撤」，
-            // 不该逼人先分清哪条是匿名收的、哪条是活跃度收的。
+            // 三条规矩一起撤：判断口径整个错了的时候，要的是「一条命令全撤」，
+            // 不该逼人先分清哪条是匿名收的、哪条是撤稿收的、哪条是活跃度收的。
             fwrite(STDOUT, sprintf(
-                "待回滚 %d 条：匿名规则 %d 条、不活跃 %d 条。\n",
+                "待回滚 %d 条：匿名 %d 条、源站撤稿 %d 条、作者不活跃 %d 条。\n",
                 count($ids),
                 count($byRule['anon']),
+                count($byRule['closed']),
                 count($byRule['activity'])
             ));
 
@@ -1683,17 +1695,25 @@ switch ($command) {
             $plan['snapshot_authors'],
             $plan['active_authors']
         ));
+        // 目录级别的健康度，不是馆内数字：馆内受影响多少篇看下面的分类表。
+        // 写在一起容易误读成「馆里有 163 篇被撤稿」，所以标点用括号、主语写「目录」。
+        // 带上同步时间：源站状态是「快照里的状态」，目录旧了就等于什么都没变。
         fwrite(STDOUT, sprintf(
-            "  目录：%d 条作品标为匿名（一律不公开）\n\n",
-            $plan['anon_in_catalog']
+            "  目录：%d 篇（匿名 %d · 源站不可用 %d）· %s\n\n",
+            $plan['catalog_total'],
+            $plan['anon_in_catalog'],
+            $plan['closed_in_catalog'],
+            $plan['catalog_at'] > 0 ? date('Y-m-d H:i', $plan['catalog_at']) : '同步时间未知'
         ));
 
-        // 五个标签都是四字，等宽下自然对齐，不必按字节补空格。
+        // 六个标签都是四字，等宽下自然对齐，不必按字节补空格。
         // 匿名那一桶不打印作者数：匿名作品本来就不该被归到任何一个 uid 名下，
         // 打一个「1 位作者」出来，等于用命令行的输出把匿名揭开了。
+        // 源站撤稿那一桶照常打作者数 —— 撤稿是公开事实，与匿名无关。
         foreach ([
             'keep'    => '保留可见',
             'anon'    => '匿名隐藏',
+            'closed'  => '源站撤稿',
             'hide'    => '应当隐藏',
             'unknown' => '无法判定',
             'manual'  => '人工隐藏',
@@ -1734,9 +1754,11 @@ switch ($command) {
         }
 
         fwrite(STDOUT, sprintf(
-            "\n将隐藏拆解 %d 篇（匿名 %d 篇 + 不活跃 %d 篇）；将恢复可见 %d 篇（此前被本闸门隐藏）。\n",
-            count($plan['toHideAnon']) + count($plan['toHide']),
+            "\n将隐藏拆解 %d 篇（匿名 %d + 源站撤稿 %d + 作者不活跃 %d）；"
+            . "将恢复可见 %d 篇（此前被本闸门隐藏）。\n",
+            count($plan['toHideAnon']) + count($plan['toHideClosed']) + count($plan['toHide']),
             count($plan['toHideAnon']),
+            count($plan['toHideClosed']),
             count($plan['toHide']),
             count($plan['toRestore'])
         ));
@@ -1746,24 +1768,32 @@ switch ($command) {
             break;
         }
 
-        if ($plan['toHideAnon'] === [] && $plan['toHide'] === [] && $plan['toRestore'] === []) {
+        if ($plan['toHideAnon'] === [] && $plan['toHideClosed'] === []
+            && $plan['toHide'] === [] && $plan['toRestore'] === []) {
             fwrite(STDOUT, "没有需要改动的拆解。\n");
             break;
         }
 
         $result = $gate->apply($plan, (int) ($options['actor'] ?? 1));
         fwrite(STDOUT, sprintf(
-            "已执行：匿名隐藏 %d 篇（改动 %d）；不活跃隐藏 %d 篇（改动 %d）；"
-            . "恢复 %d 篇（改动 %d）；失效页面 %d 个。\n",
+            "已执行：匿名隐藏 %d 篇（改动 %d）；源站撤稿隐藏 %d 篇（改动 %d）；"
+            . "不活跃隐藏 %d 篇（改动 %d）；恢复 %d 篇（改动 %d）；失效页面 %d 个。\n",
             $result['anon']['requested'],
             $result['anon']['changed'],
+            $result['closed']['requested'],
+            $result['closed']['changed'],
             $result['hide']['requested'],
             $result['hide']['changed'],
             $result['restore']['requested'],
             $result['restore']['changed'],
             $result['pages']
         ));
-        fwrite(STDOUT, sprintf("  理由：%s / %s\n", $result['anon_reason'], $result['reason']));
+        fwrite(STDOUT, sprintf(
+            "  理由：%s / %s / %s\n",
+            $result['anon_reason'],
+            $result['closed_reason'],
+            $result['reason']
+        ));
         break;
 
     /** 重建检索关键词表（词表归并、批量发布之后跑一次） */
@@ -2275,8 +2305,9 @@ switch ($command) {
 可见性
   library:active-gate [--months={$wm}] [--refresh-activity] [--apply] [--actor=ID]
                                             收起不该公开的拆解：匿名作品一律收，
-                                            作者不活跃的也收（默认近{$wl}）；
-                                            --restore-all 整体撤销本闸门收过的；
+                                            源站已撤稿（未公开/删除/退回草稿）的也收，
+                                            作者不活跃（默认近{$wl}）的也收；
+                                            三条全过关才公开，--restore-all 整体撤销；
                                             只改拆解可见性，人工隐藏的不会被恢复；
                                             不带 --apply 只试算，一个字节都不写
 

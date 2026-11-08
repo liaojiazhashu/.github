@@ -131,7 +131,7 @@ final class OneClick
         $universe = [];
 
         foreach (($catalog['items'] ?? []) as $item) {
-            if (!$this->catalog->isPractice($item) || !$this->catalog->isAvailable($item)) {
+            if (!$this->catalog->isPractice($item) || !SourceCatalog::available($item)) {
                 continue;
             }
 

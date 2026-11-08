@@ -114,7 +114,7 @@ final class ActiveGateTest extends TestCase
             $this->row(16, 16, 3),                                     // 同一作者的又一篇，验证作者去重
         ];
 
-        $out = ActiveGate::classify($rows, $cidToUid, $authors, $active);
+        $out = self::classify($rows, $cidToUid, $authors, $active);
         $b   = $out['buckets'];
 
         self::assertSame(2, $b['keep']['works']);
@@ -150,7 +150,7 @@ final class ActiveGateTest extends TestCase
             $this->row(12, 12, 7, 'hidden', 'active-gate:2026-08'),
         ];
 
-        $out = ActiveGate::classify($rows, $cidToUid, $authors, []);
+        $out = self::classify($rows, $cidToUid, $authors, []);
 
         self::assertSame(6, $out['buckets']['unknown']['works']);
         self::assertSame([], $out['toHide'], '未判定一律不隐藏');
@@ -172,7 +172,7 @@ final class ActiveGateTest extends TestCase
             $this->row(2, 2, 1, 'hidden', 'active-gate:2026-10'),
         ];
 
-        $out = ActiveGate::classify($rows, [1 => 10], $authors, $active);
+        $out = self::classify($rows, [1 => 10], $authors, $active);
 
         self::assertSame(1, $out['buckets']['manual']['works']);
         self::assertSame([2], $out['toRestore'], '只恢复本闸门自己写下的理由');
@@ -185,7 +185,7 @@ final class ActiveGateTest extends TestCase
         $authors = [10 => ['uid' => 10, 'name' => '阿查', 'ok' => false]];
         $active  = [];  // activeUids 不会收录 ok=false 的人
 
-        $out = ActiveGate::classify(
+        $out = self::classify(
             [$this->row(1, 1, 1)],
             [1 => 10],
             $authors,
@@ -200,7 +200,7 @@ final class ActiveGateTest extends TestCase
     {
         $authors = [20 => ['uid' => 20, 'name' => '阿歇', 'ok' => true]];
 
-        $out = ActiveGate::classify(
+        $out = self::classify(
             [$this->row(1, 1, 1, 'hidden', 'active-gate:2026-07')],
             [1 => 20],
             $authors,
@@ -214,14 +214,15 @@ final class ActiveGateTest extends TestCase
 
     public function testEmptyInputProducesEmptyPlan(): void
     {
-        $out = ActiveGate::classify([], [], [], []);
+        $out = self::classify([], [], [], []);
 
-        foreach (['keep', 'hide', 'anon', 'unknown', 'manual'] as $key) {
+        foreach (['keep', 'hide', 'anon', 'closed', 'unknown', 'manual'] as $key) {
             self::assertSame(0, $out['buckets'][$key]['works']);
             self::assertSame([], $out['buckets'][$key]['authors']);
         }
         self::assertSame([], $out['toHide']);
         self::assertSame([], $out['toHideAnon']);
+        self::assertSame([], $out['toHideClosed']);
         self::assertSame([], $out['toRestore']);
         self::assertSame([], $out['unknown_reasons']);
     }
@@ -235,7 +236,7 @@ final class ActiveGateTest extends TestCase
         $authors = [10 => ['uid' => 10, 'name' => '阿活', 'ok' => true]];
         $active  = [10 => ['name' => '阿活', 'last' => self::SINCE]];
 
-        $out = ActiveGate::classify(
+        $out = self::classify(
             [$this->row(1, 1, 1)],
             [1 => 10],
             $authors,
@@ -267,7 +268,7 @@ final class ActiveGateTest extends TestCase
             $this->row(3, 3, 3),   // 阿歇 · 实名、不活跃 → 收起（活跃度规则）
         ];
 
-        $out = ActiveGate::classify($rows, $cidToUid, $authors, $active, [1 => true]);
+        $out = self::classify($rows, $cidToUid, $authors, $active, [1 => true]);
 
         self::assertSame([1], $out['toHideAnon']);
         self::assertSame([3], $out['toHide']);
@@ -278,7 +279,7 @@ final class ActiveGateTest extends TestCase
     {
         // 匿名作品常挂在临时 uid 上（甚至 uid=0），按活跃度判会全落进「未判定」，
         // 永远收不起来。匿名只依赖 cid 与目录里的名字，所以排在那五个判定之前。
-        $out = ActiveGate::classify(
+        $out = self::classify(
             [
                 $this->row(1, 1, 1),   // uid 是 0
                 $this->row(2, 2, 2),   // 快照里没这位作者
@@ -299,7 +300,7 @@ final class ActiveGateTest extends TestCase
         $authors = [10 => ['uid' => 10, 'name' => '阿活', 'ok' => true]];
         $active  = [10 => ['name' => '阿活', 'last' => self::SINCE]];
 
-        $out = ActiveGate::classify(
+        $out = self::classify(
             [$this->row(1, 1, 1, 'hidden', ActiveGate::ANON_REASON . '2026-11')],
             [1 => 10],
             $authors,
@@ -316,7 +317,7 @@ final class ActiveGateTest extends TestCase
     {
         // 人工隐藏排在匿名之前：结果都是「不公开」，但这条不该被闸门记账，
         // 否则整体回滚会把它一起放出来。
-        $out = ActiveGate::classify(
+        $out = self::classify(
             [$this->row(1, 1, 1, 'hidden', '作者要求下架')],
             [1 => 10],
             [],
@@ -366,7 +367,7 @@ final class ActiveGateTest extends TestCase
             $this->row(2, 7, 2),   // 同一个拆解，另一行、实名、作者不活跃
         ];
 
-        $out = ActiveGate::classify($rows, [1 => 10, 2 => 10], $authors, [], [1 => true]);
+        $out = self::classify($rows, [1 => 10, 2 => 10], $authors, [], [1 => true]);
 
         self::assertSame(1, $out['buckets']['anon']['works'] + $out['buckets']['hide']['works']);
         self::assertSame([7], $out['toHideAnon'], '按排在前面的那一行判，且只判一次');
@@ -381,7 +382,7 @@ final class ActiveGateTest extends TestCase
         $authors = [10 => ['uid' => 10, 'name' => '阿活', 'ok' => true]];
         $active  = [10 => ['name' => '阿活', 'last' => self::SINCE]];
 
-        $out = ActiveGate::classify(
+        $out = self::classify(
             [$this->row(1, 1, 1, 'hidden', ActiveGate::ANON_REASON . '2026-10')],
             [1 => 10],
             $authors,
@@ -401,7 +402,7 @@ final class ActiveGateTest extends TestCase
         // 代价是 hidden_reason 会停在 anon-，属于审计措辞而非状态错误。
         $authors = [20 => ['uid' => 20, 'name' => '阿歇', 'ok' => true]];
 
-        $out = ActiveGate::classify(
+        $out = self::classify(
             [$this->row(1, 1, 1, 'hidden', ActiveGate::ANON_REASON . '2026-10')],
             [1 => 20],
             $authors,
@@ -413,6 +414,127 @@ final class ActiveGateTest extends TestCase
         self::assertSame([], $out['toHide'], '已经藏好的不重复写');
         self::assertSame([], $out['toHideAnon']);
         self::assertSame(1, $out['buckets']['hide']['works']);
+    }
+
+    // ---------------------------------------------------------------- 源站撤稿
+
+    public function testSourceClosedWorkIsHiddenEvenWhenAuthorIsActive(): void
+    {
+        // 作者本人这个月刚投过稿，但这篇在源站被改成未公开 / 被删了：
+        // 拆解没有任何理由继续公开。
+        $authors = [10 => ['uid' => 10, 'name' => '阿活', 'ok' => true]];
+        $active  = [10 => ['name' => '阿活', 'last' => self::SINCE]];
+
+        $out = self::classify(
+            [$this->row(1, 1, 1), $this->row(2, 2, 2)],
+            [1 => 10, 2 => 10],
+            $authors,
+            $active,
+            [],
+            [2 => true]   // 2 号 cid 已撤稿，1 号还开着
+        );
+
+        self::assertSame([2], $out['toHideClosed']);
+        self::assertSame([1], $out['buckets']['keep']['ids']);
+        self::assertSame(1, $out['buckets']['closed']['works']);
+        self::assertSame([], $out['toHide'], '撤稿的理由与活跃度分开写');
+    }
+
+    public function testSourceClosedWorkIsJudgedWithoutAuthorLookup(): void
+    {
+        // 撤稿作品的 uid 可能是 0、作者也可能不在快照里。这两类若按活跃度判
+        // 会落进「未判定」保持现状 —— 而它们恰恰是最该收起来的。
+        $out = self::classify(
+            [$this->row(1, 1, 1), $this->row(2, 2, 2)],
+            [1 => 0, 2 => 99],
+            [],
+            [],
+            [],
+            [1 => true, 2 => true]
+        );
+
+        self::assertSame(2, $out['buckets']['closed']['works']);
+        self::assertSame(0, $out['buckets']['unknown']['works'], '撤稿不该被当成未判定');
+        self::assertSame([1, 2], $out['toHideClosed']);
+    }
+
+    public function testSourceClosedWorkAlreadyHiddenIsNotWrittenTwice(): void
+    {
+        // 上一轮因作者不活跃被收起，这一轮又撤稿了：结论都是「不公开」，
+        // 不必再写一次理由，也不该进 toHideClosed 让改动条数虚高。
+        $authors = [20 => ['uid' => 20, 'name' => '阿歇', 'ok' => true]];
+
+        $out = self::classify(
+            [$this->row(1, 1, 1, 'hidden', 'active-gate:2026-10')],
+            [1 => 20],
+            $authors,
+            [],
+            [],
+            [1 => true]
+        );
+
+        self::assertSame(1, $out['buckets']['closed']['works']);
+        self::assertSame([], $out['toHideClosed']);
+        self::assertSame([], $out['buckets']['manual']['ids'], '闸门自己藏的不算人工隐藏');
+    }
+
+    public function testSourceReopenedAndActiveAuthorIsRestored(): void
+    {
+        // 源站恢复公开 + 作者仍活跃 = 三条全过关，放回。
+        // 这是「对称性」那一半：撤稿是暂态，不是无期。
+        $authors = [10 => ['uid' => 10, 'name' => '阿活', 'ok' => true]];
+        $active  = [10 => ['name' => '阿活', 'last' => self::SINCE]];
+
+        $out = self::classify(
+            [$this->row(1, 1, 1, 'hidden', ActiveGate::CLOSED_REASON . '2026-10')],
+            [1 => 10],
+            $authors,
+            $active,
+            [],
+            []   // 默认包装：1 号 cid 还开着
+        );
+
+        self::assertSame([1], $out['toRestore']);
+        self::assertSame(1, $out['buckets']['keep']['works']);
+    }
+
+    public function testSourceReopenedButInactiveAuthorStaysHidden(): void
+    {
+        // 源站恢复了，但作者停笔了 —— 活跃度那一条不过关，仍然不公开。
+        // 两条规矩是与关系，谁也不覆盖谁。
+        $authors = [20 => ['uid' => 20, 'name' => '阿歇', 'ok' => true]];
+
+        $out = self::classify(
+            [$this->row(1, 1, 1, 'hidden', ActiveGate::CLOSED_REASON . '2026-10')],
+            [1 => 20],
+            $authors,
+            [],
+            [],
+            []
+        );
+
+        self::assertSame([], $out['toRestore'], '源站恢复不等于可以公开');
+        self::assertSame([], $out['toHide'], '已经藏好的不重复写');
+        self::assertSame(1, $out['buckets']['hide']['works']);
+    }
+
+    public function testCidMissingFromCatalogIsUnknownNotClosed(): void
+    {
+        // 目录里根本没有这个 cid（同步不完整）是「不知道」，不是「已撤稿」。
+        // 这两者混淆会让一次残缺同步收掉整片公开区。
+        $out = self::classify(
+            [$this->row(1, 1, 999)],
+            [1 => 10],
+            [10 => ['uid' => 10, 'name' => '阿活', 'ok' => true]],
+            [],
+            [],
+            []
+        );
+
+        self::assertSame(0, $out['buckets']['closed']['works']);
+        self::assertSame(1, $out['buckets']['unknown']['works']);
+        self::assertSame(1, $out['unknown_reasons']['cid 不在目录里']);
+        self::assertSame([], $out['toHideClosed']);
     }
 
     // ---------------------------------------------------------------- 口径同源
@@ -441,6 +563,39 @@ final class ActiveGateTest extends TestCase
     }
 
     // ---------------------------------------------------------------- 装配
+
+    /**
+     * classify() 的测试包装：默认「目录里每个 cid 在源站都还开着」。
+     *
+     * 真实的 classify() 要求显式传 available（少传就等于「全站撤稿」，会把
+     * 全站拆解收光，所以那边是必填）。测试里绝大多数用例关心的是匿名与活跃度，
+     * 不该每处都写一遍 available，所以在这里兜住默认。
+     *
+     * @param list<array<string,mixed>>      $rows
+     * @param array<int,int>                 $cidToUid
+     * @param array<int,array<string,mixed>> $authors
+     * @param array<int,array{name:string,last:int}> $active
+     * @param array<int,true>                $anon    标成匿名的 cid
+     * @param array<int,true>                $closed  标成「源站已撤稿」的 cid
+     * @return array<string,mixed>
+     */
+    private static function classify(
+        array $rows,
+        array $cidToUid,
+        array $authors,
+        array $active,
+        array $anon = [],
+        array $closed = []
+    ): array {
+        $available = [];
+        foreach ($cidToUid as $cid => $_) {
+            if (!isset($closed[$cid])) {
+                $available[$cid] = true;
+            }
+        }
+
+        return ActiveGate::classify($rows, $cidToUid, $authors, $active, $anon, $available);
+    }
 
     private function activity(): AuthorActivity
     {

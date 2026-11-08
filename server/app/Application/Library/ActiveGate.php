@@ -5,16 +5,29 @@ declare(strict_types=1);
 namespace App\Application\Library;
 
 use App\Application\Source\AuthorActivity;
+use App\Application\Source\SourceCatalog;
 use App\Support\Config;
 use InvalidArgumentException;
 use PDO;
 use RuntimeException;
 
 /**
- * 公开区闸门：按两条规则把不该公开的拆解收起来。
+ * 公开区闸门：决定哪一篇拆解可以对外展示。
  *
- * 规则一 **匿名作品一律不公开**（作品级，无条件）；
- * 规则二 **作者长期没投稿也没评稿的，其拆解不公开**（作者级，按时间窗判）。
+ * 三条规矩，全部满足才公开 —— 等价于「可见 = 非匿名 ∧ 源站还打得开 ∧ 作者还活跃」：
+ *
+ *   1. **匿名作品一律不公开**（作品级，无条件）；
+ *   2. **源站已经不公开或已删除的作品，其拆解不公开**（作品级，看目录快照）；
+ *   3. **作者长期没投稿也没评稿的，其拆解不公开**（作者级，按时间窗判）。
+ *
+ * 为什么把三条塞进一个类、而不是三个命令各管一段：它们写的是同一个字段
+ * （`hq_analysis.visibility`）。三个命令各自隐藏又各自恢复，会出现「A 刚收、
+ * B 立刻放回」的拉锯，而且每一边都认为自己做对了 —— 这种错不会报错，
+ * 只会让公开区的内容随执行顺序抖动。
+ *
+ * 三条合成一个判定之后，恢复也只有一个出口：**三条同时满足**才放回。
+ * 于是「源站删了文章但作者很活跃」不会被放出来，「源站恢复了公开但作者停笔了」
+ * 也不会被放出来。两个条件互为与关系，谁也不覆盖谁。
  *
  * ## 为什么作用在 hq_analysis 上，而不是 hq_work
  *
@@ -39,14 +52,25 @@ use RuntimeException;
  * 未判定的五种情况（缺 cid、cid 不在目录、缺 uid、快照里没这人、`ok=false`）
  * 对匿名不适用：匿名只依赖 cid 与目录里的名字，这两样齐了就能判。
  *
+ * ## 源站状态为什么也排在活跃度之前
+ *
+ * 同理：一篇被作者改成「未公开」或被站方删掉的文章，它的拆解没有任何理由
+ * 继续公开 —— 无论作者本人多活跃。这条只依赖目录快照里那四个字段，
+ * 与 uid、快照、接口全部无关，所以同样排在作者归属之前。
+ *
+ * 反过来，**源站恢复了公开，也不代表就能放回来**：还得作者仍然活跃。
+ * 这就是把三条合成一个判定的价值 —— 两个条件天然是与关系，不需要谁去
+ * 协调谁先跑。
+ *
  * ## 为什么恢复只认自己的理由前缀
  *
  * `hidden_reason` 以 `active-gate:` 开头 = 这条隐藏是本闸门写的。恢复时只碰
  * 这一类，人工在前台点「隐藏」（理由可能是空的、也可能写了别的话）永远不会被
  * 自动放出来。审计里能分清是谁藏的，业务表里也能。
  *
- * 两种规则共用同一个前缀、只在后面加 `anon-` 区分，是为了让「整体撤销」不必
- * 让人记得哪条属于哪一类 —— 判断口径整个错了的时候，要的是一条命令全撤。
+ * 三条规矩共用同一个前缀、只在后面加 `anon-` / `closed-` 区分，是为了让
+ * 「整体撤销」不必让人记得哪条属于哪一类 —— 判断口径整个错了的时候，
+ * 要的是一条命令全撤。
  *
  * ## 为什么未知一律不隐藏
  *
@@ -74,9 +98,12 @@ final class ActiveGate
      *
      * 仍以 `active-gate:` 开头，所以 gatedIdsByRule() 与 classify() 的
      * 「是不是本闸门藏的」判断照样认它，整体撤销也一并覆盖。
-     * `-` 而不是 `:` 收尾，是为了让 `LIKE 'active-gate:%'` 一次就能捞全两类。
+     * `-` 而不是 `:` 收尾，是为了让 `LIKE 'active-gate:%'` 一次就能捞全三类。
      */
     public const ANON_REASON = self::REASON_PREFIX . 'anon-';
+
+    /** 源站已不公开 / 已删除的完整前缀。理由同上，挂在同一个大前缀下 */
+    public const CLOSED_REASON = self::REASON_PREFIX . 'closed-';
 
     /** 单批 id 数量。500 与 VisibilityService 内部一致：语句短、锁范围小 */
     public const BATCH = 500;
@@ -96,12 +123,13 @@ final class ActiveGate
     }
 
     /**
-     * 本闸门收起过的全部拆解，按规则分组。
+     * 本闸门收起过的全部拆解，按规矩分组。
      *
-     * 分组只为打印（让运维看清「多少条是匿名规则收的」）。回滚不看分组：
-     * 判断口径整个错了的时候，要的是「一条命令全撤」，不是让人逐条回忆归属。
+     * 分组只为打印（让运维看清「多少条是匿名收的、多少条是源站撤稿收的、
+     * 多少条是作者不活跃收的」）。回滚不看分组：判断口径整个错了的时候，
+     * 要的是「一条命令全撤」，不是让人逐条回忆归属。
      *
-     * @return array{activity:list<int>, anon:list<int>}
+     * @return array{anon:list<int>, closed:list<int>, activity:list<int>}
      */
     public function gatedIdsByRule(): array
     {
@@ -112,11 +140,11 @@ final class ActiveGate
         );
         $stmt->execute([':prefix' => self::REASON_PREFIX . '%']);
 
-        $out = ['activity' => [], 'anon' => []];
+        $out = ['anon' => [], 'closed' => [], 'activity' => []];
         foreach ($stmt->fetchAll() as $r) {
-            $kind = str_starts_with((string) ($r['hidden_reason'] ?? ''), self::ANON_REASON)
-                ? 'anon'
-                : 'activity';
+            $reason = (string) ($r['hidden_reason'] ?? '');
+            $kind   = str_starts_with($reason, self::ANON_REASON) ? 'anon'
+                : (str_starts_with($reason, self::CLOSED_REASON) ? 'closed' : 'activity');
             $out[$kind][] = (int) $r['id'];
         }
 
@@ -135,7 +163,7 @@ final class ActiveGate
     public function gatedAnalysisIds(): array
     {
         $byRule = $this->gatedIdsByRule();
-        $ids    = array_merge($byRule['activity'], $byRule['anon']);
+        $ids    = array_merge($byRule['anon'], $byRule['closed'], $byRule['activity']);
         sort($ids);
 
         return $ids;
@@ -176,10 +204,14 @@ final class ActiveGate
      *   snapshot_authors:int,
      *   active_authors:int,
      *   anon_in_catalog:int,
+     *   closed_in_catalog:int,
+     *   catalog_total:int,
+     *   catalog_at:int,
      *   buckets:array<string,array{works:int, ids:list<int>, authors:array<int,array{name:string,works:int}>}>,
      *   unknown_reasons:array<string,int>,
      *   toHide:list<int>,
      *   toHideAnon:list<int>,
+     *   toHideClosed:list<int>,
      *   toRestore:list<int>
      * }
      */
@@ -214,68 +246,90 @@ final class ActiveGate
         $active  = $this->activity->activeUids($since);
         $index   = $this->catalogIndex();
         $rows    = $this->rows();
-        $classes = self::classify($rows, $index['uid'], $authors, $active, $index['anon']);
+        $classes = self::classify(
+            $rows,
+            $index['uid'],
+            $authors,
+            $active,
+            $index['anon'],
+            $index['available']
+        );
 
         $builtAt = (int) ($snapshot['meta']['built_at'] ?? 0);
 
         return [
-            'months'           => $months,
-            'since'            => $since,
-            'since_label'      => date('Y-m-d H:i', $since),
-            'snapshot_at'      => $builtAt,
-            'snapshot_label'   => $builtAt > 0 ? date('Y-m-d H:i', $builtAt) : '未知',
-            'snapshot_authors' => count($authors),
-            'active_authors'   => count($active),
-            'anon_in_catalog'  => count($index['anon']),
-            'buckets'          => $classes['buckets'],
-            'unknown_reasons'  => $classes['unknown_reasons'],
-            'toHide'           => $classes['toHide'],
-            'toHideAnon'       => $classes['toHideAnon'],
+            'months'            => $months,
+            'since'             => $since,
+            'since_label'       => date('Y-m-d H:i', $since),
+            'snapshot_at'       => $builtAt,
+            'snapshot_label'    => $builtAt > 0 ? date('Y-m-d H:i', $builtAt) : '未知',
+            'snapshot_authors'  => count($authors),
+            'active_authors'    => count($active),
+            'anon_in_catalog'   => count($index['anon']),
+            'closed_in_catalog' => count($index['uid']) - count($index['available']),
+            'catalog_total'     => count($index['uid']),
+            'catalog_at'        => (int) ($index['fetched_at'] ?? 0),
+            'buckets'           => $classes['buckets'],
+            'unknown_reasons'   => $classes['unknown_reasons'],
+            'toHide'            => $classes['toHide'],
+            'toHideAnon'        => $classes['toHideAnon'],
+            'toHideClosed'      => $classes['toHideClosed'],
             'toRestore'        => $classes['toRestore'],
         ];
     }
 
     /**
-     * 落库。只做三件事：收匿名、收不活跃、放回该放的。
+     * 落库。只做四件事：收匿名、收源站已撤稿的、收不活跃作者的、放回该放的。
      *
      * 分批不只是为了 SQL 长度 —— 每批走一次 VisibilityService，就各有一条审计，
      * 一次操作动到上千条时，审计里按批留痕比塞一条巨大的汇总更好定位。
      *
-     * 匿名与不活跃分开写理由（`active-gate:anon-2026-11` / `active-gate:2026-11`），
-     * 这样审计与隐藏归档页能看出「这条是匿名规则收的」还是「这条是作者不活跃收的」。
-     * 两者前缀相同，整体回滚不分彼此。
+     * 三种隐藏分开写理由（`active-gate:anon-` / `active-gate:closed-` /
+     * `active-gate:`），这样审计与隐藏归档页能看出「这条是为什么收的」。
+     * 三者前缀相同，整体回滚不分彼此。
      *
      * 注意返回的 `pages` 是各批失效页面数之和，不同批可能命中同一个标签，
      * 所以它只是「体量参考」，不是去重后的页面数。
      *
-     * @param array{toHide:list<int>, toHideAnon?:list<int>, toRestore:list<int>} $plan
+     * @param array{toHide:list<int>, toHideAnon?:list<int>, toHideClosed?:list<int>, toRestore:list<int>} $plan
      * @return array{
      *   anon:array{requested:int, changed:int, pages:int},
+     *   closed:array{requested:int, changed:int, pages:int},
      *   hide:array{requested:int, changed:int, pages:int},
      *   restore:array{requested:int, changed:int, pages:int},
      *   changed:int,
      *   pages:int,
      *   reason:string,
-     *   anon_reason:string
+     *   anon_reason:string,
+     *   closed_reason:string
      * }
      */
     public function apply(array $plan, ?int $actorId = null): array
     {
-        $month      = date('Y-m');
-        $reason     = self::REASON_PREFIX . $month;
-        $anonReason = self::ANON_REASON . $month;
+        $month        = date('Y-m');
+        $reason       = self::REASON_PREFIX . $month;
+        $anonReason   = self::ANON_REASON . $month;
+        $closedReason = self::CLOSED_REASON . $month;
 
         $blank   = ['requested' => 0, 'changed' => 0, 'pages' => 0];
         $anon    = $blank;
+        $closed  = $blank;
         $hide    = $blank;
         $restore = $blank;
 
-        // 匿名先写：它不依赖活跃度，且优先级更高，日志里排在前面读起来更顺
+        // 作品级的两条排在前面：它们不依赖活跃度，优先级更高，日志里也更好读
         foreach (array_chunk($this->ids($plan['toHideAnon'] ?? []), self::BATCH) as $batch) {
             $r = $this->visibility->hide(VisibilityService::ANALYSIS, $batch, $actorId, $anonReason);
             $anon['requested'] += $r['requested'];
             $anon['changed']   += $r['changed'];
             $anon['pages']     += $r['pages'];
+        }
+
+        foreach (array_chunk($this->ids($plan['toHideClosed'] ?? []), self::BATCH) as $batch) {
+            $r = $this->visibility->hide(VisibilityService::ANALYSIS, $batch, $actorId, $closedReason);
+            $closed['requested'] += $r['requested'];
+            $closed['changed']   += $r['changed'];
+            $closed['pages']     += $r['pages'];
         }
 
         foreach (array_chunk($this->ids($plan['toHide'] ?? []), self::BATCH) as $batch) {
@@ -293,13 +347,15 @@ final class ActiveGate
         }
 
         return [
-            'anon'        => $anon,
-            'hide'        => $hide,
-            'restore'     => $restore,
-            'changed'     => $anon['changed'] + $hide['changed'] + $restore['changed'],
-            'pages'       => $anon['pages'] + $hide['pages'] + $restore['pages'],
-            'reason'      => $reason,
-            'anon_reason' => $anonReason,
+            'anon'          => $anon,
+            'closed'        => $closed,
+            'hide'          => $hide,
+            'restore'       => $restore,
+            'changed'       => $anon['changed'] + $closed['changed'] + $hide['changed'] + $restore['changed'],
+            'pages'         => $anon['pages'] + $closed['pages'] + $hide['pages'] + $restore['pages'],
+            'reason'        => $reason,
+            'anon_reason'   => $anonReason,
+            'closed_reason' => $closedReason,
         ];
     }
 
@@ -335,13 +391,15 @@ final class ActiveGate
     }
 
     /**
-     * 目录快照里的两张表：cid → authorUid，以及「哪些 cid 是匿名作品」。
+     * 目录快照里的三张表：cid → authorUid、哪些 cid 是匿名、哪些 cid 还可用。
      *
-     * 一次读盘出两张表。分成两个方法会让 987 KB 的 JSON 被解析两遍，
-     * 而这两张表本来就是同一次遍历的产物。
+     * 一次读盘出三张表。拆成几个方法会让 987 KB 的 JSON 被反复解析，
+     * 而这三张表本来就是同一次遍历的产物。
      *
      * 直接读 catalog.json 而不是装配 SourceCatalog：那个类要一个 SourceApi，
-     * 而这里只需要映射关系，凭空造一个 API 对象是多出来的依赖面。
+     * 而这里只需要映射关系，凭空造一个 API 对象是多出来的依赖面。但「可用」
+     * 的四个条件仍然调 `SourceCatalog::available()` —— 那是采集与闸门共用的
+     * 唯一判据，抄一份过来就等着两边分叉。
      *
      * 匿名按**作品**判：目录里这一篇的 `authorName` 是站方给的占位名。
      * 不用 `authorUid` 判 —— 同一个人这一期匿名、往期实名，按 uid 判会把
@@ -350,7 +408,7 @@ final class ActiveGate
      * 缺失/损坏一律抛异常：把它当成空表会让每一篇都归到「未判定」，
      * 结果是整轮什么都不做，看起来却像「跑过了、没人需要隐藏」。
      *
-     * @return array{uid:array<int,int>, anon:array<int,true>}
+     * @return array{uid:array<int,int>, anon:array<int,true>, available:array<int,true>, fetched_at:int}
      */
     private function catalogIndex(): array
     {
@@ -374,8 +432,9 @@ final class ActiveGate
             throw new RuntimeException('目录快照格式不对：' . $path);
         }
 
-        $uid  = [];
-        $anon = [];
+        $uid       = [];
+        $anon      = [];
+        $available = [];
         foreach ($data['items'] as $i) {
             if (!is_array($i)) {
                 continue;
@@ -390,9 +449,20 @@ final class ActiveGate
             if (self::isAnonymousItem($i)) {
                 $anon[$cid] = true;
             }
+
+            // 只记「还开着」的。cid 在 uid 表里但不在这一张里 = 源站已撤稿，
+            // 这个差集就是「要收起来」的判据，和采集方向用的是同一份事实。
+            if (SourceCatalog::available($i)) {
+                $available[$cid] = true;
+            }
         }
 
-        return ['uid' => $uid, 'anon' => $anon];
+        return [
+            'uid'        => $uid,
+            'anon'       => $anon,
+            'available'  => $available,
+            'fetched_at' => (int) ($data['meta']['fetched_at'] ?? $data['meta']['built_at'] ?? 0),
+        ];
     }
 
     /**
@@ -417,35 +487,43 @@ final class ActiveGate
     }
 
     /**
-     * 五分类 + 与现状求差。
+     * 六分类 + 与现状求差。
      *
-     * 五类互斥，判定顺序就是优先级：
+     * 六类互斥，判定顺序就是优先级：
      *   1. 人工隐藏 —— 已经被人藏了、且理由不是本闸门写的，一律不碰；
      *   2. 匿名     —— 目录里这一篇的名字是「匿名用户」，无条件收起来；
-     *   3. 未判定   —— 缺 cid / cid 不在目录 / 缺 uid / 快照里没有 / ok=false；
-     *   4. 保留     —— uid 在活跃集合里；
-     *   5. 应当隐藏 —— 其余（快照里 ok=true，就是确实没动静）。
+     *   3. 源站撤稿 —— 目录里这一篇已不可用（未公开 / 已删除 / 退回草稿），收起；
+     *   4. 未判定   —— 缺 cid / cid 不在目录 / 缺 uid / 快照里没有 / ok=false；
+     *   5. 保留     —— 三条都过关，uid 在活跃集合里；
+     *   6. 应当隐藏 —— 其余（快照里 ok=true，就是确实没动静）。
      *
-     * 人工隐藏排在未判定之前：这类行无论如何都不会被动，把它算进「未判定」
-     * 会让「未判定」这个数字虚高，掩盖真正的数据缺口。
-     *
-     * 匿名排在未判定之前：匿名只取决于 cid 与目录里的名字，不经过 uid 与快照，
-     * 所以它不可能落进那五种「未判定」。放到后面反而会让「作者 uid 是临时的」
-     * 这一类匿名稿被当成未判定，永远收不起来。
+     * 前四类的顺序不能换：
+     *   · 人工隐藏排最前 —— 这类行无论如何都不该被动，算进「未判定」会让那个
+     *     数字虚高，掩盖真正的数据缺口；
+     *   · 匿名与源站撤稿排在未判定之前 —— 这两条只取决于 cid 与目录快照，
+     *     不经过 uid 与作者快照，所以它们不可能落进那五种「未判定」。放到后面
+     *     反而会让「作者 uid 是临时的」「作者快照里没这人」的撤稿作品被当成
+     *     未判定，永远收不起来 —— 那正是最该收的一类。
      *
      * 做成**静态纯函数**：这是唯一会「算错也不报错」的地方，单测要能直接喂数据，
      * 不必为了一个分类去装配 PDO、目录快照与可见性服务。
+     *
+     * 六个参数全部必填、没有默认值，是刻意的：`$available` 若给默认空数组，
+     * 就等于「目录里没有一篇还开着」，会把全站拆解一次性收光 —— 这种错不该
+     * 靠人记得传参来避免，而该在调用时就报错。
      *
      * @param list<array<string,mixed>> $rows
      * @param array<int,int>            $cidToUid
      * @param array<int,array<string,mixed>> $authors
      * @param array<int,array{name:string,last:int}> $active
      * @param array<int,true>           $anonCids 目录里标成匿名的 cid 集合
+     * @param array<int,true>           $available 目录里仍然打得开的 cid 集合
      * @return array{
      *   buckets:array<string,array{works:int, ids:list<int>, authors:array<int,array{name:string,works:int}>}>,
      *   unknown_reasons:array<string,int>,
      *   toHide:list<int>,
      *   toHideAnon:list<int>,
+     *   toHideClosed:list<int>,
      *   toRestore:list<int>
      * }
      */
@@ -454,20 +532,23 @@ final class ActiveGate
         array $cidToUid,
         array $authors,
         array $active,
-        array $anonCids = []
+        array $anonCids,
+        array $available
     ): array {
         $buckets = [
             'keep'    => ['works' => 0, 'ids' => [], 'authors' => []],
             'hide'    => ['works' => 0, 'ids' => [], 'authors' => []],
             'anon'    => ['works' => 0, 'ids' => [], 'authors' => []],
+            'closed'  => ['works' => 0, 'ids' => [], 'authors' => []],
             'unknown' => ['works' => 0, 'ids' => [], 'authors' => []],
             'manual'  => ['works' => 0, 'ids' => [], 'authors' => []],
         ];
-        $reasons    = [];
-        $toHide     = [];
-        $toHideAnon = [];
-        $toRestore  = [];
-        $seen       = [];
+        $reasons      = [];
+        $toHide       = [];
+        $toHideAnon   = [];
+        $toHideClosed = [];
+        $toRestore    = [];
+        $seen         = [];
 
         foreach ($rows as $row) {
             $analysisId = (int) ($row['analysis_id'] ?? 0);
@@ -507,6 +588,22 @@ final class ActiveGate
                 $buckets['anon']['ids'][] = $analysisId;
                 if (!$hidden) {
                     $toHideAnon[] = $analysisId;
+                }
+                continue;
+            }
+
+            // 源站已撤稿（作者改成未公开 / 站方删了 / 退回草稿）：拆解没有理由继续公开，
+            // 无论作者本人多活跃。与匿名同理，只看目录快照，不经过 uid 与活跃度，
+            // 所以必须排在下面那五种「未判定」之前 —— 否则一篇 uid 恰好缺失的撤稿作品
+            // 会被判成未判定、继续公开着。
+            //
+            // 注意判据用 `isset($available)` 的**补集**，且要求 cid 在目录里：
+            // cid 根本不在目录里属于「不知道」（可能同步不完整），走下面的未判定。
+            if ($cid > 0 && array_key_exists($cid, $cidToUid) && !isset($available[$cid])) {
+                ++$buckets['closed']['works'];
+                $buckets['closed']['ids'][] = $analysisId;
+                if (!$hidden) {
+                    $toHideClosed[] = $analysisId;
                 }
                 continue;
             }
@@ -569,6 +666,7 @@ final class ActiveGate
             'unknown_reasons' => $reasons,
             'toHide'          => array_values($toHide),
             'toHideAnon'      => array_values($toHideAnon),
+            'toHideClosed'    => array_values($toHideClosed),
             'toRestore'       => array_values($toRestore),
         ];
     }

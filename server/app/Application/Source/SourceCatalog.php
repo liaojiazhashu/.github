@@ -251,7 +251,7 @@ final class SourceCatalog
     }
 
     /**
-     * 这篇能不能对外展示。
+     * 「这篇现在读者打不打得开」的唯一判据。
      *
      * 四个条件，缺一不可。第四条是后补的，补的原因值得记下来：
      *
@@ -264,9 +264,16 @@ final class SourceCatalog
      *
      * 判据只能是 `type = post`：草稿和正式稿的区别不在状态字段里，在类型里。
      *
+     * ## 为什么是静态的、而且只留这一个名字
+     *
+     * 采集方向用它决定「要不要采进来」，公开区闸门用它决定「要不要收起来」——
+     * 同一个事实的两个方向。闸门只读 catalog.json、不装配本类（那要一个 SourceApi），
+     * 所以这个判据必须是静态的。两边各写一份的后果是：采集认为「可用」而闸门认为
+     * 「已关闭」，作品被自己人反复收起再放回，而两边都不报错。
+     *
      * @param array<string,mixed> $item
      */
-    public function isAvailable(array $item): bool
+    public static function available(array $item): bool
     {
         return (string) ($item['type'] ?? '') === 'post'
             && (int) ($item['isDelete'] ?? 0) === 0
@@ -290,7 +297,7 @@ final class SourceCatalog
             'practice' => array_values(array_filter($items, fn (array $i): bool => $this->isPractice($i))),
             'practice_ready' => array_values(array_filter(
                 $items,
-                fn (array $i): bool => $this->isPractice($i) && $this->isAvailable($i)
+                fn (array $i): bool => $this->isPractice($i) && self::available($i)
             )),
             default => array_values($items),
         };
@@ -343,7 +350,7 @@ final class SourceCatalog
             $rows[$no]['endsAt']   = (int) ($i['endsAt'] ?? 0);
             $rows[$no]['revealAt'] = (int) ($i['revealAt'] ?? 0);
 
-            if ($this->isAvailable($i)) {
+            if (self::available($i)) {
                 $rows[$no]['ready']++;
                 $rows[$no]['words'] += (int) ($i['wordCount'] ?? 0);
 
@@ -395,7 +402,7 @@ final class SourceCatalog
 
         $rows = [];
         foreach ($items as $i) {
-            $available = $this->isAvailable($i);
+            $available = self::available($i);
             $rows[] = [
                 (int) $i['cid'],
                 (int) ($i['issueNo'] ?? 0),
@@ -513,7 +520,7 @@ final class SourceCatalog
 
             if ($this->isPractice($i)) {
                 ++$practice;
-                if ($this->isAvailable($i)) {
+                if (self::available($i)) {
                     ++$ready;
                 }
             }
