@@ -83,7 +83,7 @@ const LIBRARY_URL = process.env.LIBRARY_URL || '/library';
 
 const NAV = [
   { href: 'index.html', label: '首页', key: 'home' },
-  { href: 'about.html', label: '关于荒启', key: 'about' },
+  { href: 'about.html', label: '关于我们', key: 'about' },
   {
     /* href 指向首页的板块介绍段落：父级文字点击后落到介绍，箭头负责展开子菜单 */
     href: 'index.html#business',
@@ -106,8 +106,8 @@ const FOOTER_LINKS = [
   { href: 'contact.html#start', label: '客户端下载' },
   { href: READER_URL, label: '在线阅读', ext: true },
   { href: LIBRARY_URL, label: '进入银河图书馆', ext: true },
-  { href: 'about.html', label: '关于荒启' },
-  { href: 'contact.html', label: '联系与加入' }
+  { href: 'about.html', label: '关于我们' },
+  { href: 'contact.html', label: '联系我们' }
 ];
 
 /* 客户端下载（v2.3.11）：三平台占位安装包，
@@ -248,7 +248,7 @@ function buildDrawer(current) {
       label: '页面',
       items: [
         { href: 'index.html', label: '首页', key: 'home' },
-        { href: 'about.html', label: '关于荒启', key: 'about' },
+        { href: 'about.html', label: '关于我们', key: 'about' },
         { href: 'contact.html', label: '联系我们', key: 'contact' }
       ]
     },
@@ -318,13 +318,15 @@ ${FOOTER_LINKS.map((l) => `            <li><a href="${l.href}"${l.ext ? ' target
           <ul class="site-footer__links">
             <li><a href="contact.html#invite">加入社群（QQ 群 280660235）</a></li>
             <li><a href="contact.html">联系方式与入群须知</a></li>
+            <li><a href="mailto:huangqi.sifi@gmail.com">huangqi.sifi@gmail.com</a></li>
+            <li><a href="mailto:founpghkf@gmail.com">founpghkf@gmail.com</a></li>
           </ul>
         </div>
       </div>
 
       <div class="site-footer__bottom">
         <p>© <span data-year>2026</span> 成都荒启文化传播有限公司 · 荒启科幻。<a class="site-footer__icp" href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank"> 蜀ICP备2025169184号-1 </a></p>
-        <p class="site-footer__compliance">「荒启科幻」练笔社群由科幻爱好者组成、成员自主运营，为纯公益社群；成都荒启文化传播有限公司提供网络平台工具，不参与社群运营，不从中获取经营收益。</p>
+        <p class="site-footer__compliance">本站由成都荒启文化传播有限公司（统一社会信用代码 91510100MAEY15D64X）主办。「荒启科幻练笔」为科幻爱好者自主运营的纯公益社群，公司仅提供平台工具，不参与其日常运营，不获取经营收益。</p>
         <div class="site-footer__bottom-links">
           <a href="about.html">品牌规范</a>
           <a href="contact.html#privacy">隐私说明</a>
@@ -676,43 +678,43 @@ const PAGES = [
     file: 'index.html',
     current: 'home',
     scene: 'home',
-    title: '荒启科幻 · 从荒芜中开启新世界',
-    desc: '荒启科幻是科幻爱好者自主运营的纯公益写作社群，核心活动为「荒启科幻练笔」；成都荒启文化传播有限公司提供网络平台工具与数字化产品开发服务，并维护免费开放的银河图书馆。'
+    title: '荒启科幻 · 数字内容与平台开发｜成都荒启文化传播有限公司官方网站',
+    desc: '成都荒启文化传播有限公司官方网站。公司以数字内容制作、软件开发与技术服务为业务方向，开发并维护 APP「荒启科幻」与在线索引平台「银河图书馆」，并为纯公益社群「荒启科幻练笔」提供平台工具支持。'
   },
   {
     file: 'about.html',
     current: 'about',
     scene: 'about',
-    title: '关于荒启 · 品牌全景 | 荒启科幻',
-    desc: '荒启科幻：公益社群、公司提供的平台工具与银河图书馆的三重关系，公司定位、主体信息、核心价值与发展脉络。'
+    title: '关于我们｜荒启科幻 · 成都荒启文化传播有限公司',
+    desc: '成都荒启文化传播有限公司简介：公司定位、经营范围、主体信息与发展脉络，以及公司品牌「荒启科幻」、平台工具、银河图书馆与纯公益社群「荒启科幻练笔」的关系说明。'
   },
   {
     file: 'community.html',
     current: 'biz',
     scene: 'community',
-    title: '科幻社群 · 公益写作社群 | 荒启科幻',
-    desc: '纯公益写作社群，每年九期练笔，参加全程免费。投稿与评稿均通过公司开发的 APP 完成，算法分配评稿任务，每篇作品至少十位读者评稿，超过四份时去极值计分。'
+    title: '科幻社群｜荒启科幻',
+    desc: '「荒启科幻练笔」是由科幻爱好者自主运营的纯公益写作社群，每年九期，参加全程免费。投稿与评稿通过公司开发的 APP「荒启科幻」完成，算法分配评稿任务，每篇作品至少十位读者评稿。'
   },
   {
     file: 'tools.html',
     current: 'biz',
     scene: 'tools',
-    title: '数字化产品开发 · 社区、教育与 AI 系统定制 | 荒启科幻',
-    desc: '成都荒启文化传播有限公司的数字化产品开发：社区与内容系统、教育考试系统、AI 应用与定制开发四条业务线，一套代码覆盖 Web、H5、安卓、iOS 与小程序，支持托管、私有化部署与源码交付。'
+    title: '数字化产品开发｜荒启科幻',
+    desc: '成都荒启文化传播有限公司的软件开发与技术服务：社区与内容系统、教育考试系统、AI 应用与定制开发四条业务线，一套代码覆盖 Web、H5、安卓、iOS 与小程序，支持托管、私有化部署与源码交付。'
   },
   {
     file: 'library.html',
     current: 'biz',
     scene: 'library',
-    title: '银河图书馆 · 科幻作品索引与两页拆解 | 荒启科幻',
-    desc: '银河图书馆：公司开发维护的免费在线科幻索引馆，每篇入馆作品做成可检索的科幻词库与两页拆解 —— 读者一页看核心设定与魅力，作者一页看剧情节点与修改方向。全部免登录可读，无需注册。'
+    title: '银河图书馆｜荒启科幻',
+    desc: '银河图书馆：成都荒启文化传播有限公司开发维护的免费在线科幻索引平台，每篇入馆作品做成可检索的科幻词库与两页拆解 —— 读者一页看核心设定与魅力，作者一页看剧情节点与修改方向。全部免登录可读，无需注册。'
   },
   {
     file: 'contact.html',
     current: 'contact',
     scene: 'contact',
-    title: '联系与加入 | 荒启科幻',
-    desc: '加入荒启科幻的唯一入口：申请加入交流 QQ 群 280660235，在加群申请里回答「科幻的定义是什么？」，无需表单与额外材料。纯公益社群，参加全程免费。'
+    title: '联系我们｜荒启科幻 · 成都荒启文化传播有限公司',
+    desc: '成都荒启文化传播有限公司的联系渠道：公司邮箱 huangqi.sifi@gmail.com、欧洲分部 founpghkf@gmail.com、微信公众号「荒启科幻」，以及公益社群「荒启科幻练笔」的加入方式。'
   }
 ];
 

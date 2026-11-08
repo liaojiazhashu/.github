@@ -1035,6 +1035,10 @@ hr {
   color: var(--text-3);
   transition: color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
   display: inline-block;
+  /* 「联系我们」栏现在有邮箱地址：1279px 四列时每列约 192px，
+     huangqi.sifi@gmail.com 在 13px 下约 172px，只剩 20px 余量。
+     留一条兜底，宁可折行也不要顶出栏外。 */
+  overflow-wrap: anywhere;
 }
 .site-footer__links a:hover {
   color: var(--accent-2);
@@ -2280,6 +2284,16 @@ hr {
 }
 .kv__key { color: var(--text-4); }
 .kv__val { color: var(--text-2); }
+/* 邮箱是本页唯一要「点一下」的登记信息，给一条下划线：
+   .mono 只换了色，和旁边的登记文本混在一起看不出可点。 */
+.kv__val a {
+  color: var(--accent-2);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--accent-2-line);
+}
+.kv__val a:hover { text-decoration-color: currentColor; }
 .to-top {
   position: fixed;
   right: clamp(16px, 2vw, 30px);
@@ -2676,6 +2690,15 @@ hr {
   word-break: break-all;
 }
 .contact-line__value .mono { color: var(--accent-2); }
+/* 邮箱行：颜色由 .mono 给（与上面的 QQ 号一致），这里只补一条下划线 ——
+   不给的话它和旁边的纯文本数字长得一样，看不出能点。 */
+.contact-line__value a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--accent-2-line);
+}
+.contact-line__value a:hover { text-decoration-color: currentColor; }
 /* 隐私区块（contact.html#privacy）：.panel__body 默认撑满卡片，
    1440 下卡片 1056 宽、正文 986（≈61 字一行），长段落读不下去。
    按全站口径锁 40 字 —— 与 .index-item__desc 同一条规则。 */

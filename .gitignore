@@ -55,6 +55,8 @@ coverage/
 .build/audit-baseline/
 .build/pages/
 .build/css-parts/
+.build/shots/
+.build/shots-library/
 
 # ---- 本机与服务器环境差异 ----
 .user.ini
