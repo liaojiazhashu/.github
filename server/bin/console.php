@@ -1602,6 +1602,25 @@ switch ($command) {
             exit(1);
         }
 
+        // --months 只给试算用。落库必须走「与后台分类页、源站采集同一处定义」的时间窗，
+        // 否则会出现后台写着两个月、线上按三个月收，而两边都不报错的情形。
+        //
+        // 放在这里而不是 plan() 之前，是为了尽早失败：下面的 --refresh-activity 会按人
+        // 逐个请求源站并重写 activity.json，参数写错却要先跑完几百次请求才报错，说不过去。
+        // --restore-all 不判口径，故豁免；--months 取默认值时不构成分叉，故放行。
+        if (!isset($options['restore-all'])
+            && isset($options['months'])
+            && $months !== ActiveGate::DEFAULT_MONTHS
+            && isset($options['apply'])) {
+            fwrite(STDERR, sprintf(
+                "--apply 不能和 --months 同用：落库只能按 %d 个月跑（取默认值时不报错）。\n"
+                . "  --months=%d 只用于试算；真要改口径，改 AuthorActivity::WINDOW_MONTHS。\n",
+                ActiveGate::DEFAULT_MONTHS,
+                $months
+            ));
+            exit(2);
+        }
+
         // 快照超过一天才重建。里面存的是**原始时间戳**而不是结论，结论在读取时
         // 现算，所以后台（两个月）与本命令 `--months` 试算别的口径可以共用同一份
         // 快照，各算各的。重建时统一按 AuthorActivity::since() 建，保持标签同源。
@@ -1674,18 +1693,6 @@ switch ($command) {
                 $done['pages']
             ));
             break;
-        }
-
-        // --months 只给试算用。落库必须走「与后台分类页、源站采集同一处定义」的时间窗，
-        // 否则会出现后台写着两个月、线上按三个月收，而两边都不报错的情形。
-        if (isset($options['months']) && $months !== ActiveGate::DEFAULT_MONTHS && isset($options['apply'])) {
-            fwrite(STDERR, sprintf(
-                "--apply 不能和 --months 同用：落库只能按 %d 个月跑。\n"
-                . "  --months=%d 只用于试算；真要改口径，改 AuthorActivity::WINDOW_MONTHS。\n",
-                ActiveGate::DEFAULT_MONTHS,
-                $months
-            ));
-            exit(2);
         }
 
         try {
@@ -2317,13 +2324,15 @@ switch ($command) {
   library:unpublish --work=CODE | --all [--apply] [--actor=ID]
 
 可见性
-  library:active-gate [--months={$wm}] [--refresh-activity] [--apply] [--actor=ID]
+  library:active-gate [--refresh-activity] [--apply] [--actor=ID] [--restore-all] [--months={$wm}]
                                             收起不该公开的拆解：匿名作品一律收，
                                             源站已撤稿（未公开/删除/退回草稿）的也收，
                                             作者不活跃（默认近{$wl}）的也收；
                                             三条全过关才公开，--restore-all 整体撤销；
                                             只改拆解可见性，人工隐藏的不会被恢复；
-                                            不带 --apply 只试算，一个字节都不写
+                                            不带 --apply 只试算，一个字节都不写；
+                                            --months 只用于试算，落库只认默认值
+                                            （与 --apply 同用会拒绝，退出码 2）
 
 清空重来
   library:purge-analysis [--apply]          删掉全部拆解结果与词条，作品退回「待拆解」

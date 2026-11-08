@@ -171,9 +171,14 @@ final class ActiveGate
     /**
      * 按理由前缀把「本闸门藏的」分成三类。纯函数，单测只测这一段。
      *
-     * 认不出来的一律归 `activity`：那是三条里唯一会在条件变化后被放回的一类，
-     * 归错它的代价最小。历史上 `active-gate:YYYY-MM`（没写分类后缀）也确实属于
-     * 这一类，所以这个兜底同时兼容旧数据。
+     * **分桶只影响回滚页的分项数字，不影响谁被放回。** 恢复走的是 classify()：
+     * 目录里不再是匿名、源站重新公开、作者重新活跃，三类都会被自动放回。
+     * 所以这里归错不会造成状态错误，只会让「匿名 N / 撤稿 N / 不活跃 N」说谎，
+     * 而人正是看着这几个数字决定要不要全撤 —— 这就是它值得单测的原因。
+     *
+     * 认不出来的一律归 `activity`。这不是因为只有它会被放回（三类都能），
+     * 而是因为旧记录 `active-gate:YYYY-MM` 没有分类后缀、本来就属于这一类，
+     * 兜底归它等于顺带兼容旧数据。
      *
      * @param list<array<string,mixed>> $rows 至少含 id 与 hidden_reason
      * @return array{anon:list<int>, closed:list<int>, activity:list<int>}
@@ -481,7 +486,9 @@ final class ActiveGate
     /**
      * 把目录快照的原始结构折成三张表。纯函数，不碰文件系统 —— 单测只测这一段。
      *
-     * 缺失/损坏一律由调用方抛异常，这里只处理「结构已经合法」的输入。
+     * 校验不在这一层：文件是否存在、JSON 是否解得开、`items` 是不是数组，都由
+     * 调用方（catalogIndex()）抛异常。这里只处理结构已经合法的输入；`items`
+     * 整个缺失时按空目录处理（调用方不会让它走到这一步）。
      *
      * @param array<string,mixed> $data catalog.json 解码后的数组
      * @return array{uid:array<int,int>, anon:array<int,true>, available:array<int,true>, fetched_at:int}

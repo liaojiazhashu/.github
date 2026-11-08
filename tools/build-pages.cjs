@@ -68,14 +68,16 @@ function icon(name, cls) {
 }
 
 /* ---------------------------------------------------------------- 导航表 */
-/* 阅读站已停用（2026-11-08）。站点未启用，官网与图书馆任何位置均不出现其入口。
-   常量保留仅为兼容历史引用；如确认无引用，可整段删除。 */
-const READER_URL = '/h5/';
+/* 阅读站已停用（2026-11-08），官网与图书馆任何位置都不出现其入口。
+   曾有一个 READER_URL = '/h5/' 常量指向它，2026-11-08 一并删除：
+   那个路径在线上是 404（真正的阅读站在 www.huangqisf.com/h5/），
+   留着常量等于给后来的人留一条「写上去就静默生成死链」的路 ——
+   check-site.cjs 对站内绝对路径一律跳过，抓不到。 */
 
 /* 银河图书馆站地址（v2.4）。
    官网只负责「讲清楚这座馆是什么」并把人送进去，馆里的内容一律在站内实时查，
    不再往官网搬一份静态拷贝 —— 两份数据必然漂，而漂的那一份永远没人维护。
-   写 `/library` 是同域部署的正确写法（与 /h5/ 一致）：Nginx 把 /library 交给 PHP，
+   写 `/library` 是同域部署的正确写法：Nginx 把 /library 交给 PHP，
    官网与馆同一个域名，读者不用跳站。
    本机预览时由 js/main.js 把 /library 改指到 127.0.0.1:8090（见 LOCAL_LIBRARY），
    生产环境不会命中那段逻辑。正文里只写 {{LIBRARY_URL}}，地址不写死。 */
@@ -583,12 +585,6 @@ function assertNoPlaceholder(html, file) {
   return html;
 }
 
-/* 页面主体可用 {{READER_URL}} 引用在线阅读站地址，避免把域名写死在正文里
-   —— 改地址只需改顶部的 READER_URL 常量。 */
-function expandReaderUrl(html) {
-  return html.replace(/\{\{READER_URL\}\}/g, READER_URL);
-}
-
 /* 页面主体可用 {{LIBRARY_URL}} 引用银河图书馆站地址（含 /library 基础路径） */
 function expandLibraryUrl(html) {
   return html.replace(/\{\{LIBRARY_URL\}\}/g, LIBRARY_URL);
@@ -602,7 +598,7 @@ function expandAppButtons(html) {
 function page({ title, desc, scene, file, current, scripts = '' }) {
   const bodyPath = path.join(SRC_DIR, file);
   if (!fs.existsSync(bodyPath)) throw new Error('缺少页面主体: ' + file);
-  const body = expandAppButtons(expandLibraryUrl(expandReaderUrl(expandIcons(fs.readFileSync(bodyPath, 'utf8').trimEnd()))));
+  const body = expandAppButtons(expandLibraryUrl(expandIcons(fs.readFileSync(bodyPath, 'utf8').trimEnd())));
 
   const extraScripts = scripts
     ? scripts.split('\n').map((s) => '  <script src="' + s.trim() + '"></script>').join('\n') + '\n'

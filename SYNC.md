@@ -87,10 +87,31 @@ ssh srv 'tail -20 /var/log/zha-deploy.log'
 | `server/storage/uploads` `artifacts` | 118 MB 用户上传的作品原文 |
 | `server/storage/certs` | 证书私钥 |
 | `server/composer.phar` | 二进制，3.2 MB |
+| `server/public/sitemap.xml` | 运行时生成物，每次落库都重写；以服务器磁盘为准（见下节） |
 | `.build/fonts` | 字体副本 25 MB |
 | `assets/*.css` `assets/*.js` 等软链 | 服务器部署技巧，源文件在 `server/public/assets/` |
 
 所以代码同步**不会**影响图书馆里已有的作品内容，也不会覆盖数据库。
+
+## 静态 sitemap：不进仓库，以服务器磁盘为准
+
+`server/public/sitemap.xml` 是**运行时生成物**。`PublicSurface` 在每次发布 / 下线 /
+闸门落库后重写它，内容随数据变（闸门收起 267 篇之后，条数从 1290 降到 1015）。
+2026-11-08 起它被 `.gitignore` 挡住 —— 之前入库的那份是开发机产物，`<loc>` 全是
+`http://127.0.0.1:8090/…`，一旦被推上线，搜索引擎就会去抓本机地址。
+
+它同时是**服务器工作树被弄脏**的根源：旧版本里闸门每 `--apply` 一次就重写一次
+这个受跟踪文件，而 `deploy-zha.sh` 用的是 `git pull --ff-only`，dirty 就永远拉不动。
+撤出库之后这个问题不再出现；如果日志里还报 `FAILED pull`，先跑
+`ssh srv 'cd /www/wwwroot/zha.ruletree.club && git status --porcelain'` 看是哪个文件。
+
+- 重建：`ssh srv 'cd /www/wwwroot/zha.ruletree.club/server && php bin/console.php sitemap'`
+- **文件缺失不会自动回来**：`PublicSurface::refreshSitemap()` 是「只重写不新建」，
+  见 `server/app/Application/Library/PublicSurface.php:174`。少了它就退回动态路由
+  `SitemapController`（`server/config/routes.php` 的根级 `/sitemap.xml`），
+  页面照样 200、条数正确，只是每次请求都过一遍 PHP。
+- 换了服务器、或跑过 `git clean -xfd` 之后，若觉得 `/sitemap.xml` 变慢，
+  跑一次上面那条重建命令即可。nginx 是 `try_files $uri $uri/ @slim`，有没有文件都通。
 
 ## 冲突了怎么办
 
