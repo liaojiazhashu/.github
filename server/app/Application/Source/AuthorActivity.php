@@ -102,12 +102,27 @@ final class AuthorActivity
     }
 
     /**
+     * 站方显式打上的匿名占位名。
+     *
+     * 与 ANON_NAMES 的区别只有一个字符，后果却很大：ANON_NAMES 含空串，
+     * 用于「这个名字没法归属到人」的**显示**场景（后台分类页、CSV 导出）——
+     * 那里认错只是标签难看。公开区闸门会据此真的隐藏作品，所以它只认这个
+     * 显式占位名：`authorName` 为空更可能是接口字段缺失（SourceCatalog 在
+     * `authorInfo.name` 缺字段时直接写空串），那属于「不知道」，
+     * 不该被当成「确认是匿名」。
+     */
+    public const ANON_PLACEHOLDER = '匿名用户';
+
+    /**
      * 匿名与已注销在 catalog 里的名字。这两个不是人名，是站方给的状态。
      *
      * 公开出来是因为命令行要按它跳过 —— 冒烟跑 `--limit=5` 时不跳过的话，
      * 抽到的头五个人很可能全是「匿名用户」，看起来像功能坏了。
+     *
+     * 空串也在这里：统计与展示时，「没有名字」和「匿名」都归不到人头上。
+     * 但**不要**拿这个数组去做隐藏判定，见 ANON_PLACEHOLDER。
      */
-    public const ANON_NAMES = ['匿名用户', ''];
+    public const ANON_NAMES = [self::ANON_PLACEHOLDER, ''];
 
     public const GONE_NAMES = ['用户已注销', '已注销'];
 

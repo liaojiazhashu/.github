@@ -312,6 +312,10 @@ final class ActiveGate
      *
      * 标题与作品状态不取：闸门只改拆解可见性，不需要正文信息。
      *
+     * 按 work.id 排序是为了让「同一个拆解被两个作品行引用」时结果可复现 ——
+     * `hq_work.current_analysis_id` 没有唯一约束，不加排序时先见到哪一行由
+     * 执行计划决定，同一份数据两次跑可能给出不同结论。
+     *
      * @return list<array<string,mixed>>
      */
     private function rows(): array
@@ -321,7 +325,8 @@ final class ActiveGate
                   FROM hq_work w
                   JOIN hq_analysis a ON a.id = w.current_analysis_id
                  WHERE w.status = 'published' AND w.deleted_at IS NULL AND w.visibility = 'visible'
-                   AND a.status = 'published'";
+                   AND a.status = 'published'
+                 ORDER BY w.id";
 
         $stmt = $this->pdo->query($sql);
         $rows = $stmt === false ? [] : $stmt->fetchAll();
@@ -382,13 +387,33 @@ final class ActiveGate
 
             $uid[$cid] = (int) ($i['authorUid'] ?? 0);
 
-            // trim 兜住「名字被写成空白」这种脏数据：纯粹的空名字同样无法归属到人
-            if (in_array(trim((string) ($i['authorName'] ?? '')), AuthorActivity::ANON_NAMES, true)) {
+            if (self::isAnonymousItem($i)) {
                 $anon[$cid] = true;
             }
         }
 
         return ['uid' => $uid, 'anon' => $anon];
+    }
+
+    /**
+     * 目录里这一篇算不算匿名。
+     *
+     * **只认站方显式打的占位名，不认空名字。** 空名字意味着「目录里没有这个
+     * 字段」，来源是接口某次少给了 `authorInfo.name`，或者同步被截断。那种情况
+     * 下我们并不知道这篇是不是匿名 —— 而匿名规则是无条件隐藏、绕开后面五种
+     * 「未判定」保护，一旦把空名字当匿名，一次字段抖动就能把整片公开区收掉，
+     * 而且不报错。
+     *
+     * `AuthorActivity::ANON_NAMES` 里含空串，那是给展示用的（后台分类页、CSV）：
+     * 那里认错只是标签难看。这里要的是「确认匿名」，所以用更严的 ANON_PLACEHOLDER。
+     *
+     * 单独提出来是为了能单测 —— 这是「数据坏了被当成确认匿名」的唯一入口。
+     *
+     * @param array<string,mixed> $item 目录快照里的一条
+     */
+    public static function isAnonymousItem(array $item): bool
+    {
+        return trim((string) ($item['authorName'] ?? '')) === AuthorActivity::ANON_PLACEHOLDER;
     }
 
     /**
@@ -442,12 +467,21 @@ final class ActiveGate
         $toHide     = [];
         $toHideAnon = [];
         $toRestore  = [];
+        $seen       = [];
 
         foreach ($rows as $row) {
             $analysisId = (int) ($row['analysis_id'] ?? 0);
             if ($analysisId <= 0) {
                 continue;
             }
+
+            // 同一个拆解被两个作品行引用时只认第一行（rows() 已按 work.id 排序）。
+            // 否则同一个 id 可能既进 toHideAnon 又进 toHide，那次操作会写两条审计、
+            // 隐藏条数虚高一倍，而实际上只发生了一次状态变化。
+            if (isset($seen[$analysisId])) {
+                continue;
+            }
+            $seen[$analysisId] = true;
 
             $hidden = (string) ($row['analysis_visibility'] ?? '') === 'hidden';
             $reason = (string) ($row['hidden_reason'] ?? '');
@@ -466,10 +500,11 @@ final class ActiveGate
             }
 
             // 匿名：作品级、无条件。只收这一篇，同一作者的实名作品走下面的活跃度判定。
-            // 不计作者 —— 匿名作品本来就不该被归到任何一个 uid 名下，这一桶的
-            // 「作者数」没有意义，命令行也不打印它。
+            // 不进 authors 统计 —— 匿名作品本来就不该被归到任何一个 uid 名下，
+            // 记一条假作者只会让「N 篇 · 1 位作者」这种输出凭空多一个人。
             if ($cid > 0 && isset($anonCids[$cid])) {
-                self::add($buckets['anon'], $analysisId, 0, '');
+                ++$buckets['anon']['works'];
+                $buckets['anon']['ids'][] = $analysisId;
                 if (!$hidden) {
                     $toHideAnon[] = $analysisId;
                 }

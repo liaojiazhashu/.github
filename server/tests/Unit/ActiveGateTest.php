@@ -337,6 +337,84 @@ final class ActiveGateTest extends TestCase
         self::assertNotSame(ActiveGate::REASON_PREFIX, ActiveGate::ANON_REASON, '两类理由仍要能区分');
     }
 
+    public function testEmptyAuthorNameIsNotTreatedAsAnonymous(): void
+    {
+        // 空名字最常见的原因是接口少给了 authorInfo.name（SourceCatalog 会写空串），
+        // 也可能是同步被截断。那不是「确认匿名」，是「不知道」。
+        // 若把它当匿名，一次字段抖动就会整片收掉公开区，且不报错。
+        self::assertFalse(ActiveGate::isAnonymousItem(['authorName' => '']));
+        self::assertFalse(ActiveGate::isAnonymousItem([]));
+        self::assertFalse(ActiveGate::isAnonymousItem(['authorName' => '   ']));
+
+        // 只有站方显式打的占位名才算
+        self::assertTrue(ActiveGate::isAnonymousItem(['authorName' => '匿名用户']));
+        self::assertTrue(ActiveGate::isAnonymousItem(['authorName' => ' 匿名用户 ']));
+
+        // 真名当然不算
+        self::assertFalse(ActiveGate::isAnonymousItem(['authorName' => '鸑鷟']));
+    }
+
+    public function testSameAnalysisReferencedByTwoWorksIsCountedOnce(): void
+    {
+        // hq_work.current_analysis_id 没有唯一约束。同一个拆解被两行引用时，
+        // 只能按一行判：否则同一个 id 会既进 toHideAnon 又进 toHide，
+        // 一次操作写两条审计、条数虚高一倍。
+        $authors = [10 => ['uid' => 10, 'name' => '阿歇', 'ok' => true]];
+
+        $rows = [
+            $this->row(1, 7, 1),   // 匿名
+            $this->row(2, 7, 2),   // 同一个拆解，另一行、实名、作者不活跃
+        ];
+
+        $out = ActiveGate::classify($rows, [1 => 10, 2 => 10], $authors, [], [1 => true]);
+
+        self::assertSame(1, $out['buckets']['anon']['works'] + $out['buckets']['hide']['works']);
+        self::assertSame([7], $out['toHideAnon'], '按排在前面的那一行判，且只判一次');
+        self::assertSame([], $out['toHide']);
+    }
+
+    public function testAnonHiddenWorkIsRestoredOnceItIsNoLongerAnonymous(): void
+    {
+        // 匿名作品后来揭晓成实名、作者又活跃 → 应当恢复可见。
+        // 这是唯一能放出「曾被匿名规则收起」的作品的路径，必须钉住：
+        // 「一律不公开」约束的是作品的**当前**状态，不是给它判了无期。
+        $authors = [10 => ['uid' => 10, 'name' => '阿活', 'ok' => true]];
+        $active  = [10 => ['name' => '阿活', 'last' => self::SINCE]];
+
+        $out = ActiveGate::classify(
+            [$this->row(1, 1, 1, 'hidden', ActiveGate::ANON_REASON . '2026-10')],
+            [1 => 10],
+            $authors,
+            $active,
+            []   // 目录里已经不是匿名了
+        );
+
+        self::assertSame([1], $out['toRestore']);
+        self::assertSame([], $out['toHideAnon'], '已藏好的不重复写');
+        self::assertSame([], $out['buckets']['manual']['ids'], '这是闸门自己藏的，不算人工隐藏');
+    }
+
+    public function testAnonHiddenWorkStaysHiddenWhenAuthorIsStillInactive(): void
+    {
+        // 揭晓成实名但作者仍不活跃：结论还是「不公开」，只是理由归到活跃度那一类。
+        // 这里不重写理由（已经藏住，重写要多一条无意义的 UPDATE），
+        // 代价是 hidden_reason 会停在 anon-，属于审计措辞而非状态错误。
+        $authors = [20 => ['uid' => 20, 'name' => '阿歇', 'ok' => true]];
+
+        $out = ActiveGate::classify(
+            [$this->row(1, 1, 1, 'hidden', ActiveGate::ANON_REASON . '2026-10')],
+            [1 => 20],
+            $authors,
+            [],
+            []
+        );
+
+        self::assertSame([], $out['toRestore']);
+        self::assertSame([], $out['toHide'], '已经藏好的不重复写');
+        self::assertSame([], $out['toHideAnon']);
+        self::assertSame(1, $out['buckets']['hide']['works']);
+    }
+
     // ---------------------------------------------------------------- 口径同源
 
     public function testWindowComesFromOneConstant(): void
