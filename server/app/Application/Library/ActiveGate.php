@@ -66,6 +66,47 @@ final class ActiveGate
     }
 
     /**
+     * 本闸门收起过的全部拆解 id。
+     *
+     * 给整体回滚用。口径判断错了的时候，运维得有一条「全部撤销」的路 ——
+     * 否则只能到后台隐藏归档页一条条点，267 条点完人也废了。
+     * 只认自己的理由前缀，人工隐藏的一条都不会被带出来。
+     *
+     * @return list<int>
+     */
+    public function gatedAnalysisIds(): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT id FROM hq_analysis
+              WHERE visibility = 'hidden' AND hidden_reason LIKE :prefix
+              ORDER BY id"
+        );
+        $stmt->execute([':prefix' => self::REASON_PREFIX . '%']);
+
+        return array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    }
+
+    /**
+     * 整体放回。与 apply() 的区别是它不看活跃度，直接把闸门收起的全部恢复。
+     *
+     * @param list<int> $ids
+     * @return array{requested:int, changed:int, pages:int}
+     */
+    public function restoreAll(array $ids, ?int $actorId = null): array
+    {
+        $changed = 0;
+        $pages   = 0;
+
+        foreach (array_chunk($ids, self::BATCH) as $chunk) {
+            $r = $this->visibility->restore(VisibilityService::ANALYSIS, $chunk, $actorId);
+            $changed += (int) ($r['changed'] ?? 0);
+            $pages   += (int) ($r['pages'] ?? 0);
+        }
+
+        return ['requested' => count($ids), 'changed' => $changed, 'pages' => $pages];
+    }
+
+    /**
      * 试算：只读。不改表、不写文件、不碰缓存。
      *
      * 快照或目录缺失都**抛异常**，不静默返回空结果 —— 空结果在这条链路上

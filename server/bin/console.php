@@ -1553,6 +1553,7 @@ switch ($command) {
      *   php -c php.ini bin/console.php library:active-gate --months=3
      *   php -c php.ini bin/console.php library:active-gate --apply
      *   php -c php.ini bin/console.php library:active-gate --refresh-activity
+     *   php -c php.ini bin/console.php library:active-gate --restore-all --apply   # 整体撤销
      *
      * 只动 hq_analysis.visibility：隐藏后作品在公开区整体消失（LIVE_WORK 要求
      * 当前拆解可见），但作品行、检索索引、人工「隐藏作品」都不受影响。
@@ -1611,6 +1612,34 @@ switch ($command) {
             ),
             $config
         );
+
+        // 整体回滚：口径判断错了，或先撤下来再讨论时用。
+        // 与其他命令一致，不带 --apply 只数不写。
+        if (isset($options['restore-all'])) {
+            $ids = $gate->gatedAnalysisIds();
+
+            if ($ids === []) {
+                fwrite(STDOUT, "没有由本闸门隐藏的拆解，无需回滚。\n");
+                break;
+            }
+
+            if (!isset($options['apply'])) {
+                fwrite(STDOUT, sprintf(
+                    "将回滚 %d 条拆解（理由 active-gate:*）。预览，加 --apply 才生效。\n",
+                    count($ids)
+                ));
+                break;
+            }
+
+            $done = $gate->restoreAll($ids, (int) ($options['actor'] ?? 1));
+            fwrite(STDOUT, sprintf(
+                "已回滚：%d 条恢复可见，实际改动 %d 条，失效页面 %d 个。\n",
+                $done['requested'],
+                $done['changed'],
+                $done['pages']
+            ));
+            break;
+        }
 
         try {
             $plan = $gate->plan($months);
