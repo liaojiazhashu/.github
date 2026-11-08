@@ -68,8 +68,8 @@ function icon(name, cls) {
 }
 
 /* ---------------------------------------------------------------- 导航表 */
-/* 外部 H5 在线阅读站（v2.3.12）：独立于官网的专门阅读与交互页面。
-   占位域名 —— 正式阅读站上线后替换此常量，全站入口同步生效 */
+/* 阅读站已停用（2026-11-08）。站点未启用，官网与图书馆任何位置均不出现其入口。
+   常量保留仅为兼容历史引用；如确认无引用，可整段删除。 */
 const READER_URL = '/h5/';
 
 /* 银河图书馆站地址（v2.4）。
@@ -104,7 +104,6 @@ const FOOTER_BIZ = [
 
 const FOOTER_LINKS = [
   { href: 'contact.html#start', label: '客户端下载' },
-  { href: READER_URL, label: '在线阅读', ext: true },
   { href: LIBRARY_URL, label: '进入银河图书馆', ext: true },
   { href: 'about.html', label: '关于我们' },
   { href: 'contact.html', label: '联系我们' }
@@ -131,10 +130,9 @@ function appDownloadButtons(cls) {
 }
 
 /* 邀请码提示弹窗（v2.3.22）
-   口径修正：在线阅读必须登录，登录就必须注册，注册就必须邀请码 ——
-   「阅读站不设门槛」的旧说法是错的，弹窗与联系页已同步改口。
-   因此弹窗的第一动作是「获取邀请码」（指向联系页真正讲邀请码的那一节），
-   下载安装包退为次要动作，进入阅读站只留给已有邀请码的人。 */
+   口径：注册必须邀请码。
+   弹窗的第一动作是「获取邀请码」（指向联系页真正讲邀请码的那一节），
+   下载安装包为次要动作。 */
 function buildInviteModal() {
   return `  <dialog class="invite-modal" id="invite-modal" aria-labelledby="invite-modal-title">
     <div class="invite-modal__card">
@@ -144,7 +142,7 @@ function buildInviteModal() {
       <p class="invite-modal__eyebrow">邀请码准入</p>
       <h2 class="invite-modal__title" id="invite-modal-title">注册与阅读之前，先拿邀请码</h2>
       <p class="invite-modal__desc">
-        客户端安装包可以直接下载安装；<b>注册账号</b>与<b>在线阅读</b>都需要邀请码 ——
+        客户端安装包可以直接下载安装；<b>注册账号</b>需要邀请码 ——
         加入交流 QQ 群、在加群申请里回答「科幻的定义是什么？」即可获取，不收费，也不需要填表。
       </p>
       <p class="invite-modal__group">群号 <span class="mono">280660235</span><button class="copy-btn" type="button" data-copy="280660235" aria-label="复制群号 280660235">复制群号</button></p>
@@ -155,7 +153,6 @@ function buildInviteModal() {
         <a class="btn btn--primary btn--sm" href="contact.html#invite">${icon('shieldCheck', 'ico-18')}获取邀请码</a>
         ${appDownloadButtons('btn--outline btn--sm')}
       </div>
-      <p class="invite-modal__foot">已有邀请码？<a href="${READER_URL}" target="_blank" rel="noopener">进入在线阅读</a></p>
     </div>
   </dialog>
 `;
@@ -216,16 +213,14 @@ ${navItems}
           <svg class="ico ico-20 theme-toggle__ico theme-toggle__ico--to-day" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/></svg>
           <svg class="ico ico-20 theme-toggle__ico theme-toggle__ico--to-night" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 14.4A8.5 8.5 0 0 1 9.6 3.4a8.5 8.5 0 1 0 11 11Z"/></svg>
         </button>
-        ${/* 图书馆页不出现「在线阅读 / 下载客户端」这两个需要邀请码的动作：
+        ${/* 图书馆页不出现「下载客户端」这种需要邀请码的动作：
              这一页讲的是一套免登录就能读的拆解，头部再放一个要凭证的按钮，
              等于自己把「不用账号」这句话拆掉。换成直通馆内的入口。 */ ''}
         ${/* 银河图书馆是常驻板块，右上角给一个固定入口 —— 不随页面内容变化，
-             在线阅读 / 下载客户端下面都已直达馆内，这里再放一枚是为了
              让「图书馆是个独立站点」这件事在任何页面都可见。 */ ''}
         ${scene === 'library'
           ? `<a class="btn btn--primary btn--sm" href="${LIBRARY_URL}" target="_blank" rel="noopener">${icon('book', 'ico-18')}进入图书馆</a>`
           : `<a class="btn btn--outline btn--sm btn--read" href="${LIBRARY_URL}" target="_blank" rel="noopener">${icon('book', 'ico-18')}银河图书馆</a>
-        <a class="btn btn--outline btn--sm btn--read" href="${READER_URL}" target="_blank" rel="noopener" data-invite-open>在线阅读</a>
         <a class="btn btn--outline btn--sm btn--download" href="${APP_DOWNLOAD.href}" download>${icon('cpu', 'ico-18')}${APP_DOWNLOAD.label}</a>
         ${/* 页头常驻的「获取邀请码」。
              以前整站唯一的转化动作只在首页首屏和每页页底各出现一次：从 about /
@@ -262,7 +257,6 @@ function buildDrawer(current) {
       label: '开始使用',
       items: [
         { href: 'contact.html#start', label: '客户端下载', key: '' },
-        { href: READER_URL, label: '在线阅读', key: '', ext: true },
         { href: LIBRARY_URL, label: '进入银河图书馆', key: '', ext: true }
       ]
     }
@@ -325,7 +319,7 @@ ${FOOTER_LINKS.map((l) => `            <li><a href="${l.href}"${l.ext ? ' target
       </div>
 
       <div class="site-footer__bottom">
-        <p>© <span data-year>2026</span> 成都荒启文化传播有限公司 · 荒启科幻。<a class="site-footer__icp" href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank"> 蜀ICP备2025169184号-1 </a></p>
+        <p>© <span data-year>2026</span> 成都荒启文化传播有限公司 · 荒启科幻。<a class="site-footer__icp" href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank">蜀ICP备2025169184号-1</a> · <a class="site-footer__icp" href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank">蜀ICP备2025169184号-2A</a></p>
         <p class="site-footer__compliance">本站由成都荒启文化传播有限公司（统一社会信用代码 91510100MAEY15D64X）主办。「荒启科幻练笔」为科幻爱好者自主运营的纯公益社群，公司仅提供平台工具，不参与其日常运营，不获取经营收益。</p>
         <div class="site-footer__bottom-links">
           <a href="about.html">品牌规范</a>

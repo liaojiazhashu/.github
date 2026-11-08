@@ -63,7 +63,7 @@
                  loading="lazy" decoding="async">
             <p class="panel__body">
               群名「荒启科幻交流群」。在 QQ 中搜索群号或<b>扫描二维码</b>直接申请加群，
-              通过后群内会给出注册邀请码 —— 客户端与阅读站共用同一个账号。
+              通过后群内会给出注册邀请码 —— 在客户端注册时填写即可。
             </p>
           </div>
 
@@ -99,7 +99,7 @@
               <p class="step__num" aria-hidden="true"></p>
               <h3 class="step__title">获得邀请码</h3>
               <p class="step__desc">
-                通过后在群内取得注册邀请码，在客户端或阅读站注册时填写，一个账号两端通用。
+                通过后在群内取得注册邀请码，在客户端注册时填写即可。
               </p>
             </div>
           </div>
@@ -115,13 +115,13 @@
         <p class="eyebrow" data-reveal="fade">准入之后</p>
         <h2 class="section-head__title" data-reveal="up">拿到邀请码之后</h2>
         <p class="section-head__desc" data-reveal="up">
-          两个入口通向同一套作品与评稿系统，用同一个账号登录；
+          客户端登录后即可投稿与评稿；
           不想注册也可以直接<a href="{{LIBRARY_URL}}" target="_blank" rel="noopener">进银河图书馆</a>翻词库与拆解页 —— 读不需要账号。
         </p>
         <hr class="rule-grad section-head__rule">
       </div>
 
-      <div class="grid grid--2 grid--gap-lg mt-8">
+      <div class="grid grid--gap-lg mt-8">
         <div class="panel panel--accent" data-reveal="up">
           <p class="panel__title">{{ico:cpu:ico-18}} 客户端下载</p>
           <p class="panel__body">
@@ -130,18 +130,6 @@
           </p>
           <div class="invite-modal__actions invite-modal__actions--stack mt-5">
             {{APP_DL_BUTTONS:btn--primary btn--sm}}
-          </div>
-        </div>
-        <div class="panel panel--cyan" data-reveal="up"
-             style="--reveal-delay:90ms; display:flex; flex-direction:column">
-          <p class="panel__title">{{ico:book:ico-18}} 在线阅读</p>
-          <p class="panel__body">
-            在线阅读在独立的 H5 阅读站进行（新窗口打开），<b>打开即需要登录</b> ——
-            没有账号进不去，这一点与客户端一致。
-          </p>
-          <div class="row mt-5" style="margin-top:auto">
-            <a class="btn btn--primary" href="{{READER_URL}}" target="_blank" rel="noopener">进入在线阅读</a>
-            <a class="btn btn--outline" href="#invite">还没有邀请码</a>
           </div>
         </div>
       </div>
