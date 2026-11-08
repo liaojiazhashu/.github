@@ -22,12 +22,14 @@ use App\Application\Analysis\BatchDispatcher;
 use App\Application\Analysis\PaceEstimate;
 use App\Application\Analysis\PublishService;
 use App\Application\Auth\AuthService;
+use App\Application\Library\ActiveGate;
 use App\Application\Library\IssueSchedule;
 use App\Application\Library\PageCache;
 use App\Application\Library\PublicSurface;
 use App\Application\Library\PublicTextGuard;
 use App\Application\Library\SearchService;
 use App\Application\Library\SitemapBuilder;
+use App\Application\Library\VisibilityService;
 use App\Application\Pipeline\OneClick;
 use App\Application\Source\ActiveCollect;
 use App\Application\Source\AuthorActivity;
@@ -1544,6 +1546,155 @@ switch ($command) {
         ));
         break;
 
+    /**
+     * 作者活跃度闸门：把长期没投稿也没评稿的作者，其当前拆解从公开区收起来。
+     *
+     *   php -c php.ini bin/console.php library:active-gate                  # 只试算
+     *   php -c php.ini bin/console.php library:active-gate --months=3
+     *   php -c php.ini bin/console.php library:active-gate --apply
+     *   php -c php.ini bin/console.php library:active-gate --refresh-activity
+     *
+     * 只动 hq_analysis.visibility：隐藏后作品在公开区整体消失（LIVE_WORK 要求
+     * 当前拆解可见），但作品行、检索索引、人工「隐藏作品」都不受影响。
+     * 恢复只认本闸门写下的 `active-gate:` 理由，人工藏起来的永不自动放出。
+     *
+     * 不带 --apply 时一个字节都不写 —— 包括不碰页面缓存与 sitemap。
+     */
+    case 'library:active-gate':
+        $sourceApi = new SourceApi(
+            $config->string('source.base'),
+            $config->string('source.key'),
+            $config->string('source.ca', '')
+        );
+        $catalog  = new SourceCatalog($sourceApi, $config->string('source.cache_dir'));
+        $activity = new AuthorActivity($sourceApi, $config->string('source.cache_dir'));
+
+        $months = (int) ($options['months'] ?? ActiveGate::DEFAULT_MONTHS);
+        if ($months < 1) {
+            fwrite(STDERR, "months 必须大于 0。\n");
+            exit(1);
+        }
+
+        // 快照超过一天才重建。这里的 since 仍是「近一年」：快照里的 state 是
+        // 后台一键拆解在用的标签，不能因为本命令看两个月就把它改成两个月的口径。
+        if (isset($options['refresh-activity']) && $activity->builtAt() < time() - 86_400) {
+            $cache = $catalog->load();
+            if ($cache === null) {
+                fwrite(STDERR, "还没有目录缓存。先跑 source:sync。\n");
+                exit(1);
+            }
+
+            fwrite(STDOUT, sprintf("活跃度快照过期，重建中（%d 篇，一人一次请求）…\n", count($cache['items'])));
+            $payload = $activity->build(
+                $cache['items'],
+                strtotime('-1 year') ?: 0,
+                true,
+                true,
+                static function (int $done, int $total, string $name): void {
+                    if ($done % 10 === 0 || $done === $total) {
+                        fwrite(STDOUT, sprintf("  %3d/%d  %s\n", $done, $total, $name));
+                    }
+                }
+            );
+            fwrite(STDOUT, sprintf("  已重建：%d 位作者\n\n", count($payload['authors'])));
+        }
+
+        $gate = new ActiveGate(
+            $pdo,
+            $activity,
+            new VisibilityService(
+                $pdo,
+                new AuditLogger($pdo, new RequestContext($crypto)),
+                new PageCache($config->string('library.cache_dir')),
+                new LibraryRepository($pdo),
+                $config
+            ),
+            $config
+        );
+
+        try {
+            $plan = $gate->plan($months);
+        } catch (RuntimeException $e) {
+            // 快照/目录缺失是正常的前置条件问题，给人一句能照着做的提示，不甩堆栈
+            fwrite(STDERR, $e->getMessage() . "\n");
+            exit(1);
+        }
+
+        $b = $plan['buckets'];
+        fwrite(STDOUT, "作者活跃度闸门（只改拆解可见性，不动作品与检索）\n");
+        fwrite(STDOUT, sprintf(
+            "  时间窗：近 %d 个月，%s 之后投过稿或评过稿算活跃\n",
+            $plan['months'],
+            $plan['since_label']
+        ));
+        fwrite(STDOUT, sprintf(
+            "  快照：%s · %d 位作者，其中活跃 %d 位\n\n",
+            $plan['snapshot_label'],
+            $plan['snapshot_authors'],
+            $plan['active_authors']
+        ));
+
+        // 四个标签都是四字，等宽下自然对齐，不必按字节补空格
+        foreach (['keep' => '保留可见', 'hide' => '应当隐藏', 'unknown' => '无法判定', 'manual' => '人工隐藏'] as $key => $label) {
+            fwrite(STDOUT, sprintf(
+                "  %s  %5d 篇 · %4d 位作者\n",
+                $label,
+                $b[$key]['works'],
+                count($b[$key]['authors'])
+            ));
+        }
+
+        foreach ($plan['unknown_reasons'] as $why => $count) {
+            fwrite(STDOUT, sprintf("      · %s：%d 篇\n", $why, $count));
+        }
+
+        if ($b['hide']['works'] > 0) {
+            fwrite(STDOUT, "\n  将隐藏的作者（按篇数，前 10 位）：\n");
+            $shown = 0;
+            foreach ($b['hide']['authors'] as $uid => $a) {
+                if ($shown++ >= 10) {
+                    break;
+                }
+                fwrite(STDOUT, sprintf(
+                    "    %4d 篇  %s（uid %d）\n",
+                    $a['works'],
+                    $a['name'] !== '' ? $a['name'] : '无名',
+                    $uid
+                ));
+            }
+            if (count($b['hide']['authors']) > 10) {
+                fwrite(STDOUT, sprintf("    …… 另有 %d 位\n", count($b['hide']['authors']) - 10));
+            }
+        }
+
+        fwrite(STDOUT, sprintf(
+            "\n将隐藏拆解 %d 篇；将恢复可见 %d 篇（此前被本闸门隐藏）。\n",
+            count($plan['toHide']),
+            count($plan['toRestore'])
+        ));
+
+        if (!isset($options['apply'])) {
+            fwrite(STDOUT, "预览。加 --apply 才生效。\n");
+            break;
+        }
+
+        if ($plan['toHide'] === [] && $plan['toRestore'] === []) {
+            fwrite(STDOUT, "没有需要改动的拆解。\n");
+            break;
+        }
+
+        $result = $gate->apply($plan, (int) ($options['actor'] ?? 1));
+        fwrite(STDOUT, sprintf(
+            "已执行（理由 %s）：隐藏 %d 篇、改动 %d；恢复 %d 篇、改动 %d；失效页面 %d 个。\n",
+            $result['reason'],
+            $result['hide']['requested'],
+            $result['hide']['changed'],
+            $result['restore']['requested'],
+            $result['restore']['changed'],
+            $result['pages']
+        ));
+        break;
+
     /** 重建检索关键词表（词表归并、批量发布之后跑一次） */
     case 'library:reindex':
         $library = new LibraryRepository($pdo);
@@ -2047,6 +2198,12 @@ switch ($command) {
   library:publish --work=CODE | --all [--apply] [--actor=ID]
   library:unpublish --work=CODE | --all [--apply] [--actor=ID]
 
+可见性
+  library:active-gate [--months=2] [--refresh-activity] [--apply] [--actor=ID]
+                                            按作者活跃度收起不活跃作者的拆解；
+                                            只改拆解可见性，人工隐藏的不会被恢复；
+                                            不带 --apply 只试算，一个字节都不写
+
 清空重来
   library:purge-analysis [--apply]          删掉全部拆解结果与词条，作品退回「待拆解」
                                             （保留作品、原文、作者、审计与账单）
@@ -2076,7 +2233,7 @@ switch ($command) {
                                             人工指定作者分类；重跑分类不会被冲掉
 
 除 analysis:reap、term:prune、library:issue-dates 外，
-publish / unpublish / sync-taxonomy 同样默认只预览，加 --apply 才落库。
+publish / unpublish / sync-taxonomy / active-gate 同样默认只预览，加 --apply 才落库。
 
 TXT);
         break;

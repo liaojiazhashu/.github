@@ -280,6 +280,57 @@ final class AuthorActivity
     }
 
     /**
+     * 在 `$since` 之后投过稿或评过稿的 uid 集合。
+     *
+     * 与 judge() 的区别只有时间窗：这里不判「活跃/僵尸」这类标签，只回答
+     * 「这个人最近动过没有」，所以**不看 `state`**。`state` 是近一年口径算出来的
+     * 标签，拿它来回答两个月的问题会得到相反的答案 —— 一个去年投稿、今年停笔的人
+     * 在快照里仍是「活跃」，但他已经两个月没动静了。
+     *
+     * 匿名作者照常参与：`state=anon` 只表示「这个名字不能归属到人」，
+     * 不影响那条记录里的原始时间戳。已注销同理。
+     *
+     * `ok === false` 的人不进集合：那是「接口没查到」，不是「查到了没有」。
+     * 调用方必须把他归到「未判定」而不是「不活跃」，否则一次接口抖动就会
+     * 把一位天天评稿的作者从公开区抹掉。
+     *
+     * 边界取含（`>=`），与 judge() 的既有口径一致：正好在阈值那一刻投的稿
+     * 算在窗内，否则阈值附近的人会随每次执行时间漂移一天。
+     *
+     * @return array<int,array{name:string,last:int}> uid → 名字与最近一次动作时间
+     */
+    public function activeUids(int $since): array
+    {
+        $snapshot = $this->load();
+        if ($snapshot === null) {
+            throw new RuntimeException('活跃度快照不存在，请先跑 source:activity');
+        }
+
+        $out = [];
+        foreach ($snapshot['authors'] as $a) {
+            if (!is_array($a)) {
+                continue;
+            }
+            $uid = (int) ($a['uid'] ?? 0);
+            if ($uid <= 0) {
+                continue;
+            }
+            if (!(bool) ($a['ok'] ?? true)) {
+                continue;
+            }
+
+            $last = max((int) ($a['latest_post_at'] ?? 0), (int) ($a['latest_review_at'] ?? 0));
+            if ($last < $since) {
+                continue;
+            }
+
+            $out[$uid] = ['name' => (string) ($a['name'] ?? ''), 'last' => $last];
+        }
+
+        return $out;
+    }
+
+    /**
      * 给每篇作品打上作者的分类状态。
      *
      * 匿名是**作品级**判定，优先于作者级：一篇显示成「匿名用户」的稿子，
