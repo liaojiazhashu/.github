@@ -36,7 +36,8 @@ return [
     'api_key'         => (string) $env('DEEPSEEK_API_KEY', ''),
 
     // 出站白名单（§11.13 SSRF）：解析后的 host 必须逐字命中，不做后缀匹配
-    'host_allow'      => ['api.deepseek.com'],
+    // api.deepseek.com = DeepSeek 官方直连；www.apisky.cn = apisky 中转（OpenAI 兼容，透传 deepseek-flash/deepseek-v4-pro）
+    'host_allow'      => ['api.deepseek.com', 'www.apisky.cn'],
 
     // 生产环境的 CA 包；为空则用系统默认。Extras 里带的那份用于 Windows 绿色版 PHP
     'cafile'          => (string) $env('AI_CAFILE', ''),
