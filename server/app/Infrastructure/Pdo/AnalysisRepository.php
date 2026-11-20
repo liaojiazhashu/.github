@@ -466,6 +466,11 @@ final class AnalysisRepository
      */
     private function writePlot(int $analysisId, array $plot): array
     {
+        // t1 速览不跑 S2 剧情，plot 是空数组：清空后直接返回，不写任何剧情数据
+        if ($plot === []) {
+            return [];
+        }
+
         $stmt = $this->pdo->prepare(
             'INSERT INTO hq_plot_summary (analysis_id, who, want, cost, logline, created_at, updated_at)
              VALUES (:aid, :who, :want, :cost, :logline, NOW(), NOW())'
@@ -503,6 +508,11 @@ final class AnalysisRepository
     /** @param array{foreshadows:list<array>} $foreshadow @param array<int,int> $beatIds */
     private function writeForeshadow(int $analysisId, array $foreshadow, array $beatIds): void
     {
+        // t1/t2 没有伏笔数据时直接返回（clearArtifacts 已清空旧数据）
+        if ($foreshadow === []) {
+            return;
+        }
+
         $stmt = $this->pdo->prepare(
             'INSERT INTO hq_foreshadow (analysis_id, content, setup_beat_id, payoff_beat_id, state, created_at)
              VALUES (:aid, :content, :setup, :payoff, :state, NOW())'
@@ -528,6 +538,11 @@ final class AnalysisRepository
     /** @param array{suggestions:list<array>} $advice */
     private function writeAdvice(int $analysisId, array $advice): void
     {
+        // t1/t2 不跑 S4 建议，advice 是空数组：直接返回
+        if ($advice === []) {
+            return;
+        }
+
         $insert = $this->pdo->prepare(
             'INSERT INTO hq_suggestion (analysis_id, layer, seq, title, problem, impact, priority, created_at, updated_at)
              VALUES (:aid, :layer, :seq, :title, :problem, :impact, :priority, NOW(), NOW())'
@@ -569,6 +584,11 @@ final class AnalysisRepository
     /** @param array{summary:string, items:list<array>} $revision */
     private function writeRevision(int $analysisId, array $revision): void
     {
+        // t1/t2 不跑 S5 修改方向，revision 是空数组：直接返回
+        if ($revision === []) {
+            return;
+        }
+
         $stmt = $this->pdo->prepare(
             'INSERT INTO hq_revision (analysis_id, summary, created_at, updated_at)
              VALUES (:aid, :summary, NOW(), NOW())'
