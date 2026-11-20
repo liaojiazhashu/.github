@@ -6,6 +6,7 @@
 每条建议包含：
 - title（≤ 20 字）
 - problem（≤ 200 字，指出具体在哪、为什么是问题，引原文片段 ≤ 15 字）
+- at（位置，统一写「节.段」如 1.8 = 第 1 节第 8 段；正文没分节就都写第 1 节；数不清第几段就写 "[推断]"）
 - impact（≤ 60 字，改这一处会牵动什么）
 - paths：**3–5 条**具体路径，style 取 conservative（保守，改动小）/ radical（激进，改动大）/ neutral
 
@@ -13,7 +14,7 @@
 每条路径必须是「可以今天就动手」的动作。
 
 输出 json（paths 示例给了 3 条，实际按需给 3–5 条，少于 3 条或多于 5 条都不合格）：
-{ "suggestions": [ { "layer": "structure", "title": "…", "problem": "…", "impact": "…",
+{ "suggestions": [ { "layer": "structure", "title": "…", "problem": "…", "at": "1.8", "impact": "…",
     "paths": [ { "style": "conservative", "content": "…" },
                { "style": "neutral", "content": "…" },
                { "style": "radical", "content": "…" } ] } ] }

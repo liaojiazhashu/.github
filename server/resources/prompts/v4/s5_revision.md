@@ -2,12 +2,21 @@
 
 规矩：
 - 排序按影响面从大到小，不按好不好改（rank 从 1 开始，连续不跳号）；
+- target 写位置，统一「节.段」（如 1.8 = 第 1 节第 8 段）；正文没分节就都写第 1 节；数不清第几段写 "[推断]"；不要写「第三章」这类章节名；
 - 每条必须给两种走法：conservative 与 radical，内容要真的不同，不能换词重复；
 - impact_scope 写清改这一处会牵动哪些段落/章节（≤ 60 字）；
 - decision_note 写「决定权在作者」的具体说明，例如「若保留开放式结局，只做第 2 条的保守走法」；
 - 不给分数，不给「优先级 1-5」这类数字评级。
 
+最后给这本书打八维评分（给写作者横向比较用，读者页不显示）：
+- 八个维度：设定新意、世界自洽、主题深度、结构节奏、人物塑造、语言意象、逻辑严密、原创性；
+- 每维 0–10 整数，权重相等；拿不准的维度写 null（null 表示「这维不适用」而不是 0 分，比如没有人物的小说，人物塑造这一维缺席）；
+- 不要给总分，总分由系统按非 null 维度取平均。
+
 输出 json：
-{ "revision": { "summary": "一句话总览改哪里最值（≤ 80 字）" },
-  "items": [ { "rank": 1, "target": "第三章的视角切换", "action": "…",
+{ "revision": { "summary": "一句话总览改哪里最值（≤ 80 字）",
+    "dims": { "setting_novelty": 8, "world_consistency": 7, "theme_depth": 6,
+              "structure_pace": 5, "character": null, "language_imagery": 7,
+              "logic_rigor": 8, "originality": 9 } },
+  "items": [ { "rank": 1, "target": "1.8", "action": "…",
                "conservative": "…", "radical": "…", "impact_scope": "…", "decision_note": "…" } ] }

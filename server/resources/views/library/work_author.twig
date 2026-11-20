@@ -11,6 +11,16 @@
 {% block content %}
 {% set card = artifacts.index_card %}
 {% set revision = artifacts.revision %}
+{% set review_dims = {
+  'setting_novelty': '设定新意',
+  'world_consistency': '世界自洽',
+  'theme_depth': '主题深度',
+  'structure_pace': '结构节奏',
+  'character': '人物塑造',
+  'language_imagery': '语言意象',
+  'logic_rigor': '逻辑严密',
+  'originality': '原创性'
+} %}
 
 <article class="work">
   <header class="whead">
@@ -132,7 +142,7 @@
             <div class="layer__l">{{ layer|layer_label }}<i class="mono">{{ items|length }}</i></div>
             {% for s in items %}
               <div class="sug">
-                <h3 class="sug__t">{{ s.title }}</h3>
+                <h3 class="sug__t">{{ s.title }}{% if s.at %}<span class="sug__at mono">{{ s.at }}</span>{% endif %}</h3>
                 <p class="sug__p">{{ s.problem }}</p>
                 {% if s.impact %}<p class="sug__i"><span>影响</span>{{ s.impact }}</p>{% endif %}
                 <ul class="paths">
@@ -188,6 +198,38 @@
         <p class="dim">这次分析没有产出修改方向。</p>
       {% endif %}
     </section>
+
+    {# ------------------------------------------------------- 04 八维评分 #}
+    {# §6.3：评分默认折叠、标题写「写作者参考，读者可跳过」。用原生 <details>，
+       不用 JS、不违反 CSP style-src。progress 的 value 是属性不受内联 style 限制。 #}
+    {% if revision and revision.dims is not null %}
+    {% set dim_total = 0 %}{% set dim_cnt = 0 %}
+    {% for key, label in review_dims %}
+      {% if revision.dims[key] is defined and revision.dims[key] is not null %}
+        {% set dim_total = dim_total + revision.dims[key] %}
+        {% set dim_cnt = dim_cnt + 1 %}
+      {% endif %}
+    {% endfor %}
+    <details class="scoredim">
+      <summary class="scoredim__s">写作者参考 · 八维评分<span class="dim">（读者可跳过）</span></summary>
+      <div class="scoredim__body">
+        <div class="scoredim__grid">
+          {% for key, label in review_dims %}
+            {% if revision.dims[key] is defined and revision.dims[key] is not null %}
+              <div class="scoredim__row">
+                <span class="scoredim__l">{{ label }}</span>
+                <span class="scoredim__bar"><progress max="10" value="{{ revision.dims[key] }}"></progress></span>
+                <span class="scoredim__v mono">{{ revision.dims[key] }}</span>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% if dim_cnt > 0 %}
+          <p class="scoredim__avg">平均 <b class="mono">{{ (dim_total / dim_cnt)|round(1) }}</b> / 10<span class="dim">（{{ dim_cnt }} 维计入，其余维度不适用）</span></p>
+        {% endif %}
+      </div>
+    </details>
+    {% endif %}
 
     {% include 'library/_source.twig' with { work: work, edits: edits } %}
 

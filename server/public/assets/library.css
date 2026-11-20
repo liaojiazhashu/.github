@@ -1264,6 +1264,18 @@ html[data-theme="day"] .themebtn__moon { display: block; }
 .sug { padding: 16px 0 18px; border-bottom: 1px solid var(--line-dim); }
 .sug:last-child { border-bottom: 0; }
 .sug__t { margin: 0 0 8px; font-size: 15px; font-weight: 500; line-height: 1.5; }
+.sug__at {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  padding: 0 5px;
+  line-height: 1.6;
+  vertical-align: 2px;
+}
 .sug__p { margin: 0 0 10px; font-size: 14px; color: var(--text-2); line-height: 1.85; max-width: 40em; }
 .sug__i { margin: 0 0 12px; font-size: 13px; color: var(--text-3); }
 .sug__i span {
@@ -1341,6 +1353,75 @@ html[data-theme="day"] .themebtn__moon { display: block; }
   border-radius: var(--r-1);
   padding: 0 5px;
   margin-right: 8px;
+}
+
+/* 八维评分（§6.3，默认折叠，写作者参考） */
+
+.scoredim {
+  margin: 28px 0 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.scoredim__s {
+  cursor: pointer;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.scoredim__s::-webkit-details-marker { display: none; }
+.scoredim__s::before {
+  content: '+';
+  width: 18px;
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--mono, monospace);
+}
+.scoredim[open] .scoredim__s::before { content: '\2212'; }
+.scoredim__body {
+  padding: 0 18px 18px;
+  border-top: 1px solid var(--line-dim);
+}
+.scoredim__grid {
+  display: grid;
+  gap: 12px;
+  padding-top: 16px;
+}
+.scoredim__row {
+  display: grid;
+  grid-template-columns: 96px minmax(120px, 1fr) 28px;
+  align-items: center;
+  gap: 12px;
+}
+.scoredim__l { font-size: 13px; color: var(--text-2); }
+.scoredim__bar progress {
+  width: 100%;
+  height: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  border: 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.scoredim__bar progress::-webkit-progress-bar { background: var(--track); border-radius: 4px; }
+.scoredim__bar progress::-webkit-progress-value { background: var(--accent); border-radius: 4px; }
+.scoredim__bar progress::-moz-progress-bar { background: var(--accent); border-radius: 4px; }
+.scoredim__v { font-size: 13px; text-align: right; color: var(--text-1); }
+.scoredim__avg {
+  margin: 18px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-dim);
+  font-size: 14px;
+  color: var(--text-2);
+}
+.scoredim__avg b { font-size: 16px; color: var(--text-1); }
+
+@media (max-width: 560px) {
+  .scoredim__row { grid-template-columns: 84px minmax(80px, 1fr) 24px; gap: 8px; }
 }
 
 /* 元信息 */

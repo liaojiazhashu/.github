@@ -33,6 +33,19 @@ final class StageGate
         'execution' => '执行层',
         'detail'    => '细节层',
     ];
+    // 八维评分（§6.3）：给写作者横向比较用，读者页不显示。
+    // 键名用英文（提示词里也是英文 key），中文标签只出现在展示层。
+    // 权重相等，null 表示「这维不适用」而非 0 分，平均时跳过。
+    private const REVIEW_DIMS = [
+        'setting_novelty'   => '设定新意',
+        'world_consistency' => '世界自洽',
+        'theme_depth'       => '主题深度',
+        'structure_pace'    => '结构节奏',
+        'character'         => '人物塑造',
+        'language_imagery'  => '语言意象',
+        'logic_rigor'       => '逻辑严密',
+        'originality'       => '原创性',
+    ];
     // 每篇最多 5 个。不是成本限制，是可发现性的限制：
     // 词条越多，倒排索引的区分度越低，读者反而找不到这篇的关键所在
     private const MAX_TERMS = 5;
@@ -559,10 +572,16 @@ final class StageGate
                 }
             }
 
+            $at = trim(self::text($item['at'] ?? ''));
+            if ($at !== '' && $at !== '[推断]' && preg_match('/^\d+\.\d+$/u', $at) !== 1) {
+                $soft[] = sprintf('建议「%s」的 at 位置「%s」写法不统一，应写「节.段」或 [推断]', mb_substr($title, 0, 16), mb_substr($at, 0, 20));
+            }
+
             $list[] = [
                 'layer'   => $layer,
                 'title'   => $title,
                 'problem' => mb_substr($problem, 0, 2000),
+                'at'      => $at === '' ? null : mb_substr($at, 0, 20),
                 'impact'  => mb_substr(self::text($item['impact'] ?? ''), 0, 300),
                 'paths'   => $paths,
             ];
@@ -612,6 +631,19 @@ final class StageGate
         $summary = mb_substr(self::text(($json['revision']['summary'] ?? '') ?: ($json['summary'] ?? '')), 0, 500);
         $raw     = is_array($json['items'] ?? null) ? $json['items'] : [];
         $items   = [];
+
+        // 八维评分（§6.3）：与修改条目独立，不参与 hard 判断——评分是给写作者的
+        // 辅助数据，缺失不阻断整篇修改清单。全空只告警。
+        $dims     = self::parseDims($json['revision']['dims'] ?? ($json['dims'] ?? null));
+        $dimCount = 0;
+        foreach ($dims as $value) {
+            if ($value !== null) {
+                $dimCount++;
+            }
+        }
+        if ($dimCount === 0) {
+            $soft[] = '缺少八维评分（dims），全部为空或未给出';
+        }
 
         foreach ($raw as $item) {
             if (!is_array($item)) {
@@ -667,22 +699,22 @@ final class StageGate
         }
 
         if ($hard === []) {
-            return GateResult::pass(['summary' => $summary, 'items' => $items], $soft);
+            return GateResult::pass(['summary' => $summary, 'items' => $items, 'dims' => $dims], $soft);
         }
 
         if (!$relaxed) {
-            return GateResult::fail($hard, $soft, ['summary' => $summary, 'items' => $items]);
+            return GateResult::fail($hard, $soft, ['summary' => $summary, 'items' => $items, 'dims' => $dims]);
         }
 
         $fallback = self::fallbackItems($suggestions);
         if ($fallback === []) {
-            return GateResult::fail($hard, $soft, ['summary' => $summary, 'items' => $items]);
+            return GateResult::fail($hard, $soft, ['summary' => $summary, 'items' => $items, 'dims' => $dims]);
         }
 
         $soft[] = '模型给出的修改清单不合法，已按建议自动生成兜底清单';
 
         return GateResult::pass(
-            ['summary' => $summary !== '' ? $summary : '按影响面从大到小排列，先处理结构层。', 'items' => $fallback],
+            ['summary' => $summary !== '' ? $summary : '按影响面从大到小排列，先处理结构层。', 'items' => $fallback, 'dims' => $dims],
             $soft
         );
     }
@@ -1036,6 +1068,47 @@ final class StageGate
         }
 
         return $clean;
+    }
+
+    /**
+     * 解析八维评分（§6.3）。
+     *
+     * 只收 REVIEW_DIMS 里的八个 key，未知 key 忽略；每维 0–10 整数或 null
+     * （null=不适用，平均时跳过）。非法值一律归 null——评分宁缺毋造，
+     * 造假分数比缺分数更误导写作者。
+     *
+     * @param mixed $raw
+     * @return array<string,int|null> 八维，键全在 REVIEW_DIMS 里，值 0–10 或 null
+     */
+    private static function parseDims(mixed $raw): array
+    {
+        $out = [];
+        if (!is_array($raw)) {
+            foreach (self::REVIEW_DIMS as $key => $_) {
+                $out[$key] = null;
+            }
+            return $out;
+        }
+
+        foreach (self::REVIEW_DIMS as $key => $_) {
+            $value = $raw[$key] ?? null;
+            if ($value === null || $value === '') {
+                $out[$key] = null;
+                continue;
+            }
+            if (is_int($value) && $value >= 0 && $value <= 10) {
+                $out[$key] = $value;
+                continue;
+            }
+            if (is_string($value) && ctype_digit($value)) {
+                $iv = (int) $value;
+                $out[$key] = ($iv >= 0 && $iv <= 10) ? $iv : null;
+                continue;
+            }
+            $out[$key] = null;
+        }
+
+        return $out;
     }
 
     /**

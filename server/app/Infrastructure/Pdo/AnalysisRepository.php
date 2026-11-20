@@ -544,8 +544,8 @@ final class AnalysisRepository
         }
 
         $insert = $this->pdo->prepare(
-            'INSERT INTO hq_suggestion (analysis_id, layer, seq, title, problem, impact, priority, created_at, updated_at)
-             VALUES (:aid, :layer, :seq, :title, :problem, :impact, :priority, NOW(), NOW())'
+            'INSERT INTO hq_suggestion (analysis_id, layer, seq, title, problem, at, impact, priority, created_at, updated_at)
+             VALUES (:aid, :layer, :seq, :title, :problem, :at, :impact, :priority, NOW(), NOW())'
         );
         $insertPath = $this->pdo->prepare(
             'INSERT INTO hq_suggestion_path (suggestion_id, seq, style, content, created_at)
@@ -563,6 +563,7 @@ final class AnalysisRepository
                 ':seq'     => $seqByLayer[$layer],
                 ':title'   => mb_substr((string) $suggestion['title'], 0, 160),
                 ':problem' => (string) $suggestion['problem'],
+                ':at'      => ($suggestion['at'] ?? null) === null ? null : mb_substr((string) $suggestion['at'], 0, 20),
                 ':impact'  => $suggestion['impact'] === '' ? null : mb_substr((string) $suggestion['impact'], 0, 300),
                 // priority 只用于列表排序（结构层在前），不是评分
                 ':priority' => $layer === 'structure' ? 1 : ($layer === 'execution' ? 3 : 5),
@@ -589,13 +590,26 @@ final class AnalysisRepository
             return;
         }
 
+        // 八维评分：全 null 或未给出时存 NULL（不存 {"xxx":null,...} 这种空壳 JSON）
+        $dims     = $revision['dims'] ?? null;
+        $dimsJson = null;
+        if (is_array($dims)) {
+            foreach ($dims as $value) {
+                if ($value !== null) {
+                    $dimsJson = json_encode($dims, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+                    break;
+                }
+            }
+        }
+
         $stmt = $this->pdo->prepare(
-            'INSERT INTO hq_revision (analysis_id, summary, created_at, updated_at)
-             VALUES (:aid, :summary, NOW(), NOW())'
+            'INSERT INTO hq_revision (analysis_id, summary, dims_json, created_at, updated_at)
+             VALUES (:aid, :summary, :dims_json, NOW(), NOW())'
         );
         $stmt->execute([
-            ':aid'     => $analysisId,
-            ':summary' => mb_substr((string) $revision['summary'], 0, 500),
+            ':aid'       => $analysisId,
+            ':summary'   => mb_substr((string) $revision['summary'], 0, 500),
+            ':dims_json' => $dimsJson,
         ]);
 
         $revisionId = (int) $this->pdo->lastInsertId();
@@ -681,7 +695,7 @@ final class AnalysisRepository
         }
 
         $sugStmt = $this->pdo->prepare(
-            'SELECT id, layer, seq, title, problem, impact FROM hq_suggestion WHERE analysis_id = :aid ORDER BY priority, seq'
+            'SELECT id, layer, seq, title, problem, at, impact FROM hq_suggestion WHERE analysis_id = :aid ORDER BY priority, seq'
         );
         $sugStmt->execute([':aid' => $analysisId]);
         $pathStmt = $this->pdo->prepare(
@@ -695,12 +709,13 @@ final class AnalysisRepository
                 'layer'   => (string) $row['layer'],
                 'title'   => (string) $row['title'],
                 'problem' => (string) $row['problem'],
+                'at'      => $row['at'] === null ? null : (string) $row['at'],
                 'impact'  => (string) ($row['impact'] ?? ''),
                 'paths'   => $pathStmt->fetchAll(),
             ];
         }
 
-        $revStmt = $this->pdo->prepare('SELECT id, summary FROM hq_revision WHERE analysis_id = :aid LIMIT 1');
+        $revStmt = $this->pdo->prepare('SELECT id, summary, dims_json FROM hq_revision WHERE analysis_id = :aid LIMIT 1');
         $revStmt->execute([':aid' => $analysisId]);
         $revRow = $revStmt->fetch();
         $revision = null;
@@ -710,7 +725,12 @@ final class AnalysisRepository
                    FROM hq_revision_item WHERE revision_id = :rid ORDER BY rank_no'
             );
             $itemStmt->execute([':rid' => (int) $revRow['id']]);
-            $revision = ['summary' => (string) ($revRow['summary'] ?? ''), 'items' => $itemStmt->fetchAll()];
+            $dims = json_decode((string) ($revRow['dims_json'] ?? 'null'), true);
+            $revision = [
+                'summary' => (string) ($revRow['summary'] ?? ''),
+                'dims'    => is_array($dims) ? $dims : null,
+                'items'   => $itemStmt->fetchAll(),
+            ];
         }
 
         $readerStmt = $this->pdo->prepare(
