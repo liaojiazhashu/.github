@@ -58,6 +58,10 @@
         </div>
       </div>
 
+      {% if axis.points is empty and artifacts.foreshadows is empty %}
+        <p class="dim">这篇是速览拆解，没有剧情节点与伏笔台账。</p>
+      {% endif %}
+
       {% if axis.points is not empty %}
         <div class="axiswrap">
           <div class="axislegend">
@@ -113,6 +117,7 @@
     </section>
 
     {# ------------------------------------------------------- 02 建议 #}
+    {% if artifacts.suggestions is not empty %}
     <section class="sec" id="advice">
       <div class="sec__head">
         <div>
@@ -144,6 +149,7 @@
         {% endif %}
       {% endfor %}
     </section>
+    {% endif %}
 
     {# ------------------------------------------------------- 03 修改方向 #}
     <section class="sec" id="revision">

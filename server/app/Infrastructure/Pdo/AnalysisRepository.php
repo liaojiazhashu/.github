@@ -32,15 +32,16 @@ final class AnalysisRepository
         string $promptVersion,
         string $inputHash,
         ?int $createdBy = null,
+        string $tier = 't2',
     ): array {
         $code = Ulid::generate();
 
         $stmt = $this->pdo->prepare(
             'INSERT INTO hq_analysis
-                (code, work_id, work_version_id, status, model, prompt_version, input_hash, source,
+                (code, work_id, work_version_id, status, model, prompt_version, tier, input_hash, source,
                  token_in, token_out, cost_micro, created_by, created_at, updated_at)
              VALUES
-                (:code, :work, :version, \'queued\', :model, :pver, :hash, \'ai\',
+                (:code, :work, :version, \'queued\', :model, :pver, :tier, :hash, \'ai\',
                  0, 0, 0, :creator, NOW(), NOW())'
         );
         $stmt->execute([
@@ -49,6 +50,7 @@ final class AnalysisRepository
             ':version' => $workVersionId,
             ':model'   => $model,
             ':pver'    => $promptVersion,
+            ':tier'    => $tier,
             ':hash'    => $inputHash,
             ':creator' => $createdBy,
         ]);
@@ -727,7 +729,14 @@ final class AnalysisRepository
             ];
         }
 
+        // 三档深度（015_tier）。读者页要露出「这篇拆了多深」，作者页按档位决定
+        // 是否显示建议/修改方向区块。放这里而不是单独再查一次，省一条往返。
+        $tierStmt = $this->pdo->prepare('SELECT tier FROM hq_analysis WHERE id = :aid LIMIT 1');
+        $tierStmt->execute([':aid' => $analysisId]);
+        $tier = $tierStmt->fetchColumn() ?: 't2';
+
         return [
+            'tier'        => (string) $tier,
             'index_card'  => $indexCard === null ? null : [
                 'one_liner'  => (string) $indexCard['one_liner'],
                 'theme_note' => (string) ($indexCard['theme_note'] ?? ''),

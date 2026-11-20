@@ -91,13 +91,16 @@ final class Pipeline
             }
         }
 
+        $tier = $this->resolveTier($work);
+
         $analysis = $this->analyses->create(
             $workId,
             (int) $version['id'],
             $model,
             $promptVersion,
             $inputHash,
-            $options['created_by'] ?? null
+            $options['created_by'] ?? null,
+            $tier
         );
 
         $analysisId = $analysis['id'];
@@ -121,7 +124,7 @@ final class Pipeline
                 ? $this->chunker->split($text)
                 : [['index' => 1, 'total' => 1, 'start' => 0, 'end' => $charCount, 'text' => $text]];
 
-            foreach (StageSpec::order() as $stageCode) {
+            foreach (self::stagesForTier($tier) as $stageCode) {
                 $spec = StageSpec::fromConfig($this->config, $stageCode);
                 $this->analyses->stageStart($analysisId, $stageCode, $model, $promptVersion);
 
@@ -155,16 +158,17 @@ final class Pipeline
                 );
             }
 
-            // S6：纯代码组装。四件产出（+ 读者视角）一次事务写入，任一失败整篇回滚
+            // S6：纯代码组装。四件产出（+ 读者视角）一次事务写入，任一失败整篇回滚。
+            // 未跑的阶段（t1/t2 裁剪掉的）传空数组，write* 内部一律 ?? 兜底，不会写脏数据。
             $this->analyses->saveArtifacts(
                 $analysisId,
                 $workId,
-                $results['S1_INDEX'],
-                $results['S2_PLOT'],
-                $results['S3_FORESHADOW'],
-                $results['S4_ADVICE'],
-                $results['S5_REVISION'],
-                $results['S7_READER']
+                $results['S1_INDEX'] ?? [],
+                $results['S2_PLOT'] ?? [],
+                $results['S3_FORESHADOW'] ?? [],
+                $results['S4_ADVICE'] ?? [],
+                $results['S5_REVISION'] ?? [],
+                $results['S7_READER'] ?? []
             );
 
             $this->analyses->setStatus($analysisId, 'succeeded');
@@ -205,6 +209,44 @@ final class Pipeline
 
             throw $e;
         }
+    }
+
+    /**
+     * 三档拆解深度判定（方案 v2.0 §2.1）。
+     *
+     * public_level 语义（013_content_license）：0=未授权不出库 / 1=仅结论无引用 / 2=结论+短引用。
+     * - t1 速览：权利不明（public_level=0），只拆索引词+口味卡，够做「读/不读」决定；
+     * - t2 标准：已给「仅结论」授权（public_level≥1），加剧情+伏笔；
+     * - t3 深度：已给「结论+短引用」授权且≥中篇（public_level=2 且 word_count≥20000），
+     *   加建议+修改方向（手艺视图，才有引文配额）。
+     */
+    private function resolveTier(array $work): string
+    {
+        $level = (int) ($work['public_level'] ?? 0);
+        $words = (int) ($work['word_count'] ?? 0);
+
+        if ($level >= 2 && $words >= 20000) {
+            return 't3';
+        }
+        if ($level >= 1) {
+            return 't2';
+        }
+
+        return 't1';
+    }
+
+    /**
+     * 档位 → 阶段列表（保持 StageSpec::ORDER 的相对顺序）。
+     *
+     * @return list<string>
+     */
+    private function stagesForTier(string $tier): array
+    {
+        return match ($tier) {
+            't3' => ['S1_INDEX', 'S2_PLOT', 'S3_FORESHADOW', 'S4_ADVICE', 'S5_REVISION', 'S7_READER'],
+            't1' => ['S1_INDEX', 'S7_READER'],
+            default => ['S1_INDEX', 'S2_PLOT', 'S3_FORESHADOW', 'S7_READER'],
+        };
     }
 
     /** @var list<string> */
@@ -263,7 +305,15 @@ final class Pipeline
         // 用当前提示词版本重跑：绝大多数重跑的理由就是"提示词改了"
         $promptVersion = $this->prompts->version();
         $model = (string) ($analysis['model'] ?? '') ?: $this->config->string('ai.model.default', 'deepseek-flash');
-        $plan = StageDependency::plan($stageCode, $cascade);
+
+        // 单阶段重跑也要守档位边界：t1 只重跑 S1/S7，t2 不含 S4/S5，t3 才是全量。
+        // 级联计划里的阶段若不在本档位里，直接过滤掉（t1 重跑 S1 时级联的 S4/S5 就不该跑）。
+        $tier   = (string) ($analysis['tier'] ?? 't2');
+        $stages = self::stagesForTier($tier);
+        if (!in_array($stageCode, $stages, true)) {
+            throw new RuntimeException(sprintf('档位 %s 不含阶段 %s，无法重跑', $tier, $stageCode));
+        }
+        $plan = array_values(array_intersect(StageDependency::plan($stageCode, $cascade), $stages));
 
         $this->warnings = [];
         $results = [];
@@ -273,9 +323,9 @@ final class Pipeline
         $costBefore = $this->aiCalls->costOfAnalysis($analysisId);
 
         // 起点之前：全部来自已有产物
-        $startIdx = (int) array_search($plan[0], StageDependency::ORDER, true);
+        $startIdx = (int) array_search($plan[0], $stages, true);
         for ($i = 0; $i < $startIdx; $i++) {
-            $code = StageDependency::ORDER[$i];
+            $code = $stages[$i];
             $raw  = $this->analyses->loadRaw($analysisId, $code);
             if ($raw === null) {
                 throw new RuntimeException(sprintf(
@@ -290,8 +340,8 @@ final class Pipeline
         $this->works->setStatus($workId, 'analyzing');
 
         try {
-            for ($i = $startIdx; $i < count(StageDependency::ORDER); $i++) {
-                $code = StageDependency::ORDER[$i];
+            for ($i = $startIdx; $i < count($stages); $i++) {
+                $code = $stages[$i];
 
                 if (!in_array($code, $plan, true)) {
                     // 不在本次计划里，但后面某个阶段可能要吃它：直接从产物补上
@@ -325,7 +375,7 @@ final class Pipeline
 
             // 没重跑的下游阶段：标 stale，并在告警里点名
             $stale = [];
-            foreach (StageDependency::ORDER as $index => $code) {
+            foreach ($stages as $index => $code) {
                 if ($index > $startIdx && !in_array($code, $plan, true)) {
                     $stale[] = $code;
                     $this->warnings[] = sprintf('%s 没有重跑，结论建立在旧数据上（已标记为过期）', $code);
@@ -335,7 +385,7 @@ final class Pipeline
 
             // 重新组装：缺任何一个阶段都不组装，宁可留着旧产出也不写半份
             $complete = true;
-            foreach (StageDependency::ORDER as $code) {
+            foreach ($stages as $code) {
                 if (!isset($results[$code])) {
                     $complete = false;
                     break;
@@ -346,12 +396,12 @@ final class Pipeline
                 $this->analyses->saveArtifacts(
                     $analysisId,
                     $workId,
-                    $results['S1_INDEX'],
-                    $results['S2_PLOT'],
-                    $results['S3_FORESHADOW'],
-                    $results['S4_ADVICE'],
-                    $results['S5_REVISION'],
-                    $results['S7_READER']
+                    $results['S1_INDEX'] ?? [],
+                    $results['S2_PLOT'] ?? [],
+                    $results['S3_FORESHADOW'] ?? [],
+                    $results['S4_ADVICE'] ?? [],
+                    $results['S5_REVISION'] ?? [],
+                    $results['S7_READER'] ?? []
                 );
             } else {
                 $this->warnings[] = '部分阶段产物缺失，四件产出未重新组装';
@@ -660,6 +710,7 @@ final class Pipeline
         if ($stageCode === 'S7_READER') {
             $lines = ['已经定下来的分析结论（不要与之矛盾）：'];
 
+            $hasPlot = isset($results['S2_PLOT']);
             $summary = $results['S2_PLOT']['summary'] ?? null;
             if (is_array($summary)) {
                 $lines[] = '一句话主线：' . (string) ($summary['logline'] ?? '');
@@ -677,14 +728,18 @@ final class Pipeline
                 );
             }
 
-            $lines[] = '';
-            $lines[] = '剧情节点：';
-            foreach ($results['S2_PLOT']['beats'] ?? [] as $beat) {
-                $lines[] = sprintf('%d · %s · %s · %s%%', $beat['seq'], $beat['phase'], $beat['title'], $beat['position_pct']);
-            }
+            // t1 速览不跑 S2 剧情，这里就没有节点可引用 —— 不输出剧情节点，
+            // 也不输出「visual.scene 只能取自节点」这条约束（否则对不上）。
+            if ($hasPlot) {
+                $lines[] = '';
+                $lines[] = '剧情节点：';
+                foreach ($results['S2_PLOT']['beats'] ?? [] as $beat) {
+                    $lines[] = sprintf('%d · %s · %s · %s%%', $beat['seq'], $beat['phase'], $beat['title'], $beat['position_pct']);
+                }
 
-            $lines[] = '';
-            $lines[] = 'visual.scene 只能取自上面某个节点现场，不许另外编一个场面。';
+                $lines[] = '';
+                $lines[] = 'visual.scene 只能取自上面某个节点现场，不许另外编一个场面。';
+            }
 
             return implode("\n", $lines);
         }

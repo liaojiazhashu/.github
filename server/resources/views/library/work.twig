@@ -11,6 +11,7 @@
 {% block content %}
 {% set card = artifacts.index_card %}
 {% set plot = artifacts.summary %}
+{% set tier_label = artifacts.tier == 't1' ? '速览' : (artifacts.tier == 't3' ? '深度' : '标准') %}
 
 <article class="work">
   <header class="whead">
@@ -32,6 +33,7 @@
           </span>
         {% endif %}
         <span>正文 <b class="mono">{{ num(work.word_count) }}</b> 字</span>
+        <span>拆解深度 <b>{{ tier_label }}</b></span>
         {% if work.genre_name %}<span>{{ work.genre_name }}</span>{% endif %}
         {% if work.published_at %}<span class="mono">{{ work.published_at|slice(0,10) }}</span>{% endif %}
         {% if method_url %}<a class="whead__method" href="{{ method_url }}">这套结果怎么来的
