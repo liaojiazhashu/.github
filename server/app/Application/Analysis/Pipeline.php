@@ -304,7 +304,9 @@ final class Pipeline
 
         // 用当前提示词版本重跑：绝大多数重跑的理由就是"提示词改了"
         $promptVersion = $this->prompts->version();
-        $model = (string) ($analysis['model'] ?? '') ?: $this->config->string('ai.model.default', 'deepseek-flash');
+        // 模型一律用当前默认，不沿用历史 model 字段——历史有已下线的 wb-v4.1-flash（代拆批次），
+        // 沿用会让重跑直接 400。runWork 也是这个口径（只用调用参数或 config 默认）。
+        $model = $this->config->string('ai.model.default', 'deepseek-flash');
 
         // 单阶段重跑也要守档位边界：t1 只重跑 S1/S7，t2 不含 S4/S5，t3 才是全量。
         // 级联计划里的阶段若不在本档位里，直接过滤掉（t1 重跑 S1 时级联的 S4/S5 就不该跑）。
