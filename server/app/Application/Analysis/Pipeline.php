@@ -713,7 +713,7 @@ final class Pipeline
             )),
             'S4_ADVICE'     => StageGate::g4($json, $relaxed),
             'S5_REVISION'   => StageGate::g5($json, $results['S4_ADVICE']['suggestions'] ?? [], $relaxed),
-            'S7_READER'     => StageGate::g7($json, $relaxed),
+            'S7_READER'     => StageGate::g7($json, $relaxed, $text),
             default         => GateResult::fail(['未知阶段：' . $stageCode]),
         };
     }

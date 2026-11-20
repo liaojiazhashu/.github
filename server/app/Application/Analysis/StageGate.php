@@ -152,6 +152,8 @@ final class StageGate
             } elseif (mb_strlen($definition) > 200) {
                 $definition = mb_substr($definition, 0, 200);
                 $soft[] = sprintf('词条「%s」的定义超长已截断', $canonical);
+            } elseif (self::overlapsSource($text, $definition)) {
+                $hard[] = sprintf('词条「%s」的百科定义照抄原文（连续 ≥15 字重合），必须用自己的话写', $canonical);
             }
 
             $evidence = self::text($item['evidence'] ?? '');
@@ -161,6 +163,9 @@ final class StageGate
                 $soft[] = sprintf('丢弃词条「%s」：evidence 在原文中找不到（疑似编造）', $canonical);
                 $dropped++;
                 continue;
+            } elseif (mb_strlen(self::squash($evidence)) > 15) {
+                $soft[] = sprintf('词条「%s」的 evidence 去标点后超过 15 字（引文配额），已清空', $canonical);
+                $evidence = '';
             } else {
                 $evidence = mb_substr($evidence, 0, 200);
             }
@@ -337,6 +342,9 @@ final class StageGate
             $phase = strtolower(self::text($item['phase'] ?? ''));
             $title = self::text($item['title'] ?? '');
             $detail = self::text($item['detail'] ?? '');
+            if ($detail !== '' && self::overlapsSource($text, $detail)) {
+                $hard[] = sprintf('节点「%s」的描述照抄原文（连续 ≥15 字重合），必须用自己的话概括', $title !== '' ? $title : '未命名');
+            }
             if (!in_array($phase, self::PHASES, true)) {
                 $soft[] = sprintf('丢弃节点「%s」：phase 非法（%s）', $title !== '' ? $title : '未命名', $phase);
                 continue;
@@ -349,6 +357,9 @@ final class StageGate
             $quote = self::text($item['quote'] ?? '');
             if ($quote !== '' && !self::contains($text, $quote)) {
                 $soft[] = sprintf('节点「%s」的引文在原文中找不到，已清空', $title !== '' ? $title : '未命名');
+                $quote  = '';
+            } elseif ($quote !== '' && mb_strlen(self::squash($quote)) > 15) {
+                $soft[] = sprintf('节点「%s」的引文去标点后超过 15 字（引文配额），已清空', $title !== '' ? $title : '未命名');
                 $quote  = '';
             }
 
@@ -691,8 +702,9 @@ final class StageGate
      * 评分字段按硬违规处理：拆解不给分是产品底线，退化成「值得 8 分」就失去意义了。
      *
      * @param array<string,mixed> $json
+     * @param string              $text 原文全文，用于 C4 重合阻断（空串跳过检查）
      */
-    public static function g7(array $json, bool $relaxed = false): GateResult
+    public static function g7(array $json, bool $relaxed = false, string $text = ''): GateResult
     {
         $hard = [];
         $soft = [];
@@ -846,6 +858,29 @@ final class StageGate
         foreach ($hype as $word) {
             if (mb_strpos($blob, $word) !== false) {
                 $soft[] = sprintf('出现推荐语腔调「%s」，请人工复核这句是否在替读者下结论', $word);
+            }
+        }
+
+        // 版权铁律 C4：读者视角字段是模型自己的话，照抄原文连续 ≥15 字即硬失败重试。
+        // visual.scene 最容易踩——它描述「预告片最该出现的一幕」，模型会直接搬原文的场面描写。
+        if ($text !== '') {
+            $copyFields = [];
+            if ($hook !== '' && self::overlapsSource($text, $hook)) {
+                $copyFields[] = 'hook';
+            }
+            if ($verdict !== '' && self::overlapsSource($text, $verdict)) {
+                $copyFields[] = 'verdict';
+            }
+            foreach ($appeal as $idx => $a) {
+                if (($a['why'] ?? '') !== '' && self::overlapsSource($text, $a['why'])) {
+                    $copyFields[] = 'appeal.' . ((int) $idx + 1) . '.why';
+                }
+            }
+            if (($visualOut['scene'] ?? '') !== '' && self::overlapsSource($text, $visualOut['scene'])) {
+                $copyFields[] = 'visual.scene';
+            }
+            if ($copyFields !== []) {
+                $hard[] = '读者视角以下字段照抄原文（连续 ≥15 字重合），必须用自己的话重写：' . implode('、', $copyFields);
             }
         }
 
@@ -1028,6 +1063,29 @@ final class StageGate
     private static function squash(string $text): string
     {
         return (string) preg_replace('/[\s\x{3000}-\x{303F}\x{FF00}-\x{FF65}\p{P}\p{S}]/u', '', $text);
+    }
+
+    /**
+     * C4 重合阻断：字段文本与原文去标点后，是否存在 ≥15 字的连续重合。
+     *
+     * 用滑动窗口 + strpos（C 实现）比 lcs DP 快一个量级：字段的每个 15 字窗口
+     * 在原文里找一遍，找到即返回。阈值 15 字是设计目的定死的——中文连续 15 字
+     * 重合几乎不可能是偶然，专有名词一般 2–8 字也够不到。
+     */
+    private static function overlapsSource(string $source, string $field, int $min = 15): bool
+    {
+        $src = self::squash($source);
+        $f   = self::squash($field);
+        $len = mb_strlen($f);
+        if ($src === '' || $len < $min) {
+            return false;
+        }
+        for ($i = 0; $i + $min <= $len; $i++) {
+            if (strpos($src, mb_substr($f, $i, $min)) !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static function text(mixed $value): string

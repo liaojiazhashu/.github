@@ -5,7 +5,7 @@
 
 每条建议包含：
 - title（≤ 20 字）
-- problem（≤ 200 字，指出具体在哪、为什么是问题，要引原文片段）
+- problem（≤ 200 字，指出具体在哪、为什么是问题，引原文片段 ≤ 15 字）
 - impact（≤ 60 字，改这一处会牵动什么）
 - paths：**3–5 条**具体路径，style 取 conservative（保守，改动小）/ radical（激进，改动大）/ neutral
 

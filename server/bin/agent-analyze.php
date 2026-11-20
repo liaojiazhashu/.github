@@ -290,7 +290,7 @@ if (!$g4->passed) { $failed['S4_ADVICE'] = $g4; } else { $clean['S4_ADVICE'] = $
 $g5 = StageGate::g5($raw['S5_REVISION'], $clean['S4_ADVICE']['suggestions'] ?? [], false);
 if (!$g5->passed) { $failed['S5_REVISION'] = $g5; } else { $clean['S5_REVISION'] = $g5->data; $softAll = array_merge($softAll, $g5->soft); }
 
-$g7 = StageGate::g7($raw['S7_READER'], false);
+$g7 = StageGate::g7($raw['S7_READER'], false, $text);
 if (!$g7->passed) { $failed['S7_READER'] = $g7; } else { $clean['S7_READER'] = $g7->data; $softAll = array_merge($softAll, $g7->soft); }
 
 if ($failed !== []) {
