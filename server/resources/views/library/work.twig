@@ -3,10 +3,9 @@
 {# ==========================================================================
    读者视角（默认子页）
    --------------------------------------------------------------------------
-   读者不是作者。他来找的是「这篇值不值得我花时间」：
-   核心设定是什么、好在哪里、能不能拍、适不适合自己。
-   所以这一页只讲这四件事，剧情节点轴与建议留给作者视角 ——
-   那些是「怎么写」的信息，放在这里只会把「是什么」挤掉。
+   读者不是作者。他来找的是「这篇值不值得我花时间」。
+   所以第一屏是口味卡（五轴坐标 + 内容提示 + 适合谁 + 编辑判断），
+   回答「喜不喜欢」；第二屏才讲「这篇在讲什么」；「怎么写」全留给作者视角。
    ========================================================================== #}
 
 {% block content %}
@@ -51,6 +50,82 @@
   {% include 'library/_views.twig' with { view: 'reader', work: work } %}
 
   <div class="wrap wbody">
+
+    {# ------------------------------------------------------- 口味卡（第一屏） #}
+    {# 设计目的 v2.0 §3：读者 30 秒内做「读/不读/再看看」的决定。
+       顺序不能乱：先给口味坐标（喜不喜欢），再讲内容（讲了什么）。
+       这一屏把 verdict / axes / notes / audience 四件凑齐，正是「口味卡」。
+       五轴用原生 <progress>：CSP 禁内联 style="width:X%"，progress 的 value
+       是 HTML 属性不受限，value=50 原生居中；可 null 的轴整行隐藏。 #}
+    {% set axis_labels = {
+      'hardness': {'name': '科学含量', 'lo': '几乎不解释', 'hi': '硬核到需背景'},
+      'darkness': {'name': '黑暗程度', 'lo': '明亮轻快', 'hi': '沉重压抑'},
+      'pace':     {'name': '节奏',     'lo': '慢热铺陈', 'hi': '快节奏'},
+      'access':   {'name': '门槛',     'lo': '零门槛',   'hi': '需前置'},
+      'inward':   {'name': '内向度',   'lo': '外部事件驱动', 'hi': '心理内省'},
+    } %}
+    {% set note_labels = {
+      'violence': '暴力', 'self_harm': '自伤', 'child': '儿童受伤害', 'sex': '性',
+      'addiction': '成瘾', 'confinement': '幽闭', 'medical_horror': '医疗恐怖',
+      'mental_illness': '精神疾病', 'discrimination': '歧视', 'disaster': '灾难',
+    } %}
+    {% set level_labels = ['仅提及', '一笔带过', '有正面描写', '构成基调'] %}
+
+    {% if reader and (reader.verdict or reader.axes or reader.notes is not empty or reader.audience) %}
+      <section class="sec sec--taste" id="taste">
+        {% if reader.verdict %}
+          <p class="verdict">{{ reader.verdict }}</p>
+        {% endif %}
+
+        {% if reader.axes %}
+          <div class="axes">
+            {% for key, meta in axis_labels %}
+              {% set v = reader.axes[key] ?? null %}
+              {% if v is not null %}
+                <div class="axisrow">
+                  <span class="axisrow__name">{{ meta.name }}</span>
+                  <span class="axisrow__lo">{{ meta.lo }}</span>
+                  <progress class="axisrow__bar" max="100" value="{{ v }}">{{ v }}</progress>
+                  <span class="axisrow__hi">{{ meta.hi }}</span>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if reader.notes is not empty %}
+          <div class="notes">
+            {% for n in reader.notes %}
+              <span class="notechip notechip--l{{ n.level|default(0) }}">
+                <b>{{ note_labels[n.category]|default(n.category) }}</b>
+                {{ level_labels[n.level]|default('') }}{% if n.note %} · {{ n.note }}{% endif %}
+              </span>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if reader.audience %}
+          <div class="whogrid">
+            <div class="who who--main">
+              <span class="who__l">最适合</span>
+              <p>{{ reader.audience.primary }}</p>
+            </div>
+            <div class="who">
+              <span class="who__l">也会喜欢</span>
+              <p>{{ reader.audience.also }}</p>
+            </div>
+            <div class="who who--avoid">
+              <span class="who__l">谁不该读</span>
+              <p>{{ reader.audience.avoid }}</p>
+            </div>
+            <div class="who">
+              <span class="who__l">阅读门槛</span>
+              <p>{{ reader.audience.gate }}</p>
+            </div>
+          </div>
+        {% endif %}
+      </section>
+    {% endif %}
 
     {# ------------------------------------------------------- 01 主线 #}
     {% if plot %}
@@ -176,35 +251,7 @@
       </section>
     {% endif %}
 
-    {# ------------------------------------------------------- 05 适合谁 #}
-    {% if reader and reader.audience %}
-      <section class="sec" id="who">
-        <div class="sec__head">
-          <div>
-            <h2 class="h2">这适合谁</h2>
-          </div>
-        </div>
-
-        <div class="whogrid">
-          <div class="who who--main">
-            <span class="who__l">最主要</span>
-            <p>{{ reader.audience.primary }}</p>
-          </div>
-          <div class="who">
-            <span class="who__l">也会喜欢</span>
-            <p>{{ reader.audience.also }}</p>
-          </div>
-          <div class="who who--avoid">
-            <span class="who__l">可能会觉得不值</span>
-            <p>{{ reader.audience.avoid }}</p>
-          </div>
-          <div class="who">
-            <span class="who__l">阅读门槛</span>
-            <p>{{ reader.audience.gate }}</p>
-          </div>
-        </div>
-      </section>
-    {% endif %}
+    {# 适合谁已上移到第一屏的口味卡（#taste），不再单列。 #}
 
     {% include 'library/_source.twig' with { work: work, edits: edits, nav_to_author: true } %}
 

@@ -804,7 +804,9 @@ html[data-theme="day"] .themebtn__moon { display: block; }
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 2px 8px;
+  padding: 4px 8px;
+  min-height: 28px;
+  box-sizing: border-box;
   border: 1px solid var(--line);
   border-radius: var(--r-1);
   font-size: 12px;
@@ -1429,7 +1431,7 @@ html[data-theme="day"] .themebtn__moon { display: block; }
   min-height: 86px;
 }
 .tcard:hover { background: var(--surface); }
-.tcard__cat { font-size: 10.5px; color: var(--muted); letter-spacing: 0.05em; }
+.tcard__cat { font-size: 11.5px; color: var(--muted); letter-spacing: 0.05em; }
 .tcard__n { font-size: 14px; color: var(--text); line-height: 1.5; }
 .tcard__m { font-size: 11.5px; color: var(--muted); margin-top: auto; }
 
@@ -1984,6 +1986,81 @@ html[data-theme="day"] .foot__legal { border-top-color: var(--line-2); }
 .who--avoid { border-left-color: var(--warn); }
 .who--avoid .who__l { color: var(--warn); }
 
+/* ---------- 口味卡（第一屏） ---------- */
+
+/* 编辑判断：一句人话，替读者把口味卡收拢。视觉上是「结论」，
+   用 warn 左边线 + 稍大字号，和页头 hook（accent 左边线）呼应但区分：
+   hook 是「处境」，verdict 是「该不该读」。 */
+.verdict {
+  margin: 0 0 22px;
+  max-width: 40em;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text);
+  border-left: 2px solid var(--warn);
+  padding-left: 16px;
+}
+
+/* 五轴坐标：每行 = 轴名 + 左锚点 + progress 条 + 右锚点。
+   用原生 <progress>：CSP style-src 'self' 禁内联 style="width:X%"，
+   progress 的 value 是 HTML 属性不受限，value=50 原生居中。 */
+.axes {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0 0 22px;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-3);
+}
+.axisrow {
+  display: grid;
+  grid-template-columns: 72px 88px minmax(120px, 1fr) 120px;
+  align-items: center;
+  gap: 12px;
+}
+.axisrow__name { font-size: 13px; font-weight: 600; color: var(--text-2); }
+.axisrow__lo { font-size: 11.5px; color: var(--muted); text-align: right; }
+.axisrow__hi { font-size: 11.5px; color: var(--muted); }
+.axisrow__bar {
+  width: 100%;
+  height: 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+.axisrow__bar::-webkit-progress-bar { background: var(--track); border-radius: 999px; }
+.axisrow__bar::-webkit-progress-value { background: var(--accent); border-radius: 999px; }
+.axisrow__bar::-moz-progress-bar { background: var(--accent); border-radius: 999px; }
+
+/* 内容提示：说类别说强度，是「提醒」不是「标签」。level 3 加 warn 描边突出。 */
+.notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 22px;
+}
+.notechip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  min-height: 28px;
+  box-sizing: border-box;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-2);
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+}
+.notechip b { font-weight: 600; color: var(--warn); }
+.notechip--l3 { border-color: var(--warn); }
+
 /* ---------- 小屏 ---------- */
 
 @media (max-width: 900px) {
@@ -1991,11 +2068,20 @@ html[data-theme="day"] .foot__legal { border-top-color: var(--line-2); }
   .screenscript { padding: 20px 18px; }
   .screenscript__text { font-size: 16.5px; }
   .views__a { padding: 11px 14px 10px; }
+  /* 五轴在小屏收成两行：轴名单独一行，锚点+条+锚点占第二行 */
+  .axisrow { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .axisrow__lo { text-align: left; }
 }
 @media (max-width: 560px) {
   .kset { grid-template-columns: 1fr; }
   .appeal__i { grid-template-columns: 34px minmax(0, 1fr); gap: 12px; }
   .whead__hook { font-size: 16.5px; padding-left: 13px; }
+  /* 手机上轴名与两端锚点并排，条占满整行 */
+  .axisrow { grid-template-columns: auto 1fr; gap: 4px 10px; }
+  .axisrow__name { grid-column: 1; }
+  .axisrow__lo { grid-column: 2; text-align: right; }
+  .axisrow__bar { grid-column: 1 / -1; }
+  .axisrow__hi { grid-column: 2; text-align: right; }
 }
 
 @media (max-width: 700px) {

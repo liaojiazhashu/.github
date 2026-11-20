@@ -13,8 +13,10 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * 馆藏首页 / 作品列表 / 作品详情 / 按期次。
  *
- * 详情页是本模块的重头：它把四件产出按「索引卡 → 五类词 → 剧情 → 建议 → 修改方向 → 元信息」
- * 的顺序摆出来，对应静态方法页讲的那套方法。方法页讲「为什么这么做」，这里给「这么做出来是什么」。
+ * 详情页是本模块的重头：同一份拆解按两个视角摆出来 ——
+ * 读者视角（work.twig）先给「口味卡」（编辑判断、五轴坐标、内容提示、适合谁），
+ * 再给主线、核心设定、魅力与画面；作者视角（work_author.twig）给剧情节点、伏笔台账、
+ * 分层建议与修改方向。方法页讲「为什么这么做」，这里给「这么做出来是什么」。
  */
 final class WorksController extends LibraryController
 {
@@ -196,10 +198,10 @@ final class WorksController extends LibraryController
         if ((string) $filter['genre'] !== '') {
             $parts[] = (string) $filter['genre'];
         }
-        // 「标签」不再出现在这里：`options.tags` 从来没有被赋过值，模板里那块
-        // 标签条一次都没渲染过，而 `?tag=` 参数进了筛选却没人用它查库 ——
-        // 唯一的实际效果是让 /library/works?tag=第一接触 返回「共 0 篇」。
-        // 想去词条页按词找作品，走 ?term=（词条页的「全部 N 篇」就是这个）。
+        // 「标签」不进标题（标题只列期次/体裁这种宽泛维度，标签太细碎）。
+        // ?tag= 是活参数：LibraryRepository 按 hq_tag 查库，works.twig 的筛选表单
+        // 也给了标签下拉；词条页「全部 N 篇」走的是 ?term=（按当前拆解里的词条筛），
+        // 两套口径不同 —— tag 是人工打的标签，term 是拆解产出的关键词。
 
         return implode(' · ', $parts);
     }
@@ -230,6 +232,9 @@ final class WorksController extends LibraryController
         if ((string) $filter['genre'] !== '') {
             $chips[] = ['label' => (string) $filter['genre'], 'href' => $drop('genre')];
         }
+        if ((string) $filter['tag'] !== '') {
+            $chips[] = ['label' => (string) $filter['tag'], 'href' => $drop('tag')];
+        }
         if ((int) $filter['term'] > 0) {
             // 标签上写词条名，不写主键。从词条页「全部 50 篇」跳过来的人，第一眼
             // 看到的是「词条 #2435 ×」—— 数据库编号端到了读者脸上。
@@ -257,8 +262,8 @@ final class WorksController extends LibraryController
     // ------------------------------------------------------------- 作品详情
     //
     // 同一篇作品有两个子页，因为它的读者是两种人：
-    //   · reader（默认，/works/{code}）：来找作品的人 —— 学者、概念设计、影视买手。
-    //     他们要知道核心设定、魅力所在、能不能拍、适不适合自己。
+    //   · reader（默认，/works/{code}）：还没读过、正在决定要不要读的普通读者。
+    //     第一屏要回答「喜不喜欢」：编辑判断、五轴坐标、内容提示、适合谁。
     //   · author（/works/{code}/author）：作者本人。要知道文学上的优劣与先改哪里。
     // 两个页面用两条路由而不是一个 ?view= 参数：缓存中间件按路径做键，
     // 查询串不进键，用参数会让两套内容互相覆盖（前台 60–300 秒的 TTL 足够暴露这个 bug）。
@@ -360,15 +365,6 @@ final class WorksController extends LibraryController
     }
 
     /**
-     * 剧情节点轴：把 8 个节点摆到一条时间线上。
-     *
-     * 坐标在 PHP 里算好、模板只负责画 —— 模板里做浮点运算既难读，
-     * 也会让「一个节点压住另一个」这类问题只能靠肉眼调数字。
-     *
-     * @param list<array<string,mixed>> $beats
-     * @return array{width:int, height:int, points:list<array<string,mixed>>, phases:list<array<string,mixed>>}
-     */
-    /**
      * 剧情节点轴。
      *
      * 坐标全在 PHP 里算，Twig 只负责画 —— 因为「标签能写几个字」取决于它和同一行
@@ -379,6 +375,9 @@ final class WorksController extends LibraryController
      *      14 个汉字要 160px —— 于是四五个标签压成一团。现在按实测间隔算字数。
      *   2. 上下交错的下行标签基线恰好落在阶段名（起点/转折/危机/终局）那条基线上，
      *      两者必然叠字。现在阶段名移出 SVG，改成上方一行色块图例。
+     *
+     * @param list<array<string,mixed>> $beats
+     * @return array{width:int, height:int, points:list<array<string,mixed>>, phases:list<array<string,mixed>>}
      */
     private function axis(array $beats): array
     {

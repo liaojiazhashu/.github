@@ -40,6 +40,18 @@
     </label>
     {% endif %}
 
+    {% if options.tags is not empty %}
+    <label class="field">
+      <span>标签</span>
+      <select name="tag">
+        <option value="">全部</option>
+        {% for t in options.tags %}
+          <option value="{{ t.name }}"{% if filter.tag == t.name %} selected{% endif %}>{{ t.name }}（{{ t.n }}）</option>
+        {% endfor %}
+      </select>
+    </label>
+    {% endif %}
+
     <label class="field">
       <span>字数</span>
       <select name="range">

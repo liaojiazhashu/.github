@@ -685,6 +685,9 @@ final class StageGate
      * 空话能通过结构检查，但过不了这里 —— hook 必须具体、看点必须恰好三条且互不重复、
      * 画面四项必须都有判断（不许只丢片名）、读者画像必须包含「谁会觉得不值」。
      *
+     * 口味卡三件（axes 五轴 / notes 内容提示 / verdict 编辑判断）是 v2.0 拆解方案的核心，
+     * 这里补上对应校验：五轴至少一轴有值、内容提示只收合法类别、编辑判断不能为空。
+     *
      * 评分字段按硬违规处理：拆解不给分是产品底线，退化成「值得 8 分」就失去意义了。
      *
      * @param array<string,mixed> $json
@@ -762,6 +765,80 @@ final class StageGate
             $audienceOut[$key] = mb_substr($value, 0, 300);
         }
 
+        // 五轴口味坐标：描述「这本书是什么样」，不是「有多好」。全 null 等于没给口味信息。
+        $axes      = is_array($json['axes'] ?? null) ? $json['axes'] : [];
+        $axesOut   = [];
+        $axesNames = ['hardness' => '科学含量', 'darkness' => '黑暗程度', 'pace' => '节奏', 'access' => '门槛', 'inward' => '内向度'];
+        $axesCount = 0;
+        foreach ($axesNames as $key => $label) {
+            $value = $axes[$key] ?? null;
+            if ($value === null || $value === '') {
+                $axesOut[$key] = null;
+                continue;
+            }
+            $num = filter_var($value, FILTER_VALIDATE_INT);
+            if ($num === false || $num < 0 || $num > 100) {
+                $soft[] = sprintf('axes.%s（%s）不是 0–100 的整数，已丢弃该轴', $key, $label);
+                $axesOut[$key] = null;
+                continue;
+            }
+            if ($num === 50) {
+                $soft[] = sprintf('axes.%s（%s）给了 50（模棱两可的占位值），请人工复核', $key, $label);
+            }
+            $axesOut[$key] = $num;
+            $axesCount++;
+        }
+        if ($axesCount === 0) {
+            $hard[] = '五轴坐标 axes 至少需要一轴有值（全 null 等于没有口味信息）';
+        }
+
+        // 内容提示：只收合法类别，说类别说强度，不说情节。没写到的类别不列，notes 可为空。
+        $notes      = is_array($json['notes'] ?? null) ? $json['notes'] : [];
+        $notesOut   = [];
+        $seenNotes  = [];
+        $noteCategories = [
+            'violence', 'self_harm', 'child', 'sex', 'addiction',
+            'confinement', 'medical_horror', 'mental_illness', 'discrimination', 'disaster',
+        ];
+        foreach ($notes as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $category = self::text($item['category'] ?? '');
+            $note     = self::text($item['note'] ?? '');
+            if (!in_array($category, $noteCategories, true)) {
+                $soft[] = sprintf('内容提示类别「%s」不在合法表里，已丢弃', $category !== '' ? $category : '（空）');
+                continue;
+            }
+            if (isset($seenNotes[$category])) {
+                $soft[] = sprintf('内容提示类别「%s」重复，已丢弃后一条', $category);
+                continue;
+            }
+            $lvl = filter_var($item['level'] ?? null, FILTER_VALIDATE_INT);
+            if ($lvl === false || $lvl < 0 || $lvl > 3) {
+                $soft[] = sprintf('内容提示「%s」的 level 不是 0–3，已按 1 处理', $category);
+                $lvl = 1;
+            }
+            if ($note === '') {
+                $soft[] = sprintf('内容提示「%s」没有说明文字，已丢弃', $category);
+                continue;
+            }
+            $seenNotes[$category] = true;
+            $notesOut[] = ['category' => $category, 'level' => $lvl, 'note' => mb_substr($note, 0, 120)];
+        }
+
+        // 编辑判断：口味卡的收束，一句人话。不能为空，过长只告警并截断。
+        $verdict = self::text($json['verdict'] ?? '');
+        if ($verdict === '') {
+            if ($relaxed) {
+                $soft[] = 'verdict（编辑判断）为空，最后一次尝试已放行';
+            } else {
+                $hard[] = 'verdict（编辑判断）不能为空，它是口味卡的收束';
+            }
+        } elseif (mb_strlen($verdict) > 60) {
+            $soft[] = 'verdict 超过 60 字，请人工确认是否够「一句人话」';
+        }
+
         // 读者视角最容易退化成推荐语。这里不判失败（写了不等于错），但必须留告警，
         // 让人知道这一段需要人工看一眼。
         $hype = ['震撼', '惊艳', '必读', '神作', '巅峰', '不容错过', '史诗级'];
@@ -779,8 +856,11 @@ final class StageGate
         return GateResult::pass([
             'hook'       => mb_substr($hook, 0, 120),
             'appeal'     => $appeal,
+            'axes'       => $axesOut,
+            'notes'      => $notesOut,
             'visual'     => $visualOut,
             'audience'   => $audienceOut,
+            'verdict'    => mb_substr($verdict, 0, 200),
             'terms_note' => mb_substr(self::text($json['terms_note'] ?? ''), 0, 200),
         ], $soft);
     }

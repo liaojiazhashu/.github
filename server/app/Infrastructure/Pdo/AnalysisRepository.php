@@ -314,12 +314,16 @@ final class AnalysisRepository
         $stmt = $this->pdo->prepare(
             'INSERT INTO hq_reader_brief
                 (analysis_id, hook, appeal_json, visual_tone, visual_lens, visual_ref, visual_scene,
-                 audience_primary, audience_also, audience_avoid, audience_gate, terms_note, created_at, updated_at)
-             VALUES (:aid, :hook, :appeal, :tone, :lens, :ref, :scene, :primary, :also, :avoid, :gate, :note, NOW(), NOW())'
+                 audience_primary, audience_also, audience_avoid, audience_gate, terms_note,
+                 axes_json, notes_json, verdict, created_at, updated_at)
+             VALUES (:aid, :hook, :appeal, :tone, :lens, :ref, :scene, :primary, :also, :avoid, :gate, :note,
+                     :axes, :notes, :verdict, NOW(), NOW())'
         );
 
         $visual   = is_array($reader['visual'] ?? null) ? $reader['visual'] : [];
         $audience = is_array($reader['audience'] ?? null) ? $reader['audience'] : [];
+        $axes     = is_array($reader['axes'] ?? null) ? $reader['axes'] : [];
+        $notes    = is_array($reader['notes'] ?? null) ? $reader['notes'] : [];
 
         $stmt->execute([
             ':aid'     => $analysisId,
@@ -334,6 +338,9 @@ final class AnalysisRepository
             ':avoid'   => mb_substr((string) ($audience['avoid'] ?? ''), 0, 300),
             ':gate'    => mb_substr((string) ($audience['gate'] ?? ''), 0, 300),
             ':note'    => mb_substr((string) ($reader['terms_note'] ?? ''), 0, 300),
+            ':axes'    => $axes === [] ? null : json_encode($axes, JSON_UNESCAPED_UNICODE),
+            ':notes'   => $notes === [] ? null : json_encode($notes, JSON_UNESCAPED_UNICODE),
+            ':verdict' => mb_substr((string) ($reader['verdict'] ?? ''), 0, 200),
         ]);
     }
 
@@ -686,7 +693,8 @@ final class AnalysisRepository
 
         $readerStmt = $this->pdo->prepare(
             'SELECT hook, appeal_json, visual_tone, visual_lens, visual_ref, visual_scene,
-                    audience_primary, audience_also, audience_avoid, audience_gate, terms_note
+                    audience_primary, audience_also, audience_avoid, audience_gate, terms_note,
+                    axes_json, notes_json, verdict
                FROM hq_reader_brief WHERE analysis_id = :aid LIMIT 1'
         );
         $readerStmt->execute([':aid' => $analysisId]);
@@ -694,10 +702,14 @@ final class AnalysisRepository
         $reader    = null;
         if (is_array($readerRow)) {
             $appeal = json_decode((string) ($readerRow['appeal_json'] ?? '[]'), true);
+            $axes   = json_decode((string) ($readerRow['axes_json'] ?? 'null'), true);
+            $notes  = json_decode((string) ($readerRow['notes_json'] ?? 'null'), true);
 
             $reader = [
                 'hook'       => (string) $readerRow['hook'],
                 'appeal'     => is_array($appeal) ? $appeal : [],
+                'axes'       => is_array($axes) ? $axes : null,
+                'notes'      => is_array($notes) ? $notes : [],
                 'visual'     => [
                     'tone'      => (string) $readerRow['visual_tone'],
                     'lens'      => (string) $readerRow['visual_lens'],
@@ -710,6 +722,7 @@ final class AnalysisRepository
                     'avoid'   => (string) $readerRow['audience_avoid'],
                     'gate'    => (string) $readerRow['audience_gate'],
                 ],
+                'verdict'    => (string) ($readerRow['verdict'] ?? ''),
                 'terms_note' => (string) ($readerRow['terms_note'] ?? ''),
             ];
         }
@@ -1583,7 +1596,9 @@ final class AnalysisRepository
      * 空行直接丢掉，不写 "   " 这种占位，否则前台会渲染出三个空标题。
      *
      * @param array{hook?:string,appeal?:list<array{title?:string,why?:string}>,
-     *              visual?:array<string,string>,audience?:array<string,string>,terms_note?:string} $fields
+     *              visual?:array<string,string>,audience?:array<string,string>,
+     *              axes?:array<string,int|null>,notes?:list<array{category:string,level:int,note:string}>,
+     *              verdict?:string,terms_note?:string} $fields
      */
     public function updateReaderBrief(int $analysisId, array $fields): void
     {
@@ -1599,18 +1614,23 @@ final class AnalysisRepository
 
         $visual   = is_array($fields['visual'] ?? null) ? $fields['visual'] : [];
         $audience = is_array($fields['audience'] ?? null) ? $fields['audience'] : [];
+        $axes     = is_array($fields['axes'] ?? null) ? $fields['axes'] : [];
+        $notes    = is_array($fields['notes'] ?? null) ? $fields['notes'] : [];
 
         $stmt = $this->pdo->prepare(
             'INSERT INTO hq_reader_brief
                 (analysis_id, hook, appeal_json, visual_tone, visual_lens, visual_ref, visual_scene,
-                 audience_primary, audience_also, audience_avoid, audience_gate, terms_note, created_at, updated_at)
-             VALUES (:aid, :hook, :appeal, :tone, :lens, :ref, :scene, :primary, :also, :avoid, :gate, :note, NOW(), NOW())
+                 audience_primary, audience_also, audience_avoid, audience_gate, terms_note,
+                 axes_json, notes_json, verdict, created_at, updated_at)
+             VALUES (:aid, :hook, :appeal, :tone, :lens, :ref, :scene, :primary, :also, :avoid, :gate, :note,
+                     :axes, :notes, :verdict, NOW(), NOW())
              ON DUPLICATE KEY UPDATE hook = VALUES(hook), appeal_json = VALUES(appeal_json),
                  visual_tone = VALUES(visual_tone), visual_lens = VALUES(visual_lens),
                  visual_ref = VALUES(visual_ref), visual_scene = VALUES(visual_scene),
                  audience_primary = VALUES(audience_primary), audience_also = VALUES(audience_also),
                  audience_avoid = VALUES(audience_avoid), audience_gate = VALUES(audience_gate),
-                 terms_note = VALUES(terms_note), updated_at = NOW()'
+                 terms_note = VALUES(terms_note), axes_json = VALUES(axes_json),
+                 notes_json = VALUES(notes_json), verdict = VALUES(verdict), updated_at = NOW()'
         );
         $stmt->execute([
             ':aid'     => $analysisId,
@@ -1625,6 +1645,9 @@ final class AnalysisRepository
             ':avoid'   => mb_substr(trim((string) ($audience['avoid'] ?? '')), 0, 300),
             ':gate'    => mb_substr(trim((string) ($audience['gate'] ?? '')), 0, 300),
             ':note'    => mb_substr(trim((string) ($fields['terms_note'] ?? '')), 0, 300),
+            ':axes'    => $axes === [] ? null : json_encode($axes, JSON_UNESCAPED_UNICODE),
+            ':notes'   => $notes === [] ? null : json_encode($notes, JSON_UNESCAPED_UNICODE),
+            ':verdict' => mb_substr(trim((string) ($fields['verdict'] ?? '')), 0, 200),
         ]);
     }
 
