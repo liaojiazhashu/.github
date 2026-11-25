@@ -173,13 +173,15 @@ final class PublicCacheMiddleware implements MiddlewareInterface
         return ['works'];
     }
 
-    /** 键包含完整查询串：同一路径不同筛选是不同的页面 */
+    /**
+     * 键包含完整查询串：同一路径不同筛选是不同的页面。
+     *
+     * 规则本身在 PageCache::keyFor()，console 的 cache-purge 用同一份 ——
+     * 这里只负责把请求拆成 path 与 query，别在这里复制算法。
+     */
     private function keyOf(ServerRequestInterface $request): string
     {
-        $query = $request->getQueryParams();
-        ksort($query);
-
-        return $request->getUri()->getPath() . '?' . http_build_query($query);
+        return $this->cache->keyFor($request->getUri()->getPath(), $request->getQueryParams());
     }
 
     private function etagMatches(ServerRequestInterface $request, string $etag): bool

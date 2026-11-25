@@ -213,6 +213,51 @@ final class PageCache
         return ['removed' => $removed, 'bytes' => $bytes];
     }
 
+    /**
+     * 缓存键的唯一算法：路径 + 排序后的查询串。
+     *
+     * 中间件拿它写、console 拿它删，必须同一个来源。复制第二份规则的那天，
+     * 就是「purge 删了空气、页面照旧命中」的那天 —— 而且不会报错。
+     */
+    public function keyFor(string $path, array $query = []): string
+    {
+        ksort($query);
+
+        return $path . '?' . http_build_query($query);
+    }
+
+    /**
+     * 按 key 精确删掉一页的缓存文件。
+     *
+     * 与 prune() 的分工：prune 按 created_at 清「再也不可能命中」的死文件，
+     * 最小门槛 7200 秒；这个用于「改完模板要让这一页立刻生效」，没有年龄条件。
+     * 找不到文件不算错 —— 那一页本来就没缓存。
+     *
+     * @return array{found:int, removed:int, failed:list<string>}
+     */
+    public function purge(string $key): array
+    {
+        $base    = $this->base($key);
+        $found   = 0;
+        $removed = 0;
+        $failed  = [];
+
+        foreach ([$base . '.html', $base . '.json'] as $file) {
+            if (!is_file($file)) {
+                continue;
+            }
+
+            $found++;
+            if (@unlink($file)) {
+                $removed++;
+            } else {
+                $failed[] = $file;
+            }
+        }
+
+        return ['found' => $found, 'removed' => $removed, 'failed' => $failed];
+    }
+
     /** @return array{pages:int, bytes:int} */
     public function stats(): array
     {

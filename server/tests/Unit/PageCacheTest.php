@@ -230,6 +230,56 @@ final class PageCacheTest extends TestCase
         );
     }
 
+    // ---- purge：按 key 精确失效 --------------------------------------------------
+    //
+    // 中间件按 keyFor() 写，console 的 library:cache-purge 按同一个 key 删。
+    // 这两边一旦各写一份规则，purge 会「删了空气还报成功」—— 所以规则只有一个来源，
+    // 下面第一个用例就是钉这件事。
+
+    public function testKeyForIsTheSingleSourceOfKeyRule(): void
+    {
+        $cache = new PageCache($this->dir);
+
+        // 查询串顺序不同必须是同一个 key，否则同一页会有两份缓存
+        self::assertSame('/library/search?page=2&q=x', $cache->keyFor('/library/search', ['q' => 'x', 'page' => '2']));
+        self::assertSame('/library/search?page=2&q=x', $cache->keyFor('/library/search', ['page' => '2', 'q' => 'x']));
+
+        // 无查询串也带问号：与中间件写盘时的键一致
+        self::assertSame('/library/method?', $cache->keyFor('/library/method'));
+        self::assertSame('/library?', $cache->keyFor('/library', []));
+    }
+
+    public function testPurgeRemovesOnlyThatKey(): void
+    {
+        $cache = new PageCache($this->dir);
+        $cache->put('/library/method?', '<html>方法</html>', ['works']);
+        $cache->put('/library?', '<html>首页</html>', ['works']);
+
+        $result = $cache->purge('/library/method?');
+
+        self::assertSame(['found' => 2, 'removed' => 2, 'failed' => []], $result, 'html 与 json 各一个');
+        self::assertNull($cache->get('/library/method?', 3600));
+        self::assertNotNull($cache->get('/library?', 60), '别的页面一个字节都不该动');
+    }
+
+    public function testPurgeOnMissingKeyIsNotAnError(): void
+    {
+        $cache = new PageCache($this->dir);
+        $cache->put('/library?', '<html>x</html>', []);
+
+        // 本来就没缓存不是故障，必须能和「有缓存但删失败」区分开
+        self::assertSame(['found' => 0, 'removed' => 0, 'failed' => []], $cache->purge('/library/nope?'));
+        self::assertNotNull($cache->get('/library?', 60));
+    }
+
+    public function testPurgeOnMissingDirIsNoop(): void
+    {
+        self::assertSame(
+            ['found' => 0, 'removed' => 0, 'failed' => []],
+            (new PageCache($this->dir . '/never-created'))->purge('/library?')
+        );
+    }
+
     /** 把某一页的 created_at 往前拨，模拟「很久没人访问」 */
     private function ageEntry(string $key, int $seconds): void
     {

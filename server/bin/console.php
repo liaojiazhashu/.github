@@ -1875,6 +1875,56 @@ switch ($command) {
         break;
 
     /**
+     * 立刻让一个页面失效。
+     *
+     * 为什么不能靠 library:cache-prune：它按 created_at 删「更老」的文件，
+     * 最小门槛 7200 秒 —— 刚缓存的新页永远删不掉。改完模板要让这一页马上生效，
+     * 需要按 key 精确删掉它的两个文件。
+     *
+     * 刻意不提供 --all：一个能把全站缓存一次清空的开关，迟早有人在生产上误用。
+     *
+     * 用法：
+     *   php -c php.ini bin/console.php library:cache-purge --path=/library/method
+     *   php -c php.ini bin/console.php library:cache-purge --path='/library/search?q=abc'
+     */
+    case 'library:cache-purge':
+        $target = (string) ($options['path'] ?? '');
+        if ($target === '' || !str_starts_with($target, '/library')) {
+            fwrite(STDERR, "必须给 --path，且以 /library 开头。\n");
+            exit(1);
+        }
+
+        $parts = parse_url($target);
+        $path  = (string) ($parts['path'] ?? '');
+        $query = [];
+        if (isset($parts['query'])) {
+            parse_str((string) $parts['query'], $query);
+        }
+
+        $cache  = new PageCache($config->string('library.cache_dir'));
+        $key    = $cache->keyFor($path, $query);
+        $result = $cache->purge($key);
+
+        fwrite(STDOUT, sprintf("目标 key：%s\n", $key));
+        fwrite(STDOUT, $result['found'] === 0
+            ? "命中文件：无（这一页当前没有缓存）\n"
+            : sprintf("命中文件：html/json 共 %d 个\n", $result['found']));
+
+        if ($result['failed'] !== []) {
+            fwrite(STDERR, sprintf(
+                "删除结果：失败 %d 个 —— 删不掉说明权限或目录有问题，不是「没有缓存」：\n",
+                count($result['failed'])
+            ));
+            foreach ($result['failed'] as $file) {
+                fwrite(STDERR, '  ' . $file . "\n");
+            }
+            exit(1);
+        }
+
+        fwrite(STDOUT, sprintf("删除结果：已删 %d 个，0 个失败。\n", $result['removed']));
+        break;
+
+    /**
      * 把词条上的 is_canonical 与 resources/taxonomy/sf_terms.php 对齐。
      *
      * 词表是人工审过的通行词清单，词库页给它们免检展示；表外新词要挣到
@@ -2345,6 +2395,7 @@ switch ($command) {
   library:reindex                           重建关键词索引并失效页面缓存
   library:cache-prune [--max-age=SEC] [--apply]
                                             清理陈旧页面缓存文件（默认门槛 24 小时）
+  library:cache-purge --path=/library/…     立刻删掉指定页的缓存（改模板后用它，不等 TTL）
 
 站点
   library:issue-dates [--apply]             按 IssueSchedule 回写期次起止
