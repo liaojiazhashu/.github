@@ -64,8 +64,13 @@ ssh srv 'tail -20 /var/log/zha-deploy.log'
 
 | 要改什么 | 改哪里 | 改完跑 |
 |---|---|---|
-| 页面文案与结构 | `.build/pages/<页面>.html` | `node tools/build-pages.cjs` |
+| 页面文案与结构 | `.build/pages/<页面>.html` | `npm run build` |
 | 颜色、间距、组件样式 | `.build/css-parts/*.css` | `node tools/build-css.cjs` |
+
+**不要只跑 `<改完跑>` 那一列里的单步**——除非你确定没加新汉字。`npm run build`
+会把页面、字体子集、样式、缺字检查、站内自检五步按正确顺序跑完；字体内容变了
+还会自动把三个 woff2 的 `?v=` 升到新日期，否则老访客按 `max-age=604800` 继续用
+缓存里的旧字体。只改样式、不碰文案时用 `npm run build:fast`。
 
 - 页头、页脚、导航、`<title>` 与 meta 描述**不在这七个源文件里**，在
   `tools/build-pages.cjs` 的 `NAV` / `FOOTER_*` / `PAGES` 三段。改一处，七页同时生效。

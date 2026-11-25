@@ -50,6 +50,7 @@ huangqi-scifi/
 │   └── 荒启科幻-官网规划文档.md
 │
 └── tools/                  构建、验证与处理脚本（不参与线上运行）
+    ├── build-all.mjs       构建总入口：页面 → 字体 → 版本号 → 样式 → 两项检查
     ├── build-css.cjs       由 .build/css-parts 合并生成 css/style.css
     ├── build-pages.cjs     由页面主体批量生成完整 HTML 外壳
     ├── check-site.cjs      站点自检（结构 / 无障碍 / 资源 / CSS 变量 / 脚本顺序）
@@ -184,6 +185,33 @@ evenodd 挖空带面四层叠压，环上八枚舱节点 + X 形四辐条 + 三�
 > rIC 环境钳制、降档换内容等），如需重启「拟真星球」路线请先阅读归档。
 
 ## 六、本地开发流程
+
+### 0. 一条命令跑完整条链
+
+```bash
+npm run build
+```
+
+依次做五件事，任何一步失败就停下并说明原因：
+
+1. `node tools/build-pages.cjs` —— 用 `.build/pages/*.html` 生成七个页面
+2. `python tools/subset-fonts.py` —— 按当前全部文案重裁字体子集
+3. 字体内容真的变了，就把 `.build/css-parts/01-tokens.css` 里三个 woff2 的 `?v=`
+   自动升到新日期（同一天内再次变化顺延 b、c、d），交给下一步合并进 CSS。
+   不升的话老访客按 `max-age=604800` 继续用缓存里的旧字体，修复对他们七天不生效
+4. `node tools/build-css.cjs` —— 合并 8 个分区为 `css/style.css`
+5. `python tools/check-fonts.py` + `node tools/check-site.cjs` —— 缺字检查与站内自检
+
+只改样式、不碰文案时用 `npm run build:fast`（跳过字体那两步，几秒钟）。
+
+> 这五步手工跑的时候漏掉任何一步都不会报错：漏 `build-pages`，线上还是旧页面，
+> 文件都在，看不出问题；漏 `subset-fonts`，新加的汉字静默回退系统字体，字重与
+> 字形都断了。2026-11-25 那次字体子集落后文案 22 个字就是这么漏出来的，
+> 所以压成一条命令，并在字体变化时把版本号一起处理掉。
+
+`tools/build-all.mjs` 找不到可用的 `python` + `fontTools` + `brotli` 时不会静默跳过，
+会明确报「这一步跑不了」并以非 0 退出；本机现成一份依赖放在 `.review/pylibs`
+（已在 `.gitignore`），也可以把解释器路径放进 `HUANGQI_PYTHON` 环境变量。
 
 ### 1. 修改页面内容
 

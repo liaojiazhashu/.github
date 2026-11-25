@@ -1,9 +1,13 @@
 {
-  "name": "demo-repo",
-  "version": "0.2.0",
-  "description": "A sample package.json",
-  "dependencies": {
-    "@primer/css": "17.0.1"
+  "name": "huangqi-scifi-site",
+  "version": "0.3.0",
+  "description": "荒启科幻官网（七页静态）与构建链。页面源在 .build/pages，样式源在 .build/css-parts，产物是根目录的 *.html 与 css/style.css。",
+  "private": true,
+  "scripts": {
+    "build": "node tools/build-all.mjs",
+    "build:fast": "node tools/build-all.mjs --skip-fonts",
+    "check": "node tools/check-site.cjs",
+    "fonts": "python tools/subset-fonts.py && python tools/check-fonts.py"
   },
-  "license": "MIT"
+  "license": "UNLICENSED"
 }

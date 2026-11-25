@@ -98,5 +98,11 @@ server/resources/legal/submission-license-v1.md
 # 结论性的东西在 docs/ 下的 md，可复现。
 .review/
 
+# ---- Python 字节码缓存 ----
+# 直接跑 tools/*.py 不会产生这些文件，但把脚本当模块 import 一次就会在
+# tools/__pycache__/ 下留 .pyc。本机与服务器 Python 版本不同，缓存没有可移植性。
+__pycache__/
+*.pyc
+
 # ---- 孤立临时文件 ----
 w1440
