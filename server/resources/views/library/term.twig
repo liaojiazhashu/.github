@@ -13,6 +13,16 @@
       <span>馆内作品 <b class="mono">{{ works|length }}</b> 篇</span>
     </div>
     {% if term.definition %}<p class="lede">{{ term.definition }}</p>{% endif %}
+    {# 词条页三节的来源各不相同，别给整页盖一个「AI 生成」章：
+       · 释义 —— hq_index_term.definition，由分析流水线的 StageGate 从馆内作品的
+         拆解里归纳（200 字上限），是模型产物；
+       · 起源与发展 / 世界科幻中的它 —— resources/taxonomy/term_encyclopedia.php
+         的 68 条人工基线，或后台 hq_term_encyclopedia 里人工改过的版本；
+       · 馆内作品 —— hq_work_term 实时查询。
+       2026-11-25 补：原先一句标识都没有，读者分不清哪段是机器写的。 #}
+    {% if term.definition %}
+      <p class="note">来源：这段释义由 <b>DeepSeek</b> 从馆内作品的拆解中归纳；下方「起源与发展」与「世界科幻中的它」为编辑撰写，作品列表按关键词实时检索。</p>
+    {% endif %}
   </div>
 </section>
 

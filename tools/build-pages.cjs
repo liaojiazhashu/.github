@@ -330,7 +330,7 @@ ${FOOTER_LINKS.map((l) => `            <li><a href="${l.href}"${l.ext ? ' target
         <p class="site-footer__compliance">本站由成都荒启文化传播有限公司（统一社会信用代码 91510100MAEY15D64X）主办。「荒启科幻练笔」为科幻爱好者自主运营的纯公益社群，公司仅提供平台工具，不参与其日常运营，不获取经营收益。</p>
         <div class="site-footer__bottom-links">
           <a href="about.html">品牌规范</a>
-          <a href="contact.html#privacy">隐私说明</a>
+          <a href="privacy.html">隐私说明</a>
           <a href="#top">返回顶部</a>
         </div>
       </div>
@@ -656,7 +656,7 @@ ${buildDrawer(current)}
 ${/* 银河图书馆整站免登录可读，这一页不放任何邀请码入口 ——
      弹窗是给「注册 / 在线阅读」用的，而这一页只讲拆解怎么读、怎么查，
      混进一个邀请码按钮只会让人以为馆内内容要凭证。 */ ''}
-${scene === 'library' ? '' : buildInviteModal()}
+${scene === 'library' || scene === 'privacy' ? '' : buildInviteModal()}
 
 <button class="to-top" type="button" aria-label="回到顶部">
   <svg class="ico ico-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
@@ -710,6 +710,16 @@ const PAGES = [
     scene: 'contact',
     title: '联系我们｜荒启科幻 · 成都荒启文化传播有限公司',
     desc: '成都荒启文化传播有限公司的联系渠道：公司邮箱 huangqi.sifi@gmail.com、欧洲事务联系 founpghkf@gmail.com、微信公众号「荒启科幻」，以及公益社群「荒启科幻练笔」的加入方式。'
+  },
+  {
+    /* 隐私说明独立成页（2026-11-25）：原来寄生在 contact.html#privacy 里，
+       页脚要链它、合规要看它、以后加条款也要改它，挂在一个「联系我们」的
+       锚点下面名不正。独立出来后 contact 只留一段摘要指过来。 */
+    file: 'privacy.html',
+    current: '',
+    scene: 'privacy',
+    title: '隐私说明｜荒启科幻',
+    desc: '荒启科幻官网与银河图书馆的隐私说明：没有表单、没有第三方统计脚本、没有外域请求，唯一的本地存储是昼/夜主题选择，服务器访问日志的用途与保留期限，以及删除请求的联络方式。'
   }
 ];
 

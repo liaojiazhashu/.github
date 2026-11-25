@@ -1,0 +1,99 @@
+<main id="main" class="page">
+
+  <!-- ========================================================= 页面头 -->
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="面包屑">
+        <a href="index.html">首页</a>
+        {{ico:chevronRight:ico-18 breadcrumb__sep}}
+        <span class="breadcrumb__current">隐私说明</span>
+      </nav>
+
+      <p class="eyebrow mt-5" data-reveal="fade">隐私</p>
+      <h1 class="page-hero__title" data-reveal="up">隐私说明</h1>
+      <p class="page-hero__desc" data-reveal="up" style="--reveal-delay:90ms">
+        这一站不问你要任何信息。下面几条都能自己核对 —— 打开浏览器的开发者工具，
+        看「网络」和「应用」两个面板就够了，不需要相信任何转述。
+      </p>
+    </div>
+  </section>
+
+  <!-- ====================================================== 隐私正文 -->
+  <section class="section" id="privacy">
+    <div class="container">
+
+      <div class="panel" data-reveal="up">
+        <h2 class="panel__title">{{ico:shield:ico-18}} 个人信息处理者是谁</h2>
+        <p class="panel__body">
+          本站与「银河图书馆」的个人信息处理者是<b>成都荒启文化传播有限公司</b>
+          （统一社会信用代码 <span class="mono">91510100MAEY15D64X</span>，
+          注册地址：四川省成都高新区神仙树西路 3 号 1 栋 11 层 9 号）。
+          本页没有表单。与个人信息有关的查询、更正、删除请求，请发邮件到
+          <a class="mono" href="mailto:huangqi.sifi@gmail.com">huangqi.sifi@gmail.com</a>；
+          其他问题到交流 QQ 群 <span class="mono">280660235</span> 找管理员，或在公众号「荒启科幻」留言。
+        </p>
+      </div>
+
+      <div class="panel mt-5" data-reveal="up">
+        <h2 class="panel__title">{{ico:document:ico-18}} 没有表单，也就不问你要任何东西</h2>
+        <p class="panel__body">
+          官网页面没有注册、订阅、留言这类需要填写信息的表单，浏览全站不需要提交任何个人信息。
+          银河图书馆有一个检索框，检索词会出现在地址栏里，该地址与其他请求一样记入访问日志（见下文「访问日志」）。
+          管理后台的登录框只对内部人员开放，登录记录同样记入访问日志。
+        </p>
+      </div>
+
+      <div class="panel mt-5" data-reveal="up">
+        <h2 class="panel__title">{{ico:shieldCheck:ico-18}} 没有统计脚本，没有第三方嵌入</h2>
+        <p class="panel__body">
+          页面上没有一个来自外部域名的脚本、字体或图片请求，也就没有埋点、热力图和广告归因。
+          我们看不到你从哪来、看了多久、点过什么。
+        </p>
+      </div>
+
+      <div class="panel mt-5" data-reveal="up">
+        <h2 class="panel__title">{{ico:sliders:ico-18}} 唯一的本地存储是「昼/夜」这个选择</h2>
+        <p class="panel__body">
+          你把界面切成白天或夜间时，浏览器会在你自己的机器上存一个键
+          <span class="mono">hq-theme</span>，值是 <span class="mono">day</span> 或
+          <span class="mono">night</span>。它不会被发送到服务器，我们也读不到；
+          清掉这个站点的数据它就没了，代价只是下次要重新选一次。
+        </p>
+      </div>
+
+      <div class="panel mt-5" data-reveal="up">
+        <h2 class="panel__title">{{ico:database:ico-18}} 服务器会记访问日志</h2>
+        <p class="panel__body">
+          托管方按常规记录访问日志（IP、时间、浏览器标识，以及你请求的地址；
+          地址里可能带着你在图书馆搜过的词）。
+          日志只用于排查故障和拦截滥用，不用于给任何人画像，也不对外提供。
+          入群之后在 QQ 群、在公众号里的消息，按腾讯的平台规则处理，不在本站范围内。
+        </p>
+        <p class="panel__body mt-4">
+          保留期限：日志目前不设自动删除期限，保留至人工清理为止。
+          我们不在日志上做长期分析，也不从中整理任何用户档案。
+        </p>
+      </div>
+
+      <div class="panel mt-5" data-reveal="up">
+        <h2 class="panel__title">{{ico:mail:ico-18}} 这一站不适用于谁</h2>
+        <p class="panel__body">
+          未满 14 周岁的未成年人，请不要向本站提交任何个人信息 ——
+          本站也不需要这些信息才能阅读。
+          如果你未满 14 周岁而家长或监护人同意你使用本站，
+          请由他们在了解本页内容后陪同使用。
+        </p>
+      </div>
+
+      <div class="notice mt-6">
+        {{ico:document:ico-18}}
+        <span>本站没有账号、没有表单，应用侧不保存任何个人信息，所以没有「申请删除我的数据」这一步可走。
+        如果你想把访问日志里属于你的那几条清掉，或者发现哪里与上面写的不符，请发邮件到
+        <a class="mono" href="mailto:huangqi.sifi@gmail.com">huangqi.sifi@gmail.com</a>，
+        或到交流 QQ 群 <span class="mono">280660235</span> 找管理员。</span>
+      </div>
+
+      <p class="text-soft mt-6">最近更新：2026 年 11 月 25 日。</p>
+    </div>
+  </section>
+</main>

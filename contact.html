@@ -429,7 +429,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         <div class="panel panel--accent" data-reveal="up">
           <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3.5v3.5M14 3.5v3.5M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></svg> 客户端下载</p>
           <p class="panel__body">
-            提供电脑端（.exe）、安卓端（.apk）与 iOS 端（.ipa）三个版本，安装包可以直接下载；
+            提供电脑端（.exe）、安卓端（.apk）与 iOS 端（.mobileconfig 描述文件）三个版本，安装包可以直接下载；
             首次启动时输入邀请码完成注册即可使用。
           </p>
           <div class="invite-modal__actions invite-modal__actions--stack mt-5">
@@ -561,73 +561,21 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   </section>
 
   <!-- ====================================================== 隐私说明 -->
-  <section class="section" id="privacy">
+  <!-- 完整条款已独立成 privacy.html（2026-11-25）。这里只留摘要与入口，
+       锚点保留着：外部链接 contact.html 带 #privacy 仍然能落到这一段。 -->
+  <section class="section section--sm" id="privacy">
     <div class="container">
-      <div class="section-head">
-        <p class="eyebrow" data-reveal="fade">隐私</p>
-        <h2 class="section-head__title" data-reveal="up">这一站不问你要任何信息</h2>
-        <p class="section-head__desc" data-reveal="up">
-          下面几条都能自己核对——打开浏览器的开发者工具，看「网络」和「应用」两个面板就够了，
-          不需要相信任何转述。
-        </p>
-        <hr class="rule-grad section-head__rule">
-      </div>
-
-      <div class="panel" data-reveal="up">
-        <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12.2 11.4 14.4 15 10.6"/></svg> 个人信息处理者是谁</p>
+      <div class="panel panel--accent" data-reveal="up">
+        <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12.2 11.4 14.4 15 10.6"/></svg> 隐私说明</p>
         <p class="panel__body">
-          本站与「银河图书馆」的个人信息处理者是<b>成都荒启文化传播有限公司</b>
-          （统一社会信用代码 <span class="mono">91510100MAEY15D64X</span>，
-          注册地址：四川省成都高新区神仙树西路 3 号 1 栋 11 层 9 号）。
-          本页没有表单。与个人信息有关的查询、更正、删除请求，请发邮件到
-          <a class="mono" href="mailto:huangqi.sifi@gmail.com">huangqi.sifi@gmail.com</a>；
-          其他问题到交流 QQ 群 <span class="mono">280660235</span> 找管理员，或在公众号「荒启科幻」留言。
+          这一站不问你要任何信息：没有注册、订阅、留言表单，没有第三方统计脚本，
+          页面不请求任何外部域名。唯一的本地存储是你选的「昼/夜」，它不会离开你的浏览器。
+          个人信息处理者是谁、服务器访问日志记什么留多久、想清掉属于你的那几条该找谁，
+          都写在独立的一页里。
         </p>
-      </div>
-
-      <div class="panel mt-5" data-reveal="up">
-        <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg> 没有表单，也就不问你要任何东西</p>
-        <p class="panel__body">
-          官网页面没有注册、订阅、留言这类需要填写信息的表单，浏览全站不需要提交任何个人信息。
-          银河图书馆有一个检索框，检索词会出现在地址栏里，该地址与其他请求一样记入访问日志（见下文「访问日志」）。
-          管理后台的登录框只对内部人员开放，登录记录同样记入访问日志。
+        <p class="panel__body mt-4">
+          <a class="link-arrow" href="privacy.html">读完整的隐私说明 <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </p>
-      </div>
-
-      <div class="panel mt-5" data-reveal="up">
-        <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9.2 12 11.3 14.1 15 10.4"/></svg> 没有统计脚本，没有第三方嵌入</p>
-        <p class="panel__body">
-          页面上没有一个来自外部域名的脚本、字体或图片请求，也就没有埋点、热力图和广告归因。
-          我们看不到你从哪来、看了多久、点过什么。
-        </p>
-      </div>
-
-      <div class="panel mt-5" data-reveal="up">
-        <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg> 唯一的本地存储是「昼/夜」这个选择</p>
-        <p class="panel__body">
-          你把界面切成白天或夜间时，浏览器会在你自己的机器上存一个键
-          <span class="mono">hq-theme</span>，值是 <span class="mono">day</span> 或
-          <span class="mono">night</span>。它不会被发送到服务器，我们也读不到；
-          清掉这个站点的数据它就没了，代价只是下次要重新选一次。
-        </p>
-      </div>
-
-      <div class="panel mt-5" data-reveal="up">
-        <p class="panel__title"><svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg> 服务器会记访问日志</p>
-        <p class="panel__body">
-          托管方按常规记录访问日志（IP、时间、浏览器标识，以及你请求的地址；
-          地址里可能带着你在图书馆搜过的词）。
-          日志只用于排查故障和拦截滥用，不用于给任何人画像，也不对外提供。
-          入群之后在 QQ 群、在公众号里的消息，按腾讯的平台规则处理，不在本站范围内。
-        </p>
-      </div>
-
-      <div class="notice mt-6">
-        <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
-        <span>本站没有账号、没有表单，应用侧不保存任何个人信息，所以没有「申请删除我的数据」这一步可走。
-        如果你想把访问日志里属于你的那几条清掉，或者发现哪里与上面写的不符，请发邮件到
-        <a class="mono" href="mailto:huangqi.sifi@gmail.com">huangqi.sifi@gmail.com</a>，
-        或到交流 QQ 群 <span class="mono">280660235</span> 找管理员。</span>
       </div>
     </div>
   </section>
@@ -700,7 +648,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         <p class="site-footer__compliance">本站由成都荒启文化传播有限公司（统一社会信用代码 91510100MAEY15D64X）主办。「荒启科幻练笔」为科幻爱好者自主运营的纯公益社群，公司仅提供平台工具，不参与其日常运营，不获取经营收益。</p>
         <div class="site-footer__bottom-links">
           <a href="about.html">品牌规范</a>
-          <a href="contact.html#privacy">隐私说明</a>
+          <a href="privacy.html">隐私说明</a>
           <a href="#top">返回顶部</a>
         </div>
       </div>
