@@ -27,13 +27,18 @@ const stats = {};
 /* 外链白名单：只允许业务必需的外部导航跳转。
    · beian.miit.gov.cn —— ICP 备案号查询，法规要求页脚必须可点，
      与 build-pages.cjs 页脚模板里的备案链接对应；
-   · 在线阅读站已改为站点内相对路径 /h5/（同域部署），不再需要域名白名单。 */
+   · gsxt.gov.cn —— 国家企业信用信息公示系统，about.html 的登记信息核验指引；
+   · www.huangqisf.com/dt/ —— 客户端三平台安装包。2026-11-25 起改由该站点托管：
+     exe 11.4 MB、apk 69.6 MB，放进 git 会把仓库撑到 80 MB 以上。
+     三个文件实测均 200 可直接下载。改托管位置时，这里与
+     build-pages.cjs 的 APP_DOWNLOAD 要一起改。 */
 const EXT_NAV_ALLOW = [
   'https://beian.miit.gov.cn/',
-  'https://www.gsxt.gov.cn/' // 国家企业信用信息公示系统：about.html 登记信息核验指引（政府权威源）
+  'https://www.gsxt.gov.cn/', // 国家企业信用信息公示系统：about.html 登记信息核验指引（政府权威源）
+  'https://www.huangqisf.com/dt/' // 客户端安装包下载：本站不放二进制
 ];
 
-/* 站内绝对路径（/h5/、/dt/xxx.exe 等）指向部署环境的根目录，
+/* 站内绝对路径（形如 /library、/sitemap.xml 的路由）指向部署环境的根目录，
    不在导出目录内 —— 本地无法校验存在性，只做「形如站内绝对路径」的格式校验。 */
 const isRootAbsolute = (href) => href.startsWith('/') && !href.startsWith('//');
 

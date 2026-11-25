@@ -92,5 +92,11 @@ server/database/migrations/013_content_license.sql
 server/database/migrations/013_content_license_rollback.sql
 server/resources/legal/submission-license-v1.md
 
+# ---- 审查与验证工作目录 ----
+# .review/ 放线上响应体快照、提取出的纯文本、一次性探查脚本，
+# 以及为跑 fontTools 临时解压的依赖（十几 MB）。属本机工具产物，不进库。
+# 结论性的东西在 docs/ 下的 md，可复现。
+.review/
+
 # ---- 孤立临时文件 ----
 w1440

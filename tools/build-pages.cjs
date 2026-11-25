@@ -111,15 +111,20 @@ const FOOTER_LINKS = [
   { href: 'contact.html', label: '联系我们' }
 ];
 
-/* 客户端下载（v2.3.11）：三平台占位安装包，
-   正式客户端打包后替换同名文件即可，下载入口直接生效 */
+/* 客户端下载（v2.5）：安装包托管在 www.huangqisf.com/dt/，不放在本站。
+   zha 站点不带二进制：exe 11.4 MB、apk 69.6 MB，进 git 会把仓库撑到 80 MB 以上。
+   2026-11-25 实测三个文件均 200（exe 11,963,807 B / apk 69,574,014 B /
+   mobileconfig 36,468 B），点击即可下载安装。
+   地址只写在这一处：将来两站合并、或换托管位置，改这张表再重新构建五个页面即可。
+
+   注意 ext 是按钮上显示的文字，与文件类型一致：iOS 那条是 .mobileconfig 描述文件。 */
 const APP_DOWNLOAD = {
-  href: '/dt/荒启科幻.exe',
+  href: 'https://www.huangqisf.com/dt/荒启科幻.exe',
   label: '下载客户端',
   versions: [
-    { href: '/dt/荒启科幻.exe', label: '电脑端 Windows', ext: '.exe', icon: 'cpu' },
-    { href: '/dt/Huangqisf.apk', label: '安卓端 Android', ext: '.apk', icon: 'send' },
-    { href: '/dt/huangqisf.mobileconfig', label: 'iOS 端 iPhone / iPad', ext: '.ipa', icon: 'globe' }
+    { href: 'https://www.huangqisf.com/dt/荒启科幻.exe', label: '电脑端 Windows', ext: '.exe', icon: 'cpu' },
+    { href: 'https://www.huangqisf.com/dt/Huangqisf.apk', label: '安卓端 Android', ext: '.apk', icon: 'send' },
+    { href: 'https://www.huangqisf.com/dt/huangqisf.mobileconfig', label: 'iOS 端 iPhone / iPad', ext: '.mobileconfig', icon: 'globe' }
   ]
 };
 

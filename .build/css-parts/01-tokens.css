@@ -201,7 +201,7 @@
 
 @font-face {
   font-family: 'Noto Sans SC';
-  src: url('../assets/fonts/noto-sans-sc-400.woff2') format('woff2');
+  src: url('../assets/fonts/noto-sans-sc-400.woff2?v=20261125') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -209,7 +209,7 @@
 
 @font-face {
   font-family: 'Noto Sans SC';
-  src: url('../assets/fonts/noto-sans-sc-500.woff2') format('woff2');
+  src: url('../assets/fonts/noto-sans-sc-500.woff2?v=20261125') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -217,7 +217,7 @@
 
 @font-face {
   font-family: 'Noto Sans SC';
-  src: url('../assets/fonts/noto-sans-sc-700.woff2') format('woff2');
+  src: url('../assets/fonts/noto-sans-sc-700.woff2?v=20261125') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
