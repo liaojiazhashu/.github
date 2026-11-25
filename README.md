@@ -189,7 +189,7 @@ evenodd 挖空带面四层叠压，环上八枚舱节点 + X 形四辐条 + 三�
 
 页面主体位于 `.build/pages/*.html`（仅含 `<main>` 内容），
 导航、页脚、抽屉、脚本引用由 `tools/build-pages.cjs` 统一套壳生成，
-以保证 6 个页面外壳完全一致。
+以保证 7 个页面外壳完全一致。
 
 ```bash
 # 修改 .build/pages/xxx.html 后重新生成全部页面
@@ -320,7 +320,7 @@ PAGES=index WIDTHS=375 DPR=3 MODE=viewport SCROLLS=150 node tools/shoot.cjs
 PAGES=library WIDTHS=1440 PROBE_ONLY=1 PROBE_FILE=tools/probes/probe-library.js node tools/shoot.cjs
 
 # 首屏满屏断言：首屏底边 / 下一区块顶边都必须 ≥ 视口高（v2.3.8 起每页正好覆盖一屏）
-PAGES=index,about,community,tools,library,contact WIDTHS=1440 PROBE_ONLY=1 PROBE_FILE=tools/probes/probe-viewport-fit.js node tools/shoot.cjs
+PAGES=index,about,community,tools,library,contact,privacy WIDTHS=1440 PROBE_ONLY=1 PROBE_FILE=tools/probes/probe-viewport-fit.js node tools/shoot.cjs
 
 # 探测器探针：六结构件 / 环形推进器（节点+辐条+信标）自转 / 尾焰穿环 + 错相吞吐 / 传感眼呼吸
 # 含「渺小度」断言：整台宽度不得超过视口宽的 9%（v2.3.22 起 7vw = 101px @1440）
@@ -332,8 +332,8 @@ PAGES=index,contact WIDTHS=1440,375 PROBE_ONLY=1 PROBE_FILE=tools/probes/probe-m
 
 # 对比度探针：逐元素算 WCAG 比值（正文 ≥4.5:1、大字 ≥3:1），两主题都要跑
 # THEME 会在导航前预置 localStorage，所以昼夜各跑一次即可
-PAGES=index,about,community,tools,library,contact WIDTHS=1440 THEME=night PROBE_ONLY=1 PROBE_FILE=tools/probes/probe-contrast.js node tools/shoot.cjs
-PAGES=index,about,community,tools,library,contact WIDTHS=1440 THEME=day PROBE_ONLY=1 PROBE_FILE=tools/probes/probe-contrast.js node tools/shoot.cjs
+PAGES=index,about,community,tools,library,contact,privacy WIDTHS=1440 THEME=night PROBE_ONLY=1 PROBE_FILE=tools/probes/probe-contrast.js node tools/shoot.cjs
+PAGES=index,about,community,tools,library,contact,privacy WIDTHS=1440 THEME=day PROBE_ONLY=1 PROBE_FILE=tools/probes/probe-contrast.js node tools/shoot.cjs
 
 # 字体探针：字面数 / 加载失败 / 未加载 / 各字重可用性 / 正文第二字族是否为 Noto Sans SC
 # / svg text 里带中文却缺 CJK 回退的数量 / <11px 文本数量
@@ -409,7 +409,7 @@ Playwright / Puppeteer。截图前会等待 `document.fonts.ready`、注入样�
 - `prefers-reduced-motion` 下关闭动效并静态化背景特效
 - 装饰性元素统一 `aria-hidden="true"`
 - 禁用 JS 时内容仍可读；作品库保留静态首屏条目；背景回落为 CSS 渐变，不出现空白
-- **对比度可验证**：`probe-contrast.js` 逐元素计算 WCAG 比值，两个主题 × 六个页面必须 0 不达标。
+- **对比度可验证**：`probe-contrast.js` 逐元素计算 WCAG 比值，两个主题 × 七个页面必须 0 不达标。
   它会把 `aria-hidden="true"` 的装饰内容与 `-webkit-text-fill-color: transparent` 的渐变裁切字跳过
   （后者没有真实前景色，硬算必然报 1:1）
 - **字形覆盖可验证**：`check-fonts.py` 保证站点用到的每一个字都在自托管字体里，
@@ -423,6 +423,7 @@ Playwright / Puppeteer。截图前会等待 `document.fonts.ready`、注入样�
 
 ```
 index.html  about.html  community.html  tools.html  library.html  contact.html
+privacy.html
 css/  js/  assets/  favicon.ico
 ```
 

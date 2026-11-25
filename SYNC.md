@@ -4,7 +4,7 @@
 
 | 部分 | 入口文件 | 说明 |
 |---|---|---|
-| 荒启科幻官网 | `index.html` `about.html` `community.html` `contact.html` `tools.html` | 纯静态页 |
+| 荒启科幻官网 | `index.html` `about.html` `community.html` `contact.html` `tools.html` `privacy.html` | 纯静态页 |
 | 银河图书馆 | `library.html` + `server/` | PHP 8.4 + Slim + Twig |
 | 管理后台 | `server/` 里的 `/admin/*` 路由 | 同一 PHP 应用 |
 
@@ -59,7 +59,7 @@ ssh srv 'tail -20 /var/log/zha-deploy.log'
 
 ## 官网页面：源文件与产物
 
-官网六个页面和样式表都是**构建产物**。不要直接改根目录的 `index.html` / `css/style.css`——
+官网七个页面和样式表都是**构建产物**。不要直接改根目录的 `index.html` / `css/style.css`——
 下次构建会把它覆盖掉。
 
 | 要改什么 | 改哪里 | 改完跑 |
@@ -67,8 +67,8 @@ ssh srv 'tail -20 /var/log/zha-deploy.log'
 | 页面文案与结构 | `.build/pages/<页面>.html` | `node tools/build-pages.cjs` |
 | 颜色、间距、组件样式 | `.build/css-parts/*.css` | `node tools/build-css.cjs` |
 
-- 页头、页脚、导航、`<title>` 与 meta 描述**不在这六个源文件里**，在
-  `tools/build-pages.cjs` 的 `NAV` / `FOOTER_*` / `PAGES` 三段。改一处，六页同时生效。
+- 页头、页脚、导航、`<title>` 与 meta 描述**不在这七个源文件里**，在
+  `tools/build-pages.cjs` 的 `NAV` / `FOOTER_*` / `PAGES` 三段。改一处，七页同时生效。
 - 源文件与产物**都要提交**：服务器服务的是产物，源文件是下次重建的依据。
 - 构建后跑 `node tools/check-site.cjs`：查未定义的 CSS 变量、标题层级、锚点与死链。
 - 截图与调试输出落在 `.build/shots/`（已忽略），不要往仓库根目录丢临时文件。

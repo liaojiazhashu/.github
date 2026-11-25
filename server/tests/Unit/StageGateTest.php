@@ -511,7 +511,7 @@ final class StageGateTest extends TestCase
                  'detail' => '她只能选一段相信，而只有第三段提到了她的名字。',
                  'quote' => '只有第三段提到了她的名字', 'position_pct' => 60],
                 ['seq' => 4, 'phase' => 'end', 'title' => '信号源浮出',
-                 'detail' => '倒计时结束时，信号源从引力波背景里浮出来。',
+                 'detail' => '计时归零的那一刻，信号从引力波噪声中显形。',
                  'quote' => '信号源从引力波背景里浮出来', 'position_pct' => 95],
             ],
         ];

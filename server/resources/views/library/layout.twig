@@ -118,11 +118,17 @@
     {# 合规行：运营主体 + 统一社会信用代码 + ICP 备案号 + 公益定性。
        备案号原先只出现在官网静态页上，/library 全站一条都没有 ——
        同一个域名、同一份备案，读者在馆内却看不到运营主体是谁。
-       公司性质见官网 about.html 的「主体信息」，这里留核验所需要素与社群边界一句话。 #}
+       公司性质见官网 about.html 的「主体信息」，这里留核验所需要素与社群边界一句话。
+
+       2026-11-25 补隐私说明入口：全站只有这一页会发生「检索词写进地址栏」，
+       隐私声明里专门写了这件事，页脚却没有通往声明的路，等于声明了自己藏起来。
+       用绝对地址而不是 /privacy.html：隐私页是官网静态页，图书馆将来若挪到子域，
+       相对路径会 404；绝对地址换部署位置也不用改这里。 #}
     <p class="foot__legal">
       <span>本站由成都荒启文化传播有限公司主办 · 本馆免费开放，无任何付费项目</span>
       <span>统一社会信用代码 <span class="mono">91510100MAEY15D64X</span></span>
       <a href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank">蜀ICP备2025169184号-1</a>
+      <a href="https://zha.ruletree.club/privacy.html">隐私说明</a>
     </p>
   </div>
 </footer>
