@@ -241,6 +241,39 @@ try {
     $rows[]   = ['C', '/', '抛异常', false];
 }
 
+// 带尾斜杠的 /library/ 是 302 到 /library（routes.php 的 library.slash）。
+//
+// 这一条守的是一次长期潜伏的 500（2026-11-25 才发现）：那只闭包当时写着 `static fn`，
+// 而 Slim 的 CallableResolver::bindToContainer() 对任何 Closure 都无条件
+// `bindTo($container)`，PHP 8.4 对静态闭包直接抛
+// 「Cannot bind an instance to a static closure」。这条路由是纯跳转、不碰库，
+// 所以它应当是**稳定的 302**，与数据库挂不挂无关 —— 真正的判据是它能不能被解析。
+// 之前自检只测了 / 和 /library，于是它 500 了很久没人知道。
+try {
+    [$status, $headers, $body] = $send($app, '/library/');
+
+    $location = $headers['Location'][0] ?? '';
+    $absent   = $missingHeaders($headers);
+    $ok       = $status === 302 && $location === '/library';
+
+    if ($status !== 302) {
+        $errors[] = sprintf(
+            '/library/ 返回 %d，期望 302（若为 500，先查 routes.php 里那只闭包是不是又被写成 static）',
+            $status
+        );
+    } elseif ($location !== '/library') {
+        $errors[] = sprintf('/library/ 的 Location 是「%s」，期望 /library', $location);
+    }
+    if ($absent !== []) {
+        $errors[] = '/library/ 缺安全头：' . implode('、', $absent);
+    }
+
+    $rows[] = ['C', '/library/', sprintf('%d → %s', $status, $location === '' ? '（无）' : $location), $ok];
+} catch (Throwable $e) {
+    $errors[] = '/library/ 处理阶段直接抛异常：' . $e::class . '：' . $e->getMessage();
+    $rows[]   = ['C', '/library/', '抛异常', false];
+}
+
 // 列表页：**两种结果都算过**，只有白屏不行。
 //
 // 页面缓存在 storage/cache/pages 里，命中的话数据库挂着也能正常出页面 ——

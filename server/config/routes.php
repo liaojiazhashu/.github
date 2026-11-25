@@ -192,7 +192,12 @@ return static function (App $app): void {
     // 于是「缓存命中的请求不消耗限流额度」，限流表里的数字等于真正打到后端的请求数。
     $app->get('/sitemap.xml', SitemapController::class . ':index')->setName('library.sitemap');
 
-    $app->get('/library/', static fn ($request, $response) => $response->withStatus(302)->withHeader('Location', '/library'))
+    // 闭包**不能声明成 static**：Slim 的 CallableResolver::bindToContainer() 对任何
+    // Closure 都无条件 `bindTo($container)`，而 PHP 8 对静态闭包调用 bindTo 直接抛
+    // 「Cannot bind an instance to a static closure」。2026-11-25 线上实测：/library/
+    // 因此稳定 500（应用日志 hqlib.ERROR path=/library/），而下面 44 行的 / 用的是
+    // 非 static 闭包，一直正常。改回 static 就会重新 500。
+    $app->get('/library/', fn ($request, $response) => $response->withStatus(302)->withHeader('Location', '/library'))
         ->setName('library.slash');
 
     $app->group('/library', function (RouteCollectorProxy $group) use ($code): void {
