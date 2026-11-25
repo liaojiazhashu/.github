@@ -83,6 +83,12 @@ function icon(name, cls) {
    生产环境不会命中那段逻辑。正文里只写 {{LIBRARY_URL}}，地址不写死。 */
 const LIBRARY_URL = process.env.LIBRARY_URL || '/library';
 
+/* 站点正式地址：canonical 与 og:url 必须写绝对 URL，且要与线上真正提供服务的那个域一致。
+   2026-11-25 定 zha.ruletree.club 为主站（git 真相源、cron 自动部署、robots 与 sitemap
+   都在这里，动态 /library 的 canonical 也指向它）；www.huangqisf.com 只放安装包与 /h5/。
+   将来合并站点时改这一行、重跑本脚本即可，页面正文里不写死域名。 */
+const SITE_URL = (process.env.SITE_URL || 'https://zha.ruletree.club').replace(/\/+$/, '');
+
 const NAV = [
   { href: 'index.html', label: '首页', key: 'home' },
   { href: 'about.html', label: '关于我们', key: 'about' },
@@ -609,6 +615,13 @@ function page({ title, desc, scene, file, current, scripts = '' }) {
     ? scripts.split('\n').map((s) => '  <script src="' + s.trim() + '"></script>').join('\n') + '\n'
     : '';
 
+  /* canonical 与 og:url：首页用根路径，其余用「/文件名」。静态介绍页 library.html
+     与 Twig 渲染的 /library 是两个不同地址、两份不同内容（讲这座馆 vs 馆本身），
+     各自 canonical 到自己，不构成重复内容。 */
+  const canonical = SITE_URL + '/' + (file === 'index.html' ? '' : file);
+  const canonicalTags = `<link rel="canonical" href="${canonical}">
+<meta property="og:url" content="${canonical}">`;
+
   return assertNoPlaceholder(`<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -620,6 +633,7 @@ function page({ title, desc, scene, file, current, scripts = '' }) {
 <meta property="og:title" content="${title}">
 <meta property="og:description" content="${desc}">
 <meta property="og:type" content="website">
+${canonicalTags}
 <link rel="icon" href="assets/logo/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/logo/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">

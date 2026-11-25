@@ -208,10 +208,18 @@ curl -sI https://zha.ruletree.club/library/method | grep -Ei 'x-cache|cache-cont
 **判据用结构，不用字节数。** 动态页的正文总字数、作品数每天都在变，字节差只能当线索：
 `grep -c 'privacy.html'`、页脚 `foot__legal` 里有没有那个 `<a>`、`<title>` 是不是新值 —— 这些才是证据。
 
-**立刻失效某一个指定的页面：目前没有命令。** `library:cache-prune` 最小 7200 秒、按 `created_at` 删，删不掉刚缓存的新页；`PageCache::invalidateTags()` 只有应用层调用（发布作品会清 `works` 标签，method 页也挂这个标签），没有 CLI 入口。要让合规文案「立刻生效」，现在只有两条路：
+**立刻失效某一个指定的页面：用 `library:cache-purge --path=…`。**
 
-1. 等 TTL 过（method 最长，一小时）
-2. 由运维删掉对应的两个缓存文件：文件名是 `sha1("<path>?<query>")`，例如 method 页的 key 是 `/library/method?`，删 `<cache_dir>/<sha1>.html` 与 `.json`；`cache_dir` 取 `library.cache_dir`（默认 `server/storage/cache/pages`）
+```bash
+# 改完模板要让这一页马上生效，不用等 TTL
+php -c php.ini bin/console.php library:cache-purge --path=/library/method
+# 带查询串的页面要连 query 一起给，引号别省
+php -c php.ini bin/console.php library:cache-purge --path='/library/search?q=abc'
+```
+
+它按 key 精确删掉该页的 `.html` 与 `.json` 两个文件；`--path` 必须以 `/library` 开头；**刻意没有 `--all`**——一个能把全站缓存一次清空的开关，迟早有人在生产上误用。`library:cache-prune` 替代不了它：那条按 `created_at` 删「更老」的文件、最小门槛 7200 秒，刚缓存的新页永远删不掉。
+
+不要手算文件名去删。key 的算法收在 `PageCache::keyFor()` 一处（2026-11-25 起），文档里再抄一遍 sha1 规则，迟早与实现漂开。
 
 ## 环境信息
 

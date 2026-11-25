@@ -193,7 +193,12 @@ htmlFiles.forEach((file) => {
      资源加载（src= / <link href=）仍然零外链；
      <a href> 的外部导航跳转（如在线阅读 H5 站）是业务需求，允许，
      但域名必须在 READER_URL_BASE 白名单内。 */
-  const ext = [...html.matchAll(/(?:src|href)="(https?:\/\/[^"]+)"/g)].map((m) => m[1]);
+  /* canonical 与 og:url 是元数据，既不是资源请求也不是导航跳转：它们的 href 写的是
+     本站正式地址（绝对 URL），若参与下面的扫描会被当成外部资源而误报。先剥掉再扫。 */
+  const htmlForLinks = html
+    .replace(/<link\b[^>]*rel="canonical"[^>]*>/g, '')
+    .replace(/<meta\b[^>]*property="og:url"[^>]*>/g, '');
+  const ext = [...htmlForLinks.matchAll(/(?:src|href)="(https?:\/\/[^"]+)"/g)].map((m) => m[1]);
   const extNav = [];
   const extRes = ext.filter((url) => {
     const idx = html.indexOf(`"${url}"`);
