@@ -14,6 +14,16 @@ declare(strict_types=1);
  *   php -c php.ini bin/console.php user:enable-totp --username=admin
  *   php -c php.ini bin/console.php session:purge
  *   php -c php.ini bin/console.php seed:rbac
+ *
+ * 环境差异（本文件所有示例都是「本机」写法，线上要换）：
+ *   本机 Windows 预演：php -c php.ini bin/console.php …（项目专用 ini）
+ *   线上 Linux      ：cd /www/wwwroot/zha.ruletree.club/server && php bin/console.php …
+ *
+ * 为什么线上不能带 -c php.ini：server/php.ini 的 open_basedir 与 error_log 是
+ * Windows 绝对路径（两者都在 D:\ 下），Linux 上 open_basedir 直接挡住项目目录、
+ * error_log 又写不进去，加上 display_errors = Off —— 结果是**退出码 255、零输出**。
+ * 2026-11-25 实测：同一命令带 -c 是 255 无输出，去掉就正常。
+ * 所以「跑了没输出」不等于「命令不存在」，先去掉 -c 重试再看日志。
  */
 
 require dirname(__DIR__) . '/config/bootstrap.php';
@@ -1883,9 +1893,9 @@ switch ($command) {
      *
      * 刻意不提供 --all：一个能把全站缓存一次清空的开关，迟早有人在生产上误用。
      *
-     * 用法：
-     *   php -c php.ini bin/console.php library:cache-purge --path=/library/method
-     *   php -c php.ini bin/console.php library:cache-purge --path='/library/search?q=abc'
+     * 用法（线上；本机预演在前面加 -c php.ini，见文件头）：
+     *   php bin/console.php library:cache-purge --path=/library/method
+     *   php bin/console.php library:cache-purge --path='/library/search?q=abc'
      */
     case 'library:cache-purge':
         $target = (string) ($options['path'] ?? '');
