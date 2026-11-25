@@ -173,6 +173,46 @@ curl -s -o /dev/null -w "%{http_code}\n" https://zha.ruletree.club/
 
 返回 `200` 即正常。
 
+## 验收陷阱：Twig 页有整页缓存，别把「旧的」当成「没上线」
+
+`/library/*` 的 200 响应经过 `PublicCacheMiddleware`（`server/app/Http/Middleware/PublicCacheMiddleware.php`），
+HTML 落盘缓存在 `server/storage/cache/pages/`。各档 TTL（`ttlFor()`，配置项默认值）：
+
+| 路径 | TTL |
+|---|---|
+| `/library` | `library.cache.home`，默认 60 秒 |
+| `/library/works/<code>`、`/library/works/<code>/author` | `library.cache.work`，默认 300 秒 |
+| `/library/authors`、`/library/authors/<code>` | `library.cache.author`，默认 300 秒 |
+| `/library/works`（列表等其他 works 路径） | `library.cache.works`，默认 60 秒 |
+| `/library/method`、`/library/practice` | 3600 秒 |
+| `/library/terms/<id>` | `library.cache.term`，默认 300 秒 |
+| `/library/terms`（索引等） | `library.cache.terms`，默认 300 秒 |
+| `/library/issues*` | `library.cache.issue`，默认 300 秒 |
+| `/library/search`、其余路径 | 0（不缓存） |
+
+部署后验收任何 Twig 页，**第一步看响应头**：
+
+```bash
+curl -sI https://zha.ruletree.club/library/method | grep -Ei 'x-cache|cache-control|age'
+```
+
+- `X-Cache: MISS` —— 这次是现渲染的，可以据此判定
+- `X-Cache: HIT` —— **返回的是缓存里的旧 HTML**，可能「新导航 + 旧正文」或反过来；加随机参数打穿再看：
+  ```bash
+  curl -s "https://zha.ruletree.club/library/method?v=$(date +%s)" | grep -n '要查的那句话'
+  ```
+- `X-Cache: BYPASS` —— 该路径不缓存（非 200、后台、带 Cookie 等）
+
+2026-11-25 栽过：改完 method 页文案，线上看到「新文案 + 旧页脚」的混合态，`X-Cache: HIT`、`max-age` 还剩 2700 多秒。
+
+**判据用结构，不用字节数。** 动态页的正文总字数、作品数每天都在变，字节差只能当线索：
+`grep -c 'privacy.html'`、页脚 `foot__legal` 里有没有那个 `<a>`、`<title>` 是不是新值 —— 这些才是证据。
+
+**立刻失效某一个指定的页面：目前没有命令。** `library:cache-prune` 最小 7200 秒、按 `created_at` 删，删不掉刚缓存的新页；`PageCache::invalidateTags()` 只有应用层调用（发布作品会清 `works` 标签，method 页也挂这个标签），没有 CLI 入口。要让合规文案「立刻生效」，现在只有两条路：
+
+1. 等 TTL 过（method 最长，一小时）
+2. 由运维删掉对应的两个缓存文件：文件名是 `sha1("<path>?<query>")`，例如 method 页的 key 是 `/library/method?`，删 `<cache_dir>/<sha1>.html` 与 `.json`；`cache_dir` 取 `library.cache_dir`（默认 `server/storage/cache/pages`）
+
 ## 环境信息
 
 | 项 | 值 |
