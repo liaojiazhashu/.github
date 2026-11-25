@@ -1,0 +1,11 @@
+# 荒启科幻 · 站点爬虫规则
+# 仓库根 = 站点根；本文件随 git 部署，不要在服务器上直接改
+
+User-agent: *
+Allow: /
+
+# 运营后台与 PHP 应用源码目录，不收录
+Disallow: /admin/
+Disallow: /server/
+
+Sitemap: https://zha.ruletree.club/sitemap.xml
