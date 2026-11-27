@@ -3115,7 +3115,11 @@ html, body { background: #fff; color: #000; }
 
 /* ---- 08-motion.css ----------------------------------------------------- */
 
-[data-reveal] {
+/* 入场动画的初始态只在「脚本确实可用」时生效（html.js 由 head 的内联脚本加上）。
+   以前这条是无条件的，后果是关掉 JS（或脚本被拦截）后，全站 262 个
+   [data-reveal] 元素永久停在 opacity:0 —— 整页内容一个字都看不见。
+   渐进增强的方向应该是「JS 缺席时完整可读」，不是「JS 缺席时白屏」。 */
+.js [data-reveal] {
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
@@ -3127,9 +3131,9 @@ html, body { background: #fff; color: #000; }
   transform: none;
 }
 [data-reveal="fade"] { transform: none; }
-[data-reveal="left"] { transform: translateX(-22px); }
-[data-reveal="right"] { transform: translateX(22px); }
-[data-reveal="scale"] {
+.js [data-reveal="left"] { transform: translateX(-22px); }
+.js [data-reveal="right"] { transform: translateX(22px); }
+.js [data-reveal="scale"] {
   transform: scale(0.97) translateY(12px);
 }
 [data-reveal].is-in[data-reveal="left"], [data-reveal].is-in[data-reveal="right"], [data-reveal].is-in[data-reveal="scale"] { transform: none; }

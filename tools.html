@@ -18,7 +18,12 @@
 <link rel="preload" href="assets/fonts/noto-sans-sc-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
-<script>/* 首帧前应用主题，避免闪色；图书馆链接带上当前主题，馆里首帧就同色 */(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('hq-theme')||'night')}catch(e){}})();
+<script>/* 首帧前应用主题，避免闪色；图书馆链接带上当前主题，馆里首帧就同色 */
+/* 同时给 <html> 加 .js：入场动画的初始隐藏态（opacity:0）挂在 .js 下面，
+   脚本没跑起来时这一条不生效，整页照常可读。以前它是无条件的，
+   关掉 JS 会得到一页白屏 —— 262 个 [data-reveal] 元素全部停在透明。 */
+(function(){try{document.documentElement.className+=' js';}catch(e){}
+try{document.documentElement.setAttribute('data-theme',localStorage.getItem('hq-theme')||'night')}catch(e){}})();
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*="/library"]');if(!a)return;try{var t=localStorage.getItem('hq-theme');if(t==='day'||t==='night'){var u=new URL(a.href,location.href);u.searchParams.set('theme',t);a.href=u.toString()}}catch(err){}},true);</script>
 </head>
 <body id="top" data-scene="tools">
@@ -337,19 +342,19 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 
       <div class="page-hero__stats" data-reveal="fade" style="--reveal-delay:200ms">
         <div>
-          <p class="hero__meta-num"><span data-count="4">0</span><small>条业务线</small></p>
+          <p class="hero__meta-num"><span data-count="4">4</span><small>条业务线</small></p>
           <p class="hero__meta-label">社区 / 教育 / AI / 定制</p>
         </div>
         <div>
-          <p class="hero__meta-num"><span data-count="6">0</span><small>类终端</small></p>
+          <p class="hero__meta-num"><span data-count="6">6</span><small>类终端</small></p>
           <p class="hero__meta-label">Web / H5 / 安卓 / iOS / 微信 / 抖音</p>
         </div>
         <div>
-          <p class="hero__meta-num"><span data-count="3">0</span><small>种合作</small></p>
+          <p class="hero__meta-num"><span data-count="3">3</span><small>种合作</small></p>
           <p class="hero__meta-label">托管 / 私有化 / 源码买断</p>
         </div>
         <div>
-          <p class="hero__meta-num"><span data-count="1">0</span><small>套底座</small></p>
+          <p class="hero__meta-num"><span data-count="1">1</span><small>套底座</small></p>
           <p class="hero__meta-label">账号、内容与权限同源</p>
         </div>
       </div>

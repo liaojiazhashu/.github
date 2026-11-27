@@ -579,6 +579,62 @@ const DAYSKY = `<svg class="bg-daysky" viewBox="0 0 1600 900" preserveAspectRati
 const SCRIPTS_HEAD = `  <script src="js/main.js"></script>
 `;
 
+/* ------------------------------------------------------------ 首屏事实表 */
+/* 六个页面 hero 区的 23 个数字是「结构性事实」，不是动态统计 ——
+   成立年份、2 款自研产品、4 条业务线、每篇最多 5 个词，一年也变不了一次；
+   真正的动态统计在 /library（Twig 服务端渲染，1172 部作品、1289 篇拆解）。
+
+   以前真值只写在 data-count 属性里、正文写死 0，靠 js/main.js 的 runCount()
+   从 0 数上去。渐进增强做反了：JS 跑起来之前，页面显示的是 23 个 0。
+   现在正文与属性由这张表同一处生成，改一处六页同步，物理上不可能漂。 */
+const HERO_FACTS = {
+  /* 跨页重复的事实：index / about 都写成立年份，index·about·contact 都写产品和业务线 */
+  companyFounded:    { value: 2025, plain: true, note: '营业执照成立日期' },
+  products:          { value: 2, note: '自研产品：荒启科幻客户端 + 邀请码系统' },
+  businessLines:     { value: 4, enum: '社区 / 教育 / AI / 定制', note: 'tools 页 label 枚举' },
+  libraryIndex:      { value: 1, note: '银河图书馆' },
+  dimensions:        { value: 6, note: '六阶段拆解 S1–S6' },
+  /* 会过期的那一个：社群每年 9 期，community 与 library 两处必须同源 */
+  issuePerYear:      { value: 9, note: '社群年度期数，两页共用' },
+  reviewersPerWork:  { value: 10, note: '社群规则：每篇最低评稿人数' },
+  reviewDimensions:  { value: 5, note: '社群评稿量化维度' },
+  practiceStartYear: { value: 2024, plain: true, note: '练笔起步年份' },
+  channels:          { value: 2, note: 'QQ 群 + 公众号' },
+  /* 枚举计数：label 里已经把每一项列出来了，构建时数一遍比对 */
+  termsPerWork:      { value: 5, note: '每篇词库上限' },
+  readerViews:       { value: 2, enum: '读者一页 · 作者一页', note: 'library 页 label 枚举' },
+  terminals:         { value: 6, enum: 'Web / H5 / 安卓 / iOS / 微信 / 抖音', note: 'tools 页 label 枚举' },
+  coopModes:         { value: 3, enum: '托管 / 私有化 / 源码买断', note: 'tools 页 label 枚举' },
+  base:              { value: 1, note: '账号、内容与权限同源' },
+  /* 固定值：0 分不打分。进表是为了让 hero 区「全部数字都有单一来源」这条规则没有例外，
+     而例外正是漏改开始的地方。 */
+  noScore:           { value: 0, fixed: true, note: '只写依据不打分，不是计数器' },
+  /* 注意：contact 页第 4 格「0 元」没有 data-count，从来不是计数器，不在这张表里 */
+};
+
+/* 事实表自检。枚举类数字从 label 反推，对不上就让构建失败 ——
+   抓到的是「加了业务线忘了改数字」，维护成本为零。 */
+function assertFacts() {
+  const problems = [];
+  Object.entries(HERO_FACTS).forEach(([key, f]) => {
+    if (!Number.isInteger(f.value) || f.value < 0) {
+      problems.push(`${key}: value 必须是非负整数，实际 ${JSON.stringify(f.value)}`);
+      return;
+    }
+    if (f.enum) {
+      /* label 里两种分隔符都出现过：tools 用「/」，library 用「·」。
+         两种都认，否则枚举校验会对正确的值报错。 */
+      const items = f.enum.split(/[\/·]/).map((s) => s.trim()).filter(Boolean);
+      if (items.length !== f.value) {
+        problems.push(`${key}: label 枚举写了 ${items.length} 项（${items.join(' / ')}），但 value=${f.value}`);
+      }
+    }
+  });
+  if (problems.length) {
+    throw new Error('HERO_FACTS 自相矛盾：\n  - ' + problems.join('\n  - '));
+  }
+}
+
 /* ---------------------------------------------------------------- 组装 */
 /* 页面主体中可用 {{ico:图标名:尺寸类}} 占位符引用图标，避免重复书写 SVG。
    尺寸类允许同时给出多个类名（以空格分隔），例如 {{ico:arrowRight:ico-18 flow-arrow}} */
@@ -601,6 +657,27 @@ function expandLibraryUrl(html) {
   return html.replace(/\{\{LIBRARY_URL\}\}/g, LIBRARY_URL);
 }
 
+/* 页面主体可用 {{FACT:键名}} 生成首屏计数器：正文与 data-count 用同一个值。
+   js/main.js 的 runCount() 从 0 数到 data-count，动画照旧；
+   区别只在于「JS 没跑」时页面上是真数字，不再是 0。
+
+   正文要按 runCount() 的 format() 规则渲染，否则「无 JS 看到的」和
+   「有 JS 最终看到的」会不一致：千分位与 data-count-plain 都得对上。 */
+function formatFact(f) {
+  let txt = String(f.value);
+  if (!f.plain) txt = txt.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return txt;
+}
+
+function expandFacts(html) {
+  return html.replace(/\{\{FACT:([a-zA-Z]+)\}\}/g, (m, key) => {
+    const f = HERO_FACTS[key];
+    if (!f) throw new Error(`未知的 FACT 键：${key}`);
+    const plain = f.plain ? ' data-count-plain' : '';
+    return `<span data-count="${f.value}"${plain}>${formatFact(f)}</span>`;
+  });
+}
+
 /* 页面主体可用 {{APP_DL_BUTTONS:按钮类名}} 生成三平台客户端下载按钮组 */
 function expandAppButtons(html) {
   return html.replace(/\{\{APP_DL_BUTTONS:([^}]+)\}\}/g, (m, cls) => appDownloadButtons(cls.trim()));
@@ -609,7 +686,7 @@ function expandAppButtons(html) {
 function page({ title, desc, scene, file, current, scripts = '' }) {
   const bodyPath = path.join(SRC_DIR, file);
   if (!fs.existsSync(bodyPath)) throw new Error('缺少页面主体: ' + file);
-  const body = expandAppButtons(expandLibraryUrl(expandIcons(fs.readFileSync(bodyPath, 'utf8').trimEnd())));
+  const body = expandFacts(expandAppButtons(expandLibraryUrl(expandIcons(fs.readFileSync(bodyPath, 'utf8').trimEnd()))));
 
   const extraScripts = scripts
     ? scripts.split('\n').map((s) => '  <script src="' + s.trim() + '"></script>').join('\n') + '\n'
@@ -641,7 +718,12 @@ ${canonicalTags}
 <link rel="preload" href="assets/fonts/noto-sans-sc-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
-<script>/* 首帧前应用主题，避免闪色；图书馆链接带上当前主题，馆里首帧就同色 */(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('hq-theme')||'night')}catch(e){}})();
+<script>/* 首帧前应用主题，避免闪色；图书馆链接带上当前主题，馆里首帧就同色 */
+/* 同时给 <html> 加 .js：入场动画的初始隐藏态（opacity:0）挂在 .js 下面，
+   脚本没跑起来时这一条不生效，整页照常可读。以前它是无条件的，
+   关掉 JS 会得到一页白屏 —— 262 个 [data-reveal] 元素全部停在透明。 */
+(function(){try{document.documentElement.className+=' js';}catch(e){}
+try{document.documentElement.setAttribute('data-theme',localStorage.getItem('hq-theme')||'night')}catch(e){}})();
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*="/library"]');if(!a)return;try{var t=localStorage.getItem('hq-theme');if(t==='day'||t==='night'){var u=new URL(a.href,location.href);u.searchParams.set('theme',t);a.href=u.toString()}}catch(err){}},true);</script>
 </head>
 <body id="top" data-scene="${scene}">
@@ -738,9 +820,35 @@ const PAGES = [
 ];
 
 /* ---------------------------------------------------------------- 执行 */
+assertFacts();
+
+/* 构建后自检：每个计数器的正文必须等于 data-count（按 runCount 的格式化规则比）。
+   以前正文写死 0、真值在属性里，这条检查会立刻报 23 个错 —— 它就是为了
+   让「正文与属性不一致」永远过不了构建，而不是靠人记得。 */
+function assertCounters(html, file) {
+  const re = /<span([^>]*\bdata-count="([^"]*)"[^>]*)>([^<]*)<\/span>/g;
+  const problems = [];
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    const [, attrs, attrVal, text] = m;
+    let expected = attrVal;
+    /* 与 runCount() 的 format() 同一套规则：非 plain 的整数带千分位 */
+    if (/^\d+$/.test(attrVal) && !/\bdata-count-plain\b/.test(attrs)) {
+      expected = attrVal.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    if (expected !== text) {
+      problems.push(`<span${attrs}> 应显示「${expected}」，实际是「${text}」`);
+    }
+  }
+  if (problems.length) {
+    throw new Error(`${file} 计数器正文与 data-count 不一致（${problems.length} 处）：\n  - ` + problems.join('\n  - '));
+  }
+  return html;
+}
+
 let count = 0;
 PAGES.forEach((p) => {
-  const html = page(p);
+  const html = assertCounters(page(p), p.file);
   fs.writeFileSync(path.join(ROOT, p.file), html, 'utf8');
   const lines = html.split('\n').length;
   console.log(`  ${p.file.padEnd(18)} ${lines} 行  ${(Buffer.byteLength(html, 'utf8') / 1024).toFixed(1)} KB`);

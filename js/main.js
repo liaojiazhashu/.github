@@ -255,7 +255,20 @@
       });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
 
-    els.forEach(function (el) { io.observe(el); });
+    /* 首屏计数器现在由构建脚本把真值写进正文（2026-11-27）—— 关掉 JS 也能看到
+       真实数字，不再是 23 个 0。动画照旧从 0 数到 data-count，但**必须在元素
+       进入视口之前把正文归零**，否则会先亮出真值、再跳回 0 重数一遍，比不动更糟。
+
+       归零放在这里而不是模板里：这些元素全部带 data-reveal，CSS 上是 opacity:0
+       （css/style.css 的 `[data-reveal]` 规则），所以归零动作本身不可见；
+       没有 JS 时这段代码根本不执行，正文保持构建时的真值。
+       元素进视口那一刻由上面的观察器立刻改写，中间不会露出 0。 */
+    els.forEach(function (el) {
+      /* reduceMotion 与「没有 IntersectionObserver」在上面已经 return 了，
+         走到这里一定是要做动画的那条路，所以这里不必再判一次。 */
+      if (el.hasAttribute('data-count')) el.textContent = '0';
+      io.observe(el);
+    });
   }
 
   /* ------------------------------------------------------ 数字滚动动画 */

@@ -441,6 +441,10 @@ Playwright / Puppeteer。截图前会等待 `document.fonts.ready`、注入样�
 - `prefers-reduced-motion` 下关闭动效并静态化背景特效
 - 装饰性元素统一 `aria-hidden="true"`
 - 禁用 JS 时内容仍可读；作品库保留静态首屏条目；背景回落为 CSS 渐变，不出现空白
+- **禁用 JS 时首屏数字是真值**（2026-11-27 修）：入场动画的隐藏态挂在 `.js` 下，
+  脚本没跑就不生效；23 个计数器由构建脚本把真值写进正文，不再靠 JS 从 0 数上去。
+  `tools/build-pages.cjs` 的 `HERO_FACTS` 是这些数字的唯一来源，正文与 `data-count`
+  由同一处生成，构建时校验两者一致，改一处六页同步
 - **对比度可验证**：`probe-contrast.js` 逐元素计算 WCAG 比值，两个主题 × 七个页面必须 0 不达标。
   它会把 `aria-hidden="true"` 的装饰内容与 `-webkit-text-fill-color: transparent` 的渐变裁切字跳过
   （后者没有真实前景色，硬算必然报 1:1）
