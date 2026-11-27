@@ -45,17 +45,52 @@ ssh srv 'flock -n /tmp/zha-deploy.lock /www/wwwroot/deploy-zha.sh'
 
 ## 服务器自动部署机制
 
-- 部署脚本：`/www/wwwroot/deploy-zha.sh`
-- 定时任务：`*/5 * * * *`，cron 每 5 分钟执行一次
+- 部署脚本：真相源在仓库 `deploy/deploy-zha.sh`；服务器 `/www/wwwroot/deploy-zha.sh`
+  只是一层薄壳（`deploy/bootstrap-shim.sh`），`exec` 调仓库里那份
+- 定时任务：`*/5 * * * *`，cron 每 5 分钟执行一次，`flock` 保证不会同时跑两份
 - 日志：`/var/log/zha-deploy.log`
-- 并发保护：`flock`，不会同时跑两份
-- 只做 `git pull --ff-only`：服务器上有本地改动时会失败并记日志，不会覆盖
+- 状态：`/var/lib/zha-deploy/`（`consecutive-failures` 连续失败数、`last-success` 上次成功时间）
+
+**为什么脚本要进仓库、服务器上只留壳**：原来的脚本只存在于服务器，改了没有 diff、
+没有历史，出错只能靠读日志反推。放进仓库后一切走正常提交流程。壳是唯一的例外，
+因为仓库本身要靠部署才能更新，需要一个钉在服务器上的入口指向它。
+
+**执行顺序**：工作区预检 → `git fetch` 带重试 → `git merge --ff-only FETCH_HEAD`
+→ 属主修正与 Twig 缓存清理。
+
+几个设计要点，都是 2026-11-27 按实测数据定的：
+
+| 做法 | 依据 |
+|---|---|
+| 联网那步重试 5 次，每次 `timeout 12s` | 服务器到 github.com:443 是间歇可用的：连续 10 次 `git fetch` 只成功 3 次，失败的 7 次每次都要等满 45 秒。20 天日志里 1562 次 `FAILED pull`，真正因工作区脏失败的只有 5 次（**312 : 1**） |
+| 用 `merge --ff-only FETCH_HEAD` 而不是 `pull` | `pull` = fetch + merge，会在重试成功后再联网一次，那一次失败就前功尽弃且不被重试覆盖 |
+| 工作区预检只看已跟踪文件 | 服务器上常年有 `storage/` 等未跟踪产物，它们不影响 merge，不该让部署停下 |
+| 脏与网络失败分开记日志 | 旧脚本两者都只写「可能存在本地改动或网络问题」，长得一样就没法排障 |
+| **绝不自动丢弃本地改动** | 服务器工作区本该干净，变脏就是有人手工改过，那是需要人判断的事 |
+| 连续失败 3 次开始告警，之后每 12 次重复 | 每 5 分钟报一次会把一次几小时的光纤抖动刷成几十条同样的话，人就开始忽略它 |
+
+**排障**：日志里看到 `FAILED pull：工作区有已跟踪文件的本地改动` 时，往下两行会写明
+是「只是行尾不同」（`git diff --ignore-cr-at-eol HEAD` 无差异）还是「真实内容差异」。
+只是行尾的话，确认后 `git checkout -- <文件>` 丢弃即可，不影响任何内容。
 
 查看部署记录：
 
 ```bash
 ssh srv 'tail -20 /var/log/zha-deploy.log'
+ssh srv 'cat /var/lib/zha-deploy/last-success; cat /var/lib/zha-deploy/consecutive-failures'
 ```
+
+**首次安装 / 迁移时**（一次性，之后不再需要）：
+
+```bash
+scp deploy/bootstrap-shim.sh srv:/www/wwwroot/deploy-zha.sh
+ssh srv 'chmod 755 /www/wwwroot/deploy-zha.sh'
+```
+
+壳里用 `[ -f ]` 而不是 `[ -x ]` 判断仓库里那份在不在：本机是 Windows 提交的
+（`core.fileMode=false`），git 记不住可执行位，`deploy-zha.sh` 到服务器上是 644。
+用 `-x` 会让部署链在「文件明明在、却报找不到」的情况下彻底停住。
+`.gitattributes` 里给 `*.sh` 钉了 `eol=lf`，防止 CRLF 到 Linux 上让 bash 每行报错。
 
 ## 官网页面：源文件与产物
 

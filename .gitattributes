@@ -1,0 +1,8 @@
+# 行尾策略。
+#
+# 本机是 Windows 且全局 core.autocrlf=true，而服务器是 Linux。shell 脚本一旦带
+# CRLF 落到 Linux，bash 会在每一行报 `$'\r': command not found` —— 而 deploy/
+# 下的脚本正是由 cron 调用的，坏掉就是整条部署链停摆，且日志里看不出是行尾问题。
+# 所以对它强制 LF，不依赖任何人的本地 git 配置。
+
+*.sh   text eol=lf
