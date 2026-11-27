@@ -216,11 +216,14 @@ curl -sI https://zha.ruletree.club/library/method | grep -Ei 'x-cache|cache-cont
 **立刻失效某一个指定的页面：用 `library:cache-purge --path=…`。**
 
 ```bash
-# 改完模板要让这一页马上生效，不用等 TTL
-php -c php.ini bin/console.php library:cache-purge --path=/library/method
+# 线上：先进应用目录，**不要带 -c php.ini**（原因见下）
+cd /www/wwwroot/zha.ruletree.club/server
+php bin/console.php library:cache-purge --path=/library/method
 # 带查询串的页面要连 query 一起给，引号别省
-php -c php.ini bin/console.php library:cache-purge --path='/library/search?q=abc'
+php bin/console.php library:cache-purge --path='/library/search?q=abc'
 ```
+
+**服务器上不能带 `-c php.ini`。** `server/php.ini` 是 Windows 本机专用配置，`open_basedir`、`extension_dir`、`error_log`、`upload_tmp_dir`、`sys_temp_dir`、`session.save_path`、`curl.cainfo`、`openssl.cafile`、`zend_extension` 共 9 处本机绝对路径。在 Linux 上一加，`bootstrap.php` 立刻被 `open_basedir` 挡死，退出码 255；而 `display_errors = Off` 让屏幕上什么都不打印——看起来像命令没跑，其实已经 Fatal。2026-11-25 就栽在这里。本机 Windows 预演要加 `-c php.ini`，两条路不要混。
 
 它按 key 精确删掉该页的 `.html` 与 `.json` 两个文件；`--path` 必须以 `/library` 开头；**刻意没有 `--all`**——一个能把全站缓存一次清空的开关，迟早有人在生产上误用。`library:cache-prune` 替代不了它：那条按 `created_at` 删「更老」的文件、最小门槛 7200 秒，刚缓存的新页永远删不掉。
 

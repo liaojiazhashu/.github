@@ -28,6 +28,11 @@ return [
         'name'     => '银河图书馆',
         'env'      => $env('APP_ENV', 'production'),
         'debug'    => $bool('APP_DEBUG', false),
+        /* 站点绝对地址。sitemap 里每一条 <loc> 都由它拼出来
+           （SitemapBuilder::collect 的 $base），所以**它必须是线上正式域名**：
+           写成 127.0.0.1 就等于把搜索引擎引到回环地址，整份站点地图对外无效。
+           线上由 server/.env 的 APP_URL 覆盖，本机 .env 保持 localhost 即可 ——
+           本机生成的 sitemap.xml 已被 .gitignore 排除，不会进库。 */
         'url'      => $env('APP_URL', 'http://127.0.0.1:8090'),
         'timezone' => $env('APP_TIMEZONE', 'Asia/Shanghai'),
         'root'     => $root,

@@ -29,10 +29,29 @@ final class SitemapBuilder
      */
     public static function collect(LibraryRepository $library, string $base): array
     {
-        $base    = rtrim($base, '/');
+        $base = rtrim($base, '/');
+        self::assertBase($base);
+
         $entries = $library->sitemapEntries();
 
         $urls = [
+            /* 官网七页。它们是纯静态文件，Nginx 的 try_files $uri 直接命中，
+               根本不经过这个应用 —— 但 sitemap 只有这一处生成器，robots.txt
+               又只声明一份 sitemap，所以它们必须在这里露一次面。
+               2026-11-27 之前这七页一条都没有：整份 sitemap 只有 /library* 的
+               1088 条，搜索引擎除了靠外链，无从知道官网还有六个页面。 */
+            ['loc' => $base . '/',               'changefreq' => 'monthly', 'priority' => '1.0'],
+            ['loc' => $base . '/about.html',     'changefreq' => 'monthly', 'priority' => '0.8'],
+            ['loc' => $base . '/community.html', 'changefreq' => 'monthly', 'priority' => '0.8'],
+            ['loc' => $base . '/tools.html',     'changefreq' => 'monthly', 'priority' => '0.8'],
+            ['loc' => $base . '/contact.html',   'changefreq' => 'monthly', 'priority' => '0.7'],
+            /* 静态介绍页，不是 /library 应用本身。两者内容不同、canonical 各自自指
+               （见 tools/build-pages.cjs 的 SITE_URL），所以两条都该在 sitemap 里。 */
+            ['loc' => $base . '/library.html',   'changefreq' => 'monthly', 'priority' => '0.7'],
+            /* 隐私说明：内容一年也变不了一次，给最低优先级。收录它不是为了排名，
+               是让「这家公司有没有隐私政策」这类查询能找到页面。 */
+            ['loc' => $base . '/privacy.html',   'changefreq' => 'yearly',  'priority' => '0.3'],
+
             ['loc' => $base . '/library', 'changefreq' => 'daily', 'priority' => '1.0'],
             ['loc' => $base . '/library/works', 'changefreq' => 'daily', 'priority' => '0.9'],
             ['loc' => $base . '/library/authors', 'changefreq' => 'weekly', 'priority' => '0.8'],
@@ -41,6 +60,12 @@ final class SitemapBuilder
                它是一页「社区规模」的说明，检索意图是「荒启科幻练笔多少篇」，
                不是某一篇作品，优先级低于作品与作者。 */
             ['loc' => $base . '/library/practice', 'changefreq' => 'monthly', 'priority' => '0.6'],
+            /* 方法说明。官网 library.html 有两处链到它（「这套结果怎么来的」「看方法」），
+               页面本身 canonical 自指、无 noindex，是公开可索引的说明页 ——
+               有入口、能打开、却没进 sitemap，等于让搜索引擎只能靠那两条外链发现它。
+               内容讲的是口径与边界，一年也改不了几次，所以给 monthly / 0.5。
+               /library/search 不收录：那个模板显式输出 noindex, follow。 */
+            ['loc' => $base . '/library/method', 'changefreq' => 'monthly', 'priority' => '0.5'],
         ];
 
         foreach ($entries['issues'] as $no) {
@@ -69,6 +94,36 @@ final class SitemapBuilder
         }
 
         return $urls;
+    }
+
+    /**
+     * 站点绝对地址守卫：APP_URL 忘配时，不许静默产出一份对外无效的 sitemap。
+     *
+     * settings.php 的 app.url 默认值是 `http://127.0.0.1:8090`。生产漏配 APP_URL 时，
+     * 每一个 <loc> 都指向回环地址 —— HTTP 200、条数正确、XML 合法、自检全过，只有
+     * 搜索引擎一条都收不进去。没有任何迹象提示配漏了一项，这比报错危险得多。
+     *
+     * 本机开发不受影响：APP_ENV=local/testing 时本来就用 localhost，放行。
+     * 判据是 APP_ENV 而不是 PHP_SAPI —— `php bin/console.php sitemap` 与 fpm 一样
+     * 会把结果落成对外文件，只看 SAPI 会让命令行这条路径漏过去。
+     */
+    public static function assertBase(string $base): void
+    {
+        $host = strtolower((string) parse_url($base, PHP_URL_HOST));
+        if (!in_array($host, ['127.0.0.1', 'localhost', '::1', '0.0.0.0'], true)) {
+            return;
+        }
+
+        $env = $_ENV['APP_ENV'] ?? getenv('APP_ENV');
+        $env = is_string($env) ? strtolower(trim($env)) : '';
+        if (in_array($env, ['local', 'development', 'testing', 'test'], true)) {
+            return;
+        }
+
+        throw new \RuntimeException(
+            'app.url 指向回环地址（' . $base . '），整份 sitemap 对外无效。'
+            . '请在 server/.env 设置 APP_URL=https://正式域名。'
+        );
     }
 
     /**

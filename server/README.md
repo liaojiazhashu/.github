@@ -8,6 +8,13 @@
 > M6「加固」同日交付（安全自检 56 通过 / 0 不通过 / 8 待人工、渗透 15 项全过、
 > 备份加密 + 恢复演练校验一致）。**下一步是上线前的 Go/No-Go 评审（§16.2）**。
 
+> **命令里的 `-c php.ini` 只在本机 Windows 有效。** 本文档中 `D:\webserver\php\php.exe -c php.ini …`
+> 一律是本机写法；在服务器（Linux）上做同一件事要去掉它：
+> `cd /www/wwwroot/zha.ruletree.club/server && php bin/console.php …`。
+> `server/php.ini` 的 `open_basedir`、`extension_dir`、`error_log` 等 9 处是 Windows 绝对路径，
+> 在 Linux 上一加载 `bootstrap.php` 就被挡死，退出码 255，而 `display_errors = Off`
+> 什么都不打印 —— 看起来像命令没跑，其实已经 Fatal（2026-11-25 踩过）。
+
 ## 1. 运行环境（本机绿包，不写注册表）
 
 | 组件           | 路径                     | 端口       | 说明                                                         |

@@ -204,6 +204,10 @@ npm run build
 
 只改样式、不碰文案时用 `npm run build:fast`（跳过字体那两步，几秒钟）。
 
+> **Windows PowerShell 下报「在此系统上禁止运行脚本」**，是 `npm.ps1` 被执行策略拦住了，
+> 不是构建本身出错。改用 `npm.cmd run build`，或者直接跑入口 `node tools/build-all.mjs`
+> （两者等价，`--fast` 这类参数也照传）。
+
 > 这五步手工跑的时候漏掉任何一步都不会报错：漏 `build-pages`，线上还是旧页面，
 > 文件都在，看不出问题；漏 `subset-fonts`，新加的汉字静默回退系统字体，字重与
 > 字形都断了。2026-11-25 那次字体子集落后文案 22 个字就是这么漏出来的，
